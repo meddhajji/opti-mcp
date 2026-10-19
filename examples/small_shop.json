@@ -1,0 +1,18 @@
+{
+  "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "shifts": ["morning", "evening"],
+  "staff": [
+    {"name": "Karim", "max_shifts": 5, "prefers_off": [{"day": "Fri"}]},
+    {"name": "Sara", "max_shifts": 5, "unavailable": [{"day": "Wed"}]},
+    {"name": "Youssef", "max_shifts": 5},
+    {"name": "Imane", "max_shifts": 5, "prefers_off": [{"day": "Sun"}]},
+    {"name": "Omar", "max_shifts": 3, "unavailable": [{"day": "Mon"}, {"day": "Tue"}]}
+  ],
+  "needs": [
+    {"day": "*", "shift": "morning", "min_staff": 1},
+    {"day": "*", "shift": "evening", "min_staff": 2},
+    {"day": "Fri", "shift": "evening", "min_staff": 3},
+    {"day": "Sat", "shift": "evening", "min_staff": 3}
+  ],
+  "max_consecutive_days": 4
+}

@@ -1,0 +1,17 @@
+{
+  "name": "optimizer",
+  "displayName": "Optimizer",
+  "version": "0.1.0",
+  "description": "Exact optimisation for agents: proven-optimal staff schedules and integer models, every answer independently verified, and plain explanations when no solution exists. Runs locally, no API key.",
+  "author": {
+    "name": "Mohamed Hajji"
+  },
+  "license": "MIT",
+  "keywords": ["optimization", "operations-research", "scheduling", "or-tools", "cp-sat", "mcp"],
+  "mcpServers": {
+    "optimizer": {
+      "command": "python",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launch.py"]
+    }
+  }
+}
