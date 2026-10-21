@@ -16,6 +16,9 @@ from --plugin-dir; the skill still loads from the plugin.
 The prompt is identical in every condition and never mentions the plugin:
 whether the agent chooses to use it is part of what is measured.
 
+With --backend groq, the same problems, prompt and conditions go through
+benchmark/groq_agent.py instead, to test models weaker than Claude Code runs.
+
 Results are appended to benchmark/results/<run name>.jsonl, one line per
 (problem, model, condition); finished combinations are skipped, so an
 interrupted run resumes where it stopped.
@@ -24,6 +27,7 @@ Example:
   python benchmark/run.py --name pilot --models haiku --conditions reasoning plugin --problems optibench-573
 """
 import argparse
+import asyncio
 import json
 import os
 import shutil
@@ -41,7 +45,8 @@ sys.path.insert(0, str(BENCH))
 from score import OUTCOMES, parse_final_answer, score  # noqa: E402
 
 CLAUDE = os.environ.get("CLAUDE_BIN") or shutil.which("claude") or str(Path.home() / ".local/bin/claude.exe")
-PLUGIN_TOOLS = "mcp__optimizer"  # every tool of the optimizer MCP server
+PLUGIN_TOOLS = "mcp__optimizer"  # every tool of the optimizer MCP server, as Claude Code names them
+OPTIMIZER_TOOLS = {"solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}  # raw MCP names
 MCP_CONFIG = json.dumps({"mcpServers": {"optimizer": {
     "command": "python", "args": [str(REPO / "scripts" / "launch.py")]}}})
 CONDITIONS = ("reasoning", "code", "plugin")
@@ -102,10 +107,7 @@ def parse_stream(stdout: str) -> dict:
     }
 
 
-def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeout_s: int, workdir: Path) -> dict:
-    workdir.mkdir(parents=True, exist_ok=True)
-    prompt = PROMPT.format(question=problem["question"], keys=json.dumps(problem["answer_keys"], ensure_ascii=False))
-    started = time.monotonic()
+def run_claude(prompt: str, model: str, condition: str, budget_usd: float, timeout_s: int, workdir: Path):
     try:
         proc = subprocess.run(command(model, condition, budget_usd), input=prompt, capture_output=True,
                               text=True, encoding="utf-8", errors="replace", cwd=workdir, timeout=timeout_s)
@@ -114,14 +116,46 @@ def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeou
     except subprocess.TimeoutExpired:
         stream, error = {"text": "", "tools": [], "turns": None, "cost_usd": None, "is_error": True, "stop": "timeout"}, \
             f"timed out after {timeout_s} s"
+    return stream, error
+
+
+def run_groq(prompt: str, model: str, condition: str, timeout_s: int, workdir: Path):
+    import groq_agent  # imported here so the Claude backend does not need the groq package
+
+    empty = {"text": "", "tools": [], "turns": None, "cost_usd": None}
+    try:
+        out = asyncio.run(asyncio.wait_for(groq_agent.run(prompt, model, condition, workdir), timeout_s))
+    except TimeoutError:
+        return empty | {"stop": "timeout"}, f"timed out after {timeout_s} s"
+    except groq_agent.DailyLimitReached:
+        raise
+    except Exception as e:  # one failed run is recorded, never fatal for the whole benchmark
+        return empty | {"stop": "error"}, f"{type(e).__name__}: {str(e)[:400]}"
+    stream = {"text": out["text"], "tools": out["tools"], "turns": out["turns"], "cost_usd": None,
+              "tokens": out["tokens"], "stop": "; ".join(out["events"]) or "success", "calls": out["calls"]}
+    return stream, None
+
+
+def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeout_s: int, workdir: Path,
+            backend: str = "claude") -> dict:
+    workdir.mkdir(parents=True, exist_ok=True)
+    prompt = PROMPT.format(question=problem["question"], keys=json.dumps(problem["answer_keys"], ensure_ascii=False))
+    started = time.monotonic()
+    if backend == "groq":
+        stream, error = run_groq(prompt, model, condition, timeout_s, workdir)  # DailyLimitReached propagates
+    else:
+        stream, error = run_claude(prompt, model, condition, budget_usd, timeout_s, workdir)
     answer = parse_final_answer(stream["text"])
     verdict = score(problem, answer)
     return {
-        "problem": problem["id"], "model": model, "condition": condition,
+        "problem": problem["id"], "model": model, "condition": condition, "backend": backend,
         "outcome": verdict["outcome"], "detail": verdict["detail"], "answer": answer,
-        "tools": Counter(stream["tools"]), "plugin_used": any(t.startswith(PLUGIN_TOOLS) for t in stream["tools"]),
-        "turns": stream["turns"], "cost_usd": stream["cost_usd"], "seconds": round(time.monotonic() - started, 1),
+        "tools": Counter(stream["tools"]),
+        "plugin_used": any(t.startswith(PLUGIN_TOOLS) or t in OPTIMIZER_TOOLS for t in stream["tools"]),
+        "turns": stream["turns"], "cost_usd": stream["cost_usd"], "tokens": stream.get("tokens"),
+        "seconds": round(time.monotonic() - started, 1),
         "stop": stream["stop"], "error": error, "text_tail": stream["text"][-600:],
+        **({"calls": stream["calls"]} if stream.get("calls") else {}),
     }
 
 
@@ -140,6 +174,7 @@ def summarise(rows: list[dict]) -> None:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", required=True, help="run name: results go to benchmark/results/<name>.jsonl")
+    ap.add_argument("--backend", choices=("claude", "groq"), default="claude")
     ap.add_argument("--models", nargs="+", default=["haiku"])
     ap.add_argument("--conditions", nargs="+", default=list(CONDITIONS), choices=CONDITIONS)
     ap.add_argument("--problems", nargs="*", help="problem ids (default: all)")
@@ -153,11 +188,17 @@ def main():
     done = {(r["problem"], r["model"], r["condition"]) for r in rows}
     problems = load_problems(args.problems)
     todo = [(p, m, c) for p in problems for m in args.models for c in args.conditions if (p["id"], m, c) not in done]
-    print(f"{len(todo)} runs to do ({len(done)} already in {out.name}), claude = {CLAUDE}")
+    print(f"{len(todo)} runs to do ({len(done)} already in {out.name}), backend = {args.backend}")
 
     for i, (problem, model, condition) in enumerate(todo, 1):
-        workdir = BENCH / "runs" / args.name / f"{problem['id']}-{model}-{condition}"
-        row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir)
+        workdir = BENCH / "runs" / args.name / f"{problem['id']}-{model.replace('/', '_')}-{condition}"
+        try:
+            row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir, args.backend)
+        except Exception as e:
+            if type(e).__name__ == "DailyLimitReached":
+                print(f"Stopped: Groq's daily quota for {model} is used up. Re-run the same command later to resume.")
+                break
+            raise
         rows.append(row)
         with out.open("a", encoding="utf-8") as f:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")

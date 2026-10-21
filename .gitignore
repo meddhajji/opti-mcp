@@ -5,3 +5,4 @@ __pycache__/
 .plugin-data/
 build/
 benchmark/runs/
+.env
