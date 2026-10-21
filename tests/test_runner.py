@@ -1,0 +1,43 @@
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "benchmark"))
+
+from run import PLUGIN_TOOLS, PROMPT, command, parse_stream  # noqa: E402
+
+
+def test_conditions_differ_only_in_what_they_allow():
+    reasoning, code, plugin = (command("haiku", c, 1.0) for c in ("reasoning", "code", "plugin"))
+    for cmd in (reasoning, code, plugin):  # shared isolation flags
+        assert {"-p", "--restricted", "--strict-mcp-config", "--no-session-persistence"} <= set(cmd)
+        assert cmd[cmd.index("--model") + 1] == "haiku"
+    tools = {name: cmd[cmd.index("--tools") + 1] for name, cmd in (("r", reasoning), ("c", code), ("p", plugin))}
+    assert tools == {"r": "", "c": "Bash,Read,Write,Edit", "p": ""}  # explicit lists: no web search, no sub-agents
+    assert "--plugin-dir" not in reasoning and "--plugin-dir" not in code
+    assert "--plugin-dir" in plugin and "--mcp-config" in plugin and PLUGIN_TOOLS in plugin
+    assert "launch.py" in plugin[plugin.index("--mcp-config") + 1]
+
+
+def test_prompt_never_mentions_the_plugin():
+    text = PROMPT.format(question="Q", keys='["a"]').lower()
+    assert "plugin" not in text and "optimizer" not in text and "solver" not in text
+
+
+def test_parse_stream_collects_tools_and_final_text():
+    events = [
+        {"type": "system", "subtype": "init"},
+        {"type": "assistant", "message": {"content": [
+            {"type": "text", "text": "Let me model this."},
+            {"type": "tool_use", "name": f"{PLUGIN_TOOLS}__solve_model", "input": {}},
+        ]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "content": "{}"}]}},
+        {"type": "assistant", "message": {"content": [{"type": "text", "text": 'FINAL ANSWER: {"x": 1}'}]}},
+        {"type": "result", "subtype": "success", "result": 'FINAL ANSWER: {"x": 1}', "num_turns": 3,
+         "total_cost_usd": 0.012, "is_error": False},
+    ]
+    out = parse_stream("\n".join(json.dumps(e) for e in events) + "\nnot json\n")
+    assert out["tools"] == [f"{PLUGIN_TOOLS}__solve_model"]
+    assert out["text"] == 'FINAL ANSWER: {"x": 1}'
+    assert (out["turns"], out["cost_usd"], out["stop"]) == (3, 0.012, "success")

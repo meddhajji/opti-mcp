@@ -108,8 +108,45 @@ plugin than without it, and can a small cheap model with the plugin match a larg
 against the reference model rather than compared to one expected plan, so an alternative
 optimal plan counts as optimal, and a broken plan is reported with the rule it breaks.
 
-Next: the runner, which gives each problem to an agent with and without the plugin
-(Claude Code, and a small local model) and records the answers for scoring.
+**Runner** (`benchmark/run.py`). Each problem goes to `claude -p` in restricted mode with
+an explicit tool list, in a fresh empty folder, with none of the user's plugins, settings
+or connectors, and no web search (the problems are public). Three conditions, same
+prompt, which never mentions the plugin:
+
+| Condition | Tools | Represents |
+|---|---|---|
+| reasoning | none | asking a chatbot |
+| code | Bash, Read, Write, Edit | a coding agent writing its own solver |
+| plugin | the `optimize` skill and the optimizer MCP tools only | this plugin |
+
+### First results: Claude Haiku 5.5, 20 problems, one run each (21 Oct 2026)
+
+`python benchmark/report.py haiku-full` (raw answers in `benchmark/results/haiku-full.jsonl`)
+
+| Condition | Optimal | Suboptimal | Infeasible | Cost (20 runs) | Median time |
+|---|---|---|---|---|---|
+| plugin | **19 / 20** | 1 | 0 | $0.035 | 21 s |
+| reasoning | **19 / 20** | 0 | 1 | $0.032 | 15 s |
+| code | **17 / 20** | 1 | 2 | $0.030 | 14 s |
+
+- **Infeasible answers were fractional plans.** Reasoning answered 1,142.857 batches on
+  #404. The coding agent twice wrote a continuous solver for a whole-number problem
+  (41.27 and 1,142.86 batches). The plugin condition produced no invalid plan.
+- **The one plugin miss, #539, is an ambiguous problem.** It opens with "a researcher
+  *must perform* two types of experiments" and then asks for the minimum radiation; the
+  label is 0 (no experiments). The plugin and code runs read "must perform" as at least
+  one of each and answered 5, and every condition explained both readings. Kept in the
+  set, because removing a problem after seeing the results would bias it.
+- **Haiku chose the plugin on its own in 17 of 20 runs** and solved the other 3 correctly
+  by reasoning. Only `solve_model` was called.
+- **What this shows:** on textbook-size problems, the cheapest Claude model is already
+  nearly perfect by reasoning alone; the plugin removes invalid fractional plans and
+  proves optimality, but does not raise the score. With one run per problem, a gap of
+  one or two answers is within noise.
+
+Next: a hard tier of realistic-size problems (rotas over a month, many cutting lengths,
+large assignments), where a model cannot hold the whole problem in its head, with three
+runs per problem to measure variance; then a larger model as reference.
 
 ## Install
 

@@ -4,3 +4,4 @@ __pycache__/
 .pytest_cache/
 .plugin-data/
 build/
+benchmark/runs/
