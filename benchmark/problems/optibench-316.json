@@ -1,0 +1,79 @@
+{
+ "id": "optibench-316",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "Due to an accident, at least 550 locals must be moved across a lake. They can either be transported over the lake by a kayak or a motorboat. Kayaks can transport 4 people every trip and motorboats can transport 5 people every trip. Kayaks take 5 minutes per trip whereas motorboats take 3 minutes per trip. Due to the limited number of motorboats available to the locals, there can be at most 25 motorboat trips and at least 75% of the trips should be by kayak. How many of each transportation method should be used to minimize the total amount of time needed to transport all the locals?",
+ "answer_keys": [
+  "The number of kayak trips",
+  "The number of motorboat trips",
+  "The total time needed to transport all the locals"
+ ],
+ "objective_key": "The total time needed to transport all the locals",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of kayak trips": 107.0,
+  "The number of motorboat trips": 25.0,
+  "The total time needed to transport all the locals": 610.0
+ },
+ "optimum": 610.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of kayak trips": "kayak",
+   "The number of motorboat trips": "motorboat",
+   "The total time needed to transport all the locals": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "kayak",
+     "type": "integer",
+     "lb": 0,
+     "ub": 200
+    },
+    {
+     "name": "motorboat",
+     "type": "integer",
+     "lb": 0,
+     "ub": 200
+    }
+   ],
+   "constraints": [
+    {
+     "name": "people moved",
+     "terms": {
+      "kayak": 4,
+      "motorboat": 5
+     },
+     "sense": ">=",
+     "rhs": 550
+    },
+    {
+     "name": "at most 25 motorboat trips",
+     "terms": {
+      "motorboat": 1
+     },
+     "sense": "<=",
+     "rhs": 25
+    },
+    {
+     "name": "at least 75% kayak trips",
+     "terms": {
+      "kayak": 1,
+      "motorboat": -3
+     },
+     "sense": ">=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "kayak": 5,
+     "motorboat": 3
+    }
+   }
+  }
+ }
+}

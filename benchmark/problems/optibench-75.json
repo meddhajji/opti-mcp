@@ -1,0 +1,134 @@
+{
+ "id": "optibench-75",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-table",
+ "question": "Gandhi Cloth Company is capable of manufacturing three types of clothing: shirts, shorts, and pants. The manufacture of each type of clothing requires that Gandhi have the appropriate type of machinery available. The machinery needed to manufacture each type of clothing must be rented at the following rates: shirt machinery, $200 per week; shorts machinery, $150 per week; pants machinery, $100 per week. The manufacture of each type of clothing also requires the amounts of cloth and labor as shown in the following Table 1. Each week, 150 hours of labor and 160 sq yd of cloth are available. The variable unit cost and selling price for each type of clothing are shown in Table 2. Formulate an LP whose solution will maximize Gandhi's weekly profits.\n\nTable 1 (The amount of labor hours and cloth required for each type of clothing):\n| Clothing Type | Labor Hours | Cloth (sq yd) |\n| ------------- | ----------- | ------------- |\n| Shirt         | 3           | 4             |\n| Shorts        | 2           | 3             |\n| Pants         | 6           | 4             |\n\nTable 2 (Revenue and Cost Information for each type of clothing):\n| Clothing Type | Sales Price | Variable Cost |\n| ------------- | ----------- | ------------- |\n| Shirt         | $12         | $6            |\n| Shorts        | $8          | $4            |\n| Pants         | $15         | $8            |",
+ "answer_keys": [
+  "The number of shirts produced each week",
+  "The number of shorts produced each week",
+  "The number of pants produced each week",
+  "Shirt machinery rented",
+  "Shorts machinery rented",
+  "Pants machinery rented",
+  "The maximum weekly profit"
+ ],
+ "objective_key": "The maximum weekly profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of shirts produced each week": 0.0,
+  "The number of shorts produced each week": 0.0,
+  "The number of pants produced each week": 25.0,
+  "Shirt machinery rented": 0.0,
+  "Shorts machinery rented": 0.0,
+  "Pants machinery rented": 1.0,
+  "The maximum weekly profit": 75.0
+ },
+ "optimum": 75.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of shirts produced each week": "shirts",
+   "The number of shorts produced each week": "shorts",
+   "The number of pants produced each week": "pants",
+   "Shirt machinery rented": "rent_shirt",
+   "Shorts machinery rented": "rent_shorts",
+   "Pants machinery rented": "rent_pants",
+   "The maximum weekly profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "shirts",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "shorts",
+     "type": "integer",
+     "lb": 0,
+     "ub": 53
+    },
+    {
+     "name": "pants",
+     "type": "integer",
+     "lb": 0,
+     "ub": 25
+    },
+    {
+     "name": "rent_shirt",
+     "type": "boolean"
+    },
+    {
+     "name": "rent_shorts",
+     "type": "boolean"
+    },
+    {
+     "name": "rent_pants",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "labor hours",
+     "terms": {
+      "shirts": 3,
+      "shorts": 2,
+      "pants": 6
+     },
+     "sense": "<=",
+     "rhs": 150
+    },
+    {
+     "name": "cloth sq yd",
+     "terms": {
+      "shirts": 4,
+      "shorts": 3,
+      "pants": 4
+     },
+     "sense": "<=",
+     "rhs": 160
+    },
+    {
+     "name": "shirts need shirt machinery",
+     "terms": {
+      "shirts": 1,
+      "rent_shirt": -40
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "shorts need shorts machinery",
+     "terms": {
+      "shorts": 1,
+      "rent_shorts": -53
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "pants need pants machinery",
+     "terms": {
+      "pants": 1,
+      "rent_pants": -25
+     },
+     "sense": "<=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "shirts": 6,
+     "shorts": 4,
+     "pants": 7,
+     "rent_shirt": -200,
+     "rent_shorts": -150,
+     "rent_pants": -100
+    }
+   }
+  }
+ }
+}

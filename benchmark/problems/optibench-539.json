@@ -1,0 +1,71 @@
+{
+ "id": "optibench-539",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A researcher must perform two types of experiments, in-vivo and ex-vivo. In-vivo experiments requires 30 minutes to prepare and 60 minutes to execute. Ex-vivo experiments require 45 minutes to prepare and 30 minutes to execute. In addition, in-vivo experiments gives the researcher 2 units of radiation while ex-vivo experiments give the researcher 3 unites of radiation. At most 400 minutes can be used for preparation and 500 minutes for execution of the experiment. How many of each experiment should be scheduled by the researcher to minimize the total radiation received by the researcher?",
+ "answer_keys": [
+  "The number of in-vivo experiments",
+  "The number of ex-vivo experiments",
+  "Total radiation received"
+ ],
+ "objective_key": "Total radiation received",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of in-vivo experiments": 0.0,
+  "The number of ex-vivo experiments": 0.0,
+  "Total radiation received": 0.0
+ },
+ "optimum": 0.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of in-vivo experiments": "in_vivo",
+   "The number of ex-vivo experiments": "ex_vivo",
+   "Total radiation received": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "in_vivo",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    },
+    {
+     "name": "ex_vivo",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    }
+   ],
+   "constraints": [
+    {
+     "name": "preparation minutes",
+     "terms": {
+      "in_vivo": 30,
+      "ex_vivo": 45
+     },
+     "sense": "<=",
+     "rhs": 400
+    },
+    {
+     "name": "execution minutes",
+     "terms": {
+      "in_vivo": 60,
+      "ex_vivo": 30
+     },
+     "sense": "<=",
+     "rhs": 500
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "in_vivo": 2,
+     "ex_vivo": 3
+    }
+   }
+  }
+ }
+}

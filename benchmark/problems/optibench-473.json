@@ -1,0 +1,71 @@
+{
+ "id": "optibench-473",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "Eric is a world-famous wood artist. He manufactures two types of decors made of oak. The first product, a display shelf, requires 25 minutes each for carving and 20 minutes each for polishing. The second decor is a plant stand and it requires 20 minutes each for carving and 10 minutes each for polishing. There are 350 minutes available for carving and 600 for polishing. The profit is $55 each for the display shelf and $45 for each plant stand. How many decors of each type should the artist create in order to maximize his profit?",
+ "answer_keys": [
+  "The number of display shelves to manufacture",
+  "The number of plant stands to manufacture",
+  "Total profit"
+ ],
+ "objective_key": "Total profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of display shelves to manufacture": 2.0,
+  "The number of plant stands to manufacture": 15.0,
+  "Total profit": 785.0
+ },
+ "optimum": 785.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of display shelves to manufacture": "shelves",
+   "The number of plant stands to manufacture": "stands",
+   "Total profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "shelves",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "stands",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    }
+   ],
+   "constraints": [
+    {
+     "name": "carving minutes",
+     "terms": {
+      "shelves": 25,
+      "stands": 20
+     },
+     "sense": "<=",
+     "rhs": 350
+    },
+    {
+     "name": "polishing minutes",
+     "terms": {
+      "shelves": 20,
+      "stands": 10
+     },
+     "sense": "<=",
+     "rhs": 600
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "shelves": 55,
+     "stands": 45
+    }
+   }
+  }
+ }
+}

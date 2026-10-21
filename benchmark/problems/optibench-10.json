@@ -1,0 +1,158 @@
+{
+ "id": "optibench-10",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "To graduate from Basketweavers University with a major in operations research, a student must complete at least two math courses, at least two OR courses, and at least two computer courses. Some courses can be used to fulfill more than one requirement: Calculus can fulfill the math requirement; operations research, math and OR requirements; data structures, computer and math requirements; business statistics, math and OR requirements; computer simulation, OR and computer requirements; introduction to computer programming, computer requirement; and forecasting, OR and math requirements. Some courses are prerequisites for others: Calculus is a prerequisite for business statistics; introduction to computer programming is a prerequisite for computer simulation and for data structures; and business statistics is a prerequisite for forecasting. Minimizes the number of courses needed to satisfy the major requirements.",
+ "answer_keys": [
+  "Calculus",
+  "Operations Research",
+  "Data Structures",
+  "Business Statistics",
+  "Computer Simulation",
+  "Introduction to Computer Programming",
+  "Forecasting",
+  "The minimum number of courses needed"
+ ],
+ "objective_key": "The minimum number of courses needed",
+ "objective_sense": "minimize",
+ "expected": {
+  "Calculus": 0.0,
+  "Operations Research": 1.0,
+  "Data Structures": 1.0,
+  "Business Statistics": 0.0,
+  "Computer Simulation": 1.0,
+  "Introduction to Computer Programming": 1.0,
+  "Forecasting": 0.0,
+  "The minimum number of courses needed": 4.0
+ },
+ "optimum": 4.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "Calculus": "calculus",
+   "Operations Research": "op_research",
+   "Data Structures": "data_structures",
+   "Business Statistics": "business_stats",
+   "Computer Simulation": "computer_sim",
+   "Introduction to Computer Programming": "intro_programming",
+   "Forecasting": "forecasting",
+   "The minimum number of courses needed": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "calculus",
+     "type": "boolean"
+    },
+    {
+     "name": "op_research",
+     "type": "boolean"
+    },
+    {
+     "name": "data_structures",
+     "type": "boolean"
+    },
+    {
+     "name": "business_stats",
+     "type": "boolean"
+    },
+    {
+     "name": "computer_sim",
+     "type": "boolean"
+    },
+    {
+     "name": "intro_programming",
+     "type": "boolean"
+    },
+    {
+     "name": "forecasting",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "math requirement",
+     "terms": {
+      "calculus": 1,
+      "op_research": 1,
+      "data_structures": 1,
+      "business_stats": 1,
+      "forecasting": 1
+     },
+     "sense": ">=",
+     "rhs": 2
+    },
+    {
+     "name": "OR requirement",
+     "terms": {
+      "op_research": 1,
+      "business_stats": 1,
+      "computer_sim": 1,
+      "forecasting": 1
+     },
+     "sense": ">=",
+     "rhs": 2
+    },
+    {
+     "name": "computer requirement",
+     "terms": {
+      "data_structures": 1,
+      "computer_sim": 1,
+      "intro_programming": 1
+     },
+     "sense": ">=",
+     "rhs": 2
+    },
+    {
+     "name": "calculus before business statistics",
+     "terms": {
+      "business_stats": 1,
+      "calculus": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "programming before simulation",
+     "terms": {
+      "computer_sim": 1,
+      "intro_programming": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "programming before data structures",
+     "terms": {
+      "data_structures": 1,
+      "intro_programming": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "business statistics before forecasting",
+     "terms": {
+      "forecasting": 1,
+      "business_stats": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "calculus": 1,
+     "op_research": 1,
+     "data_structures": 1,
+     "business_stats": 1,
+     "computer_sim": 1,
+     "intro_programming": 1,
+     "forecasting": 1
+    }
+   }
+  }
+ }
+}

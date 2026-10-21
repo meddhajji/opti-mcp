@@ -1,0 +1,278 @@
+{
+ "id": "industrial-assignment",
+ "source": "Written for this benchmark (industrial operations)",
+ "kind": "industrial",
+ "question": "A workshop has five operators (Amine, Brahim, Chaimae, Driss, Fatima) and five machines (M1 to M5). Each operator must be assigned to exactly one machine and each machine needs exactly one operator. The changeover time in minutes for each operator on each machine is:\nAmine: M1 14, M2 5, M3 8, M4 7, M5 15\nBrahim: M1 2, M2 12, M3 6, M4 5, M5 9\nChaimae: M1 7, M2 8, M3 3, M4 9, M5 6\nDriss: M1 2, M2 4, M3 6, M4 10, M5 11\nFatima: M1 9, M2 6, M3 7, M4 8, M5 4\nAssign operators to machines to minimise the total changeover time.",
+ "answer_keys": [
+  "The minimum total changeover time in minutes"
+ ],
+ "objective_key": "The minimum total changeover time in minutes",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total changeover time in minutes": 19.0
+ },
+ "optimum": 19.0,
+ "independent_check": "exhaustive search over all 120 assignments",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total changeover time in minutes": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "assign_Amine_M1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_M2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_M3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_M4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_M5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Brahim_M1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Brahim_M2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Brahim_M3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Brahim_M4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Brahim_M5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Chaimae_M1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Chaimae_M2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Chaimae_M3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Chaimae_M4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Chaimae_M5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_M1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_M2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_M3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_M4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_M5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Fatima_M1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Fatima_M2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Fatima_M3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Fatima_M4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Fatima_M5",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Amine on exactly one machine",
+     "terms": {
+      "assign_Amine_M1": 1,
+      "assign_Amine_M2": 1,
+      "assign_Amine_M3": 1,
+      "assign_Amine_M4": 1,
+      "assign_Amine_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Brahim on exactly one machine",
+     "terms": {
+      "assign_Brahim_M1": 1,
+      "assign_Brahim_M2": 1,
+      "assign_Brahim_M3": 1,
+      "assign_Brahim_M4": 1,
+      "assign_Brahim_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Chaimae on exactly one machine",
+     "terms": {
+      "assign_Chaimae_M1": 1,
+      "assign_Chaimae_M2": 1,
+      "assign_Chaimae_M3": 1,
+      "assign_Chaimae_M4": 1,
+      "assign_Chaimae_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Driss on exactly one machine",
+     "terms": {
+      "assign_Driss_M1": 1,
+      "assign_Driss_M2": 1,
+      "assign_Driss_M3": 1,
+      "assign_Driss_M4": 1,
+      "assign_Driss_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Fatima on exactly one machine",
+     "terms": {
+      "assign_Fatima_M1": 1,
+      "assign_Fatima_M2": 1,
+      "assign_Fatima_M3": 1,
+      "assign_Fatima_M4": 1,
+      "assign_Fatima_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "M1 has exactly one operator",
+     "terms": {
+      "assign_Amine_M1": 1,
+      "assign_Brahim_M1": 1,
+      "assign_Chaimae_M1": 1,
+      "assign_Driss_M1": 1,
+      "assign_Fatima_M1": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "M2 has exactly one operator",
+     "terms": {
+      "assign_Amine_M2": 1,
+      "assign_Brahim_M2": 1,
+      "assign_Chaimae_M2": 1,
+      "assign_Driss_M2": 1,
+      "assign_Fatima_M2": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "M3 has exactly one operator",
+     "terms": {
+      "assign_Amine_M3": 1,
+      "assign_Brahim_M3": 1,
+      "assign_Chaimae_M3": 1,
+      "assign_Driss_M3": 1,
+      "assign_Fatima_M3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "M4 has exactly one operator",
+     "terms": {
+      "assign_Amine_M4": 1,
+      "assign_Brahim_M4": 1,
+      "assign_Chaimae_M4": 1,
+      "assign_Driss_M4": 1,
+      "assign_Fatima_M4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "M5 has exactly one operator",
+     "terms": {
+      "assign_Amine_M5": 1,
+      "assign_Brahim_M5": 1,
+      "assign_Chaimae_M5": 1,
+      "assign_Driss_M5": 1,
+      "assign_Fatima_M5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "assign_Amine_M1": 14,
+     "assign_Amine_M2": 5,
+     "assign_Amine_M3": 8,
+     "assign_Amine_M4": 7,
+     "assign_Amine_M5": 15,
+     "assign_Brahim_M1": 2,
+     "assign_Brahim_M2": 12,
+     "assign_Brahim_M3": 6,
+     "assign_Brahim_M4": 5,
+     "assign_Brahim_M5": 9,
+     "assign_Chaimae_M1": 7,
+     "assign_Chaimae_M2": 8,
+     "assign_Chaimae_M3": 3,
+     "assign_Chaimae_M4": 9,
+     "assign_Chaimae_M5": 6,
+     "assign_Driss_M1": 2,
+     "assign_Driss_M2": 4,
+     "assign_Driss_M3": 6,
+     "assign_Driss_M4": 10,
+     "assign_Driss_M5": 11,
+     "assign_Fatima_M1": 9,
+     "assign_Fatima_M2": 6,
+     "assign_Fatima_M3": 7,
+     "assign_Fatima_M4": 8,
+     "assign_Fatima_M5": 4
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,160 @@
+{
+ "id": "industrial-production-planning",
+ "source": "Written for this benchmark (industrial operations)",
+ "kind": "industrial",
+ "question": "A factory plans production for the next 4 weeks. Demand is 120, 160, 220 and 140 units, and must be met on time (no backorders). Each week it can make up to 150 units in regular time at 40 dollars per unit, plus up to 40 units in overtime at 55 dollars per unit. Units kept in stock at the end of a week cost 5 dollars each, and the warehouse holds at most 100 units. There are 20 units in stock at the start. What is the minimum total cost of meeting demand over the 4 weeks?",
+ "answer_keys": [
+  "The minimum total cost in dollars"
+ ],
+ "objective_key": "The minimum total cost in dollars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total cost in dollars": 25700.0
+ },
+ "optimum": 25700.0,
+ "independent_check": "dynamic programming over weekly stock levels",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total cost in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "regular_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 150
+    },
+    {
+     "name": "overtime_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "stock_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    },
+    {
+     "name": "regular_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 150
+    },
+    {
+     "name": "overtime_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "stock_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    },
+    {
+     "name": "regular_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 150
+    },
+    {
+     "name": "overtime_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "stock_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    },
+    {
+     "name": "regular_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 150
+    },
+    {
+     "name": "overtime_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "stock_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    }
+   ],
+   "constraints": [
+    {
+     "name": "stock balance week 1",
+     "terms": {
+      "regular_w1": 1,
+      "overtime_w1": 1,
+      "stock_w1": -1
+     },
+     "sense": "==",
+     "rhs": 100
+    },
+    {
+     "name": "stock balance week 2",
+     "terms": {
+      "regular_w2": 1,
+      "overtime_w2": 1,
+      "stock_w2": -1,
+      "stock_w1": 1
+     },
+     "sense": "==",
+     "rhs": 160
+    },
+    {
+     "name": "stock balance week 3",
+     "terms": {
+      "regular_w3": 1,
+      "overtime_w3": 1,
+      "stock_w3": -1,
+      "stock_w2": 1
+     },
+     "sense": "==",
+     "rhs": 220
+    },
+    {
+     "name": "stock balance week 4",
+     "terms": {
+      "regular_w4": 1,
+      "overtime_w4": 1,
+      "stock_w4": -1,
+      "stock_w3": 1
+     },
+     "sense": "==",
+     "rhs": 140
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "regular_w1": 40,
+     "overtime_w1": 55,
+     "stock_w1": 5,
+     "regular_w2": 40,
+     "overtime_w2": 55,
+     "stock_w2": 5,
+     "regular_w3": 40,
+     "overtime_w3": 55,
+     "stock_w3": 5,
+     "regular_w4": 40,
+     "overtime_w4": 55,
+     "stock_w4": 5
+    }
+   }
+  }
+ }
+}

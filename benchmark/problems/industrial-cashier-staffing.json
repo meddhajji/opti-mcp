@@ -1,0 +1,147 @@
+{
+ "id": "industrial-cashier-staffing",
+ "source": "Written for this benchmark (industrial operations)",
+ "kind": "industrial",
+ "question": "A supermarket is open from 8:00 to 22:00. The number of cashiers needed is: 3 from 8:00 to 10:00, 5 from 10:00 to 12:00, 7 from 12:00 to 14:00, 6 from 14:00 to 16:00, 5 from 16:00 to 18:00, 8 from 18:00 to 20:00, 4 from 20:00 to 22:00. Each cashier works one 6-hour shift starting at 8:00, 10:00, 12:00, 14:00 or 16:00. How many cashiers should start at each time to cover every period with the fewest cashiers in total?",
+ "answer_keys": [
+  "The number of cashiers starting at 8:00",
+  "The number of cashiers starting at 10:00",
+  "The number of cashiers starting at 12:00",
+  "The number of cashiers starting at 14:00",
+  "The number of cashiers starting at 16:00",
+  "The minimum total number of cashiers"
+ ],
+ "objective_key": "The minimum total number of cashiers",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of cashiers starting at 8:00": 3.0,
+  "The number of cashiers starting at 10:00": 2.0,
+  "The number of cashiers starting at 12:00": 2.0,
+  "The number of cashiers starting at 14:00": 4.0,
+  "The number of cashiers starting at 16:00": 4.0,
+  "The minimum total number of cashiers": 15.0
+ },
+ "optimum": 15.0,
+ "independent_check": "exhaustive search over shift counts 0 to 10 at each start time (161,051 combinations)",
+ "reference": {
+  "key_to_variable": {
+   "The number of cashiers starting at 8:00": "start_8h",
+   "The number of cashiers starting at 10:00": "start_10h",
+   "The number of cashiers starting at 12:00": "start_12h",
+   "The number of cashiers starting at 14:00": "start_14h",
+   "The number of cashiers starting at 16:00": "start_16h",
+   "The minimum total number of cashiers": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "start_8h",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    },
+    {
+     "name": "start_10h",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    },
+    {
+     "name": "start_12h",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    },
+    {
+     "name": "start_14h",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    },
+    {
+     "name": "start_16h",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    }
+   ],
+   "constraints": [
+    {
+     "name": "3 cashiers 8-10",
+     "terms": {
+      "start_8h": 1
+     },
+     "sense": ">=",
+     "rhs": 3
+    },
+    {
+     "name": "5 cashiers 10-12",
+     "terms": {
+      "start_8h": 1,
+      "start_10h": 1
+     },
+     "sense": ">=",
+     "rhs": 5
+    },
+    {
+     "name": "7 cashiers 12-14",
+     "terms": {
+      "start_8h": 1,
+      "start_10h": 1,
+      "start_12h": 1
+     },
+     "sense": ">=",
+     "rhs": 7
+    },
+    {
+     "name": "6 cashiers 14-16",
+     "terms": {
+      "start_10h": 1,
+      "start_12h": 1,
+      "start_14h": 1
+     },
+     "sense": ">=",
+     "rhs": 6
+    },
+    {
+     "name": "5 cashiers 16-18",
+     "terms": {
+      "start_12h": 1,
+      "start_14h": 1,
+      "start_16h": 1
+     },
+     "sense": ">=",
+     "rhs": 5
+    },
+    {
+     "name": "8 cashiers 18-20",
+     "terms": {
+      "start_14h": 1,
+      "start_16h": 1
+     },
+     "sense": ">=",
+     "rhs": 8
+    },
+    {
+     "name": "4 cashiers 20-22",
+     "terms": {
+      "start_16h": 1
+     },
+     "sense": ">=",
+     "rhs": 4
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "start_8h": 1,
+     "start_10h": 1,
+     "start_12h": 1,
+     "start_14h": 1,
+     "start_16h": 1
+    }
+   }
+  }
+ }
+}

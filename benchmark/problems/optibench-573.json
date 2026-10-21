@@ -1,0 +1,78 @@
+{
+ "id": "optibench-573",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A clothing company makes flight jackets and denim jackets in their factory. A different team produces each kind of jacket and each team has a different maximum production rate: 10 flight jackets per day and 25 denim jackets per day respectively. Both teams require the use of a sewing machine and this machine can process at most 30 jackets per day of either type. While the flight jackets generate a profit of $70 per jacket, the denim jackets generate a profit of $100 per jacket. Assuming the company can sell all the jackets they make, how many of each type of jacket should they make to maximize profit?",
+ "answer_keys": [
+  "The number of flight jackets to produce",
+  "The number of denim jackets to produce",
+  "The maximum profit"
+ ],
+ "objective_key": "The maximum profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of flight jackets to produce": 5.0,
+  "The number of denim jackets to produce": 25.0,
+  "The maximum profit": 2850.0
+ },
+ "optimum": 2850.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of flight jackets to produce": "flight",
+   "The number of denim jackets to produce": "denim",
+   "The maximum profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "flight",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "denim",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    }
+   ],
+   "constraints": [
+    {
+     "name": "flight team rate",
+     "terms": {
+      "flight": 1
+     },
+     "sense": "<=",
+     "rhs": 10
+    },
+    {
+     "name": "denim team rate",
+     "terms": {
+      "denim": 1
+     },
+     "sense": "<=",
+     "rhs": 25
+    },
+    {
+     "name": "sewing machine",
+     "terms": {
+      "flight": 1,
+      "denim": 1
+     },
+     "sense": "<=",
+     "rhs": 30
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "flight": 70,
+     "denim": 100
+    }
+   }
+  }
+ }
+}

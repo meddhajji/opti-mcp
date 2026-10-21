@@ -1,0 +1,209 @@
+{
+ "source": "OptiBench (Yang et al., ICLR 2025), https://github.com/yangzhch6/ReSocratic, data/OptiBench.json",
+ "license": "Apache-2.0, see LICENSE-OptiBench",
+ "selection": "Linear problems whose expected answers are all whole numbers, sampled at random (seeds 20261021 and 7), checked by hand.",
+ "problems": [
+  {
+   "index": 539,
+   "type": "linear-notable",
+   "question": "A researcher must perform two types of experiments, in-vivo and ex-vivo. In-vivo experiments requires 30 minutes to prepare and 60 minutes to execute. Ex-vivo experiments require 45 minutes to prepare and 30 minutes to execute. In addition, in-vivo experiments gives the researcher 2 units of radiation while ex-vivo experiments give the researcher 3 unites of radiation. At most 400 minutes can be used for preparation and 500 minutes for execution of the experiment. How many of each experiment should be scheduled by the researcher to minimize the total radiation received by the researcher?",
+   "results": {
+    "The number of in-vivo experiments": "0.0",
+    "The number of ex-vivo experiments": "0.0",
+    "Total radiation received": "0.0"
+   }
+  },
+  {
+   "index": 386,
+   "type": "linear-notable",
+   "question": "A dog school trains labradors and golden retrievers to deliver newspaper. A labrador can deliver 7 newspapers at a time and requires 5 small bone treats for service. A golden retriever can deliver 10 newspapers at a time and requires 6 small bone treats per service. The school only has 1500 small bone treats available. In addition, at least 50 golden retrievers must be used and at most 60% of the dogs can be labradors. How many of each dog should be used to maximize the number of newspapers that can be delivered?",
+   "results": {
+    "The number of labradors": "0.0",
+    "The number of golden retrievers": "250.0",
+    "The number of newspapers delivered": "2500.0"
+   }
+  },
+  {
+   "index": 573,
+   "type": "linear-notable",
+   "question": "A clothing company makes flight jackets and denim jackets in their factory. A different team produces each kind of jacket and each team has a different maximum production rate: 10 flight jackets per day and 25 denim jackets per day respectively. Both teams require the use of a sewing machine and this machine can process at most 30 jackets per day of either type. While the flight jackets generate a profit of $70 per jacket, the denim jackets generate a profit of $100 per jacket. Assuming the company can sell all the jackets they make, how many of each type of jacket should they make to maximize profit?",
+   "results": {
+    "The number of flight jackets to produce": "5.0",
+    "The number of denim jackets to produce": "25.0",
+    "The maximum profit": "2850.0"
+   }
+  },
+  {
+   "index": 10,
+   "type": "linear-notable",
+   "question": "To graduate from Basketweavers University with a major in operations research, a student must complete at least two math courses, at least two OR courses, and at least two computer courses. Some courses can be used to fulfill more than one requirement: Calculus can fulfill the math requirement; operations research, math and OR requirements; data structures, computer and math requirements; business statistics, math and OR requirements; computer simulation, OR and computer requirements; introduction to computer programming, computer requirement; and forecasting, OR and math requirements. Some courses are prerequisites for others: Calculus is a prerequisite for business statistics; introduction to computer programming is a prerequisite for computer simulation and for data structures; and business statistics is a prerequisite for forecasting. Minimizes the number of courses needed to satisfy the major requirements.",
+   "results": {
+    "Calculus": "0.0",
+    "Operations Research": "1.0",
+    "Data Structures": "1.0",
+    "Business Statistics": "0.0",
+    "Computer Simulation": "1.0",
+    "Introduction to Computer Programming": "1.0",
+    "Forecasting": "0.0",
+    "The minimum number of courses needed": "4.0"
+   }
+  },
+  {
+   "index": 379,
+   "type": "linear-notable",
+   "question": "A food delivery person can either have shifts on bikes or scooters. A shift on a bike can deliver 10 orders, takes 5 units of energy, and brings in $50 on tips because it is faster. A shift on a scooter can deliver 7 orders, takes 6 units of energy, and brings in $43 on tips.  The delivery person has available 40 shifts a month and has 230 units of energy and must bring at least 320 orders. He must have at least 5 shifts on a scooter because bikes are harder to get. How many shifts on each type of transportation should the delivery person schedule to maximize tips received?",
+   "results": {
+    "The number of bike shifts": "35.0",
+    "The number of scooter shifts": "5.0",
+    "The total tips received": "1965.0"
+   }
+  },
+  {
+   "index": 404,
+   "type": "linear-notable",
+   "question": "A meat processing plant uses two machines, a meat slicer and a meat packer, to make their hams and pork ribs. To produce one batch of hams requires 4 hours on the meat slicer and 2.5 hours on the meat packer. To produce one batch of pork ribs requires 2 hours on the meat slicer and 3.5 hours on the meat packer. Each machine runs for at most 4000 hours per year. If the profit per batch of hams is $150 and the profit per batch of pork ribs is $300, how many batches of each should be made to maximize profit?",
+   "results": {
+    "The number of batches of hams": "1.0",
+    "The number of batches of pork ribs": "1142.0",
+    "The total profit": "342750.0"
+   }
+  },
+  {
+   "index": 316,
+   "type": "linear-notable",
+   "question": "Due to an accident, at least 550 locals must be moved across a lake. They can either be transported over the lake by a kayak or a motorboat. Kayaks can transport 4 people every trip and motorboats can transport 5 people every trip. Kayaks take 5 minutes per trip whereas motorboats take 3 minutes per trip. Due to the limited number of motorboats available to the locals, there can be at most 25 motorboat trips and at least 75% of the trips should be by kayak. How many of each transportation method should be used to minimize the total amount of time needed to transport all the locals?",
+   "results": {
+    "The number of kayak trips": "107.0",
+    "The number of motorboat trips": "25.0",
+    "The total time needed to transport all the locals": "610.0"
+   }
+  },
+  {
+   "index": 239,
+   "type": "linear-notable",
+   "question": "Let us suppose that we want to put four items in a knapsack that can hold up to 12 kg. The weight and the value associated with each of the items are listed below: for the item 1, 2, 3 and 4, the weights and the values are (3, 15), (6, 25), (5, 12) and (5, 10). We need to decide which items to put in so as to maximize the total value of the knapsack.",
+   "results": {
+    "The decision to put item 1 in the knapsack": "1.0",
+    "The decision to put item 2 in the knapsack": "1.0",
+    "The decision to put item 3 in the knapsack": "0.0",
+    "The decision to put item 4 in the knapsack": "0.0",
+    "The maximum total value of the knapsack": "40.0"
+   }
+  },
+  {
+   "index": 473,
+   "type": "linear-notable",
+   "question": "Eric is a world-famous wood artist. He manufactures two types of decors made of oak. The first product, a display shelf, requires 25 minutes each for carving and 20 minutes each for polishing. The second decor is a plant stand and it requires 20 minutes each for carving and 10 minutes each for polishing. There are 350 minutes available for carving and 600 for polishing. The profit is $55 each for the display shelf and $45 for each plant stand. How many decors of each type should the artist create in order to maximize his profit?",
+   "results": {
+    "The number of display shelves to manufacture": "2.0",
+    "The number of plant stands to manufacture": "15.0",
+    "Total profit": "785.0"
+   }
+  },
+  {
+   "index": 401,
+   "type": "linear-notable",
+   "question": "There has been an oil spill in the ocean and ducks need to be taken to shore to be cleaned either by boat or by canoe. A boat can take 10 ducks per trip while a canoe can take 8 ducks per trip. Since the boats are motor powered, they take 20 minutes per trip while the canoes take 40 minutes per trip. In order to avoid further environmental damage, there can be at most 12 boat trips and at least 60% of the trips should be by canoe. If at least 300 ducks need to be taken to shore, how many of each transportation method should be used to minimize the total amount of time needed to transport the ducks?",
+   "results": {
+    "The number of boat trips": "12.0",
+    "The number of canoe trips": "23.0",
+    "The total amount of time": "1160.0"
+   }
+  },
+  {
+   "index": 0,
+   "type": "linear-notable",
+   "question": "You want to sell a kind of item in order to maximize your profit. Market research tells you that if you set the price at $1.50, you will be able to sell 5000 items, and for every 10 cents you lower the price below $1.50 you will be able to sell another 1000 items. You can only reduce the price by a multiple of 10 cents. Suppose that your fixed costs ( “start-up costs” ) total $2000, and the per item cost of production ( “marginal cost” ) is $0.50. Find the price to set per item and the number of items sold in order to maximize profit, and also determine the maximum profit you can get.",
+   "results": {
+    "The maximum profit you can get": "3600.0"
+   }
+  },
+  {
+   "index": 21,
+   "type": "linear-table",
+   "question": "On their farm, the Friendly family grows apples that they harvest each fall and make into three products: apple butter, applesauce, and apple jelly. They sell these products at local grocery stores, craft fairs, and at their own Friendly Farm Pumpkin Festival. They have a total of 500 cooking hours available, 240 hours of labor available during the fall, and about 6,500 apples for production. The following Table provides details on the cooking time, labor time, and number of apples required for a 10-gallon batch of each product, as well as the sales revenue generated by each batch. The Friendlys want to know how many batches of each product to produce in order to maximize their revenues.\n\nTable (Resource requirements and sales revenue for a 10-gallon batch of each product):\n| Product       | Cooking Time (hrs) | Labor Time (hrs) | Apples Required | Sales Revenue ($) |\n| ------------- | ------------------ | ---------------- | --------------- | ----------------- |\n| Apple Butter  | 3.5                | 1.2              | 40              | 190               |\n| Applesauce    | 5.2                | 0.8              | 55              | 170               |\n| Apple Jelly   | 2.8                | 1.5              | 20              | 155               |",
+   "results": {
+    "Number of Apple Butter batches to produce": "42.0",
+    "Number of Apple Sauce batches to produce": "0.0",
+    "Number of Apple Jelly batches to produce": "126.0",
+    "Total Revenue": "27510.0"
+   }
+  },
+  {
+   "index": 56,
+   "type": "linear-table",
+   "question": "Deutchlander Machine Company (DMC) manufactures two types of printing presses: a four-color litho and a two-color litho. Demand for both products is high and exceeds DMC's production capacity. The production is constrained by the availability of steel rollers, gear cutting capacity, and roller polishing capacity. The following Table details the requirements for each type of press. DMC can acquire 100 steel rollers per week, has 160 hours available for gear cutting, and 40 hours for roller polishing each week. To maintain market presence without increasing prices, DMC aims to produce at least two units of each press weekly. The profit for each four-color press is DM24,000 and for each two-color press is DM10,000. Maximize DMC's profit.\n\nTable (Resource requirements for each type of printing press):\n| Printing Press Type | Steel Rollers Required | Gear Cutting Time (hours) | Polishing Time (hours) | Profit per Unit (DM) |\n| ------------------- | ---------------------- | ------------------------- | ---------------------- | -------------------- |\n| Four-color litho    | 16                     | 30                        | 8                      | 24,000               |\n| Two-color litho     | 8                      | 12                        | 3                      | 10,000               |",
+   "results": {
+    "The number of four-color litho to produce": "2.0",
+    "The number of two-color litho to produce": "8.0",
+    "The maximum profit": "128000.0"
+   }
+  },
+  {
+   "index": 400,
+   "type": "linear-table",
+   "question": "A chocolate maker has contracted to operate a small candy counter in a fashionable store. To start with, the selection of offerings will be intentionally limited. The counter will offer a regular mix of candy made up of equal parts of cashews, raisins, caramels, and chocolates, and a deluxe mix that is one-half cashews and one-half chocolates, which will be sold in one-pound boxes. In addition, the candy counter will offer individual one-pound boxes of cashews, raisins, caramels, and chocolates. A major attraction of the candy counter is that all candies are made fresh at the counter. However, storage space for supplies and ingredients is limited. Bins are available that can hold the amounts shown in the table. Ingredient Capacity (pounds per day)\nCashews 120 Raisins 200 Caramels 100 Chocolates 160. In order to present a good image and to encourage purchases, the counter will make at least 20 boxes of each type of product each day. Any leftover boxes at the end of the day will be removed and given to a nearby nursing home for goodwill. The profit per box for the various items has been determined as follows. Item Profit per Box Regular $.80 Deluxe .90 Cashews .70 Raisins .60 Caramels .50 Chocolates .75. Solve for the optimal values of the decision variables and the maximum profit.",
+   "results": {
+    "The number of regular mix boxes": "320.0",
+    "The number of deluxe mix boxes": "40.0",
+    "The number of cashew boxes": "20.0",
+    "The number of raisin boxes": "120.0",
+    "The number of caramel boxes": "20.0",
+    "The number of chocolate boxes": "60.0",
+    "The maximum profit": "433.0"
+   }
+  },
+  {
+   "index": 75,
+   "type": "linear-table",
+   "question": "Gandhi Cloth Company is capable of manufacturing three types of clothing: shirts, shorts, and pants. The manufacture of each type of clothing requires that Gandhi have the appropriate type of machinery available. The machinery needed to manufacture each type of clothing must be rented at the following rates: shirt machinery, $200 per week; shorts machinery, $150 per week; pants machinery, $100 per week. The manufacture of each type of clothing also requires the amounts of cloth and labor as shown in the following Table 1. Each week, 150 hours of labor and 160 sq yd of cloth are available. The variable unit cost and selling price for each type of clothing are shown in Table 2. Formulate an LP whose solution will maximize Gandhi's weekly profits.\n\nTable 1 (The amount of labor hours and cloth required for each type of clothing):\n| Clothing Type | Labor Hours | Cloth (sq yd) |\n| ------------- | ----------- | ------------- |\n| Shirt         | 3           | 4             |\n| Shorts        | 2           | 3             |\n| Pants         | 6           | 4             |\n\nTable 2 (Revenue and Cost Information for each type of clothing):\n| Clothing Type | Sales Price | Variable Cost |\n| ------------- | ----------- | ------------- |\n| Shirt         | $12         | $6            |\n| Shorts        | $8          | $4            |\n| Pants         | $15         | $8            |",
+   "results": {
+    "The number of shirts produced each week": "0.0",
+    "The number of shorts produced each week": "0.0",
+    "The number of pants produced each week": "25.0",
+    "Shirt machinery rented": "0.0",
+    "Shorts machinery rented": "0.0",
+    "Pants machinery rented": "1.0",
+    "The maximum weekly profit": "75.0"
+   }
+  }
+ ],
+ "excluded": [
+  {
+   "index": 162,
+   "reason": "Asks two questions (an optimal plan, then a second plan under new prices); scoring expects one answer.",
+   "question": "To protect soil from erosion, some farmers plant winter cover crops such as winter wheat and rye. In addition to conserving soil, cover crops often increase crop yields in the row crops that follow in spring and summer. Suppose that a farmer has 800 acres of land and plans to plant winter wheat and rye. The input cost for I acre for each crop is given in the table along with the cost for machinery and labor. The profit for 1 acre of each crop is given in the last column. Input Cost per Acre, Labor/Machinery Cost per Acre, Profit per Acre. Wheat: [$90, $50, $42], Rye: [$120, $40, $35]. Suppose the farmer has budgeted a maximum of $90,000 for input costs and a maximum of $36,000 for labor and machinery. Determine the number of acres of each crop that the farmer should plant to maximize profit. (Assume that all crops will be sold.). What is the maximum profit? If the profit per acre for wheat were $40 and the profit per acre for rye were $45, how many acres of each crop should be planted to maximize profit?",
+   "results": {
+    "The number of acres of winter wheat to plant": "400.0",
+    "The number of acres of rye to plant": "400.0",
+    "The maximum profit": "30800.0",
+    "New optimal number of acres of winter wheat to plant": "200.0",
+    "New optimal number of acres of rye to plant": "600.0",
+    "New maximum profit": "35000.0"
+   }
+  },
+  {
+   "index": 52,
+   "reason": "Ambiguous: the expected 5,900 is optimal only if both lines' setup costs are paid even when a line is unused. If setup is paid only for a line in use, 6 workers on line 1 alone cost 4,000 and meet every demand.",
+   "question": "Glueco produces three types of glue on two different production lines. Each line can be utilized by up to seven workers at a time. Workers are paid $500 per week on production line 1, and $900 per week on production line 2. A week of production costs $1,000 to set up production line 1 and $2,000 to set up production line 2. During a week on a production line, each worker produces the number of units of glue shown in Table: Glue Production Line 1, 2; the glue 1, 2, 3: (20, 30, 40), (50, 35, 45). Each week, at least 120 units of glue 1, at least 150 units of glue 2, and at least 200 units of glue 3 must be produced. Minimize the total cost of meeting weekly demands.",
+   "results": {
+    "The number of workers on production line 1": "4.0",
+    "The number of workers on production line 2": "1.0",
+    "The total cost": "5900.0"
+   }
+  },
+  {
+   "index": 140,
+   "reason": "Inconsistent label: the expected plan (500 gallons of each oil into gas 1, nothing bought) sells 1,000 gallons at 12 dollars, i.e. 12,000, above the expected maximum of 9,500.",
+   "question": "Euing Gas produces two types of gasoline (gas 1 and gas 2) from two types of oil (oil 1 and oil 2). Each gallon of gas 1 must contain at least 50 percent oil 1, and each gallon of gas 2 must contain at least 60 percent oil 1. Each gallon of gas 1 can be sold for $12, and each gallon of gas 2 can be sold for $14. Currently, 500 gallons of oil 1 and 1,000 gallons of oil 2 are available. As many as 1,500 more gallons of oil 1 can be purchased at the prices shown in the following Table. Formulate an LP that will maximize Euing's profits (revenues - purchasing costs).\n\nTable (Purchasing prices for additional gallons of oil 1):\n| Additional Gallons of Oil 1 | Price per Gallon |\n| --------------------------- | ---------------- |\n| First 500                   | $25              |\n| Next 500                    | $20              |\n| Next 500                    | $15              |",
+   "results": {
+    "The amount of oil 1 purchased": "0.0",
+    "The amount of oil 1 used to produce gas 1": "500.0",
+    "The amount of oil 1 used to produce gas 2": "-0.0",
+    "The amount of oil 2 used to produce gas 1": "500.0",
+    "The amount of oil 2 used to produce gas 2": "0.0",
+    "The maximum profit": "9500.0"
+   }
+  }
+ ]
+}

@@ -1,0 +1,179 @@
+{
+ "id": "optibench-400",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-table",
+ "question": "A chocolate maker has contracted to operate a small candy counter in a fashionable store. To start with, the selection of offerings will be intentionally limited. The counter will offer a regular mix of candy made up of equal parts of cashews, raisins, caramels, and chocolates, and a deluxe mix that is one-half cashews and one-half chocolates, which will be sold in one-pound boxes. In addition, the candy counter will offer individual one-pound boxes of cashews, raisins, caramels, and chocolates. A major attraction of the candy counter is that all candies are made fresh at the counter. However, storage space for supplies and ingredients is limited. Bins are available that can hold the amounts shown in the table. Ingredient Capacity (pounds per day)\nCashews 120 Raisins 200 Caramels 100 Chocolates 160. In order to present a good image and to encourage purchases, the counter will make at least 20 boxes of each type of product each day. Any leftover boxes at the end of the day will be removed and given to a nearby nursing home for goodwill. The profit per box for the various items has been determined as follows. Item Profit per Box Regular $.80 Deluxe .90 Cashews .70 Raisins .60 Caramels .50 Chocolates .75. Solve for the optimal values of the decision variables and the maximum profit.",
+ "answer_keys": [
+  "The number of regular mix boxes",
+  "The number of deluxe mix boxes",
+  "The number of cashew boxes",
+  "The number of raisin boxes",
+  "The number of caramel boxes",
+  "The number of chocolate boxes",
+  "The maximum profit"
+ ],
+ "objective_key": "The maximum profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of regular mix boxes": 320.0,
+  "The number of deluxe mix boxes": 40.0,
+  "The number of cashew boxes": 20.0,
+  "The number of raisin boxes": 120.0,
+  "The number of caramel boxes": 20.0,
+  "The number of chocolate boxes": 60.0,
+  "The maximum profit": 433.0
+ },
+ "optimum": 433.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of regular mix boxes": "regular",
+   "The number of deluxe mix boxes": "deluxe",
+   "The number of cashew boxes": "cashews",
+   "The number of raisin boxes": "raisins",
+   "The number of caramel boxes": "caramels",
+   "The number of chocolate boxes": "chocolates",
+   "The maximum profit": "objective"
+  },
+  "objective_divisor": 100,
+  "model": {
+   "variables": [
+    {
+     "name": "regular",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "deluxe",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "cashews",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "raisins",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "caramels",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "chocolates",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    }
+   ],
+   "constraints": [
+    {
+     "name": "cashew bin",
+     "terms": {
+      "regular": 1,
+      "deluxe": 2,
+      "cashews": 4
+     },
+     "sense": "<=",
+     "rhs": 480
+    },
+    {
+     "name": "raisin bin",
+     "terms": {
+      "regular": 1,
+      "raisins": 4
+     },
+     "sense": "<=",
+     "rhs": 800
+    },
+    {
+     "name": "caramel bin",
+     "terms": {
+      "regular": 1,
+      "caramels": 4
+     },
+     "sense": "<=",
+     "rhs": 400
+    },
+    {
+     "name": "chocolate bin",
+     "terms": {
+      "regular": 1,
+      "deluxe": 2,
+      "chocolates": 4
+     },
+     "sense": "<=",
+     "rhs": 640
+    },
+    {
+     "name": "at least 20 regular boxes",
+     "terms": {
+      "regular": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    },
+    {
+     "name": "at least 20 deluxe boxes",
+     "terms": {
+      "deluxe": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    },
+    {
+     "name": "at least 20 cashews boxes",
+     "terms": {
+      "cashews": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    },
+    {
+     "name": "at least 20 raisins boxes",
+     "terms": {
+      "raisins": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    },
+    {
+     "name": "at least 20 caramels boxes",
+     "terms": {
+      "caramels": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    },
+    {
+     "name": "at least 20 chocolates boxes",
+     "terms": {
+      "chocolates": 1
+     },
+     "sense": ">=",
+     "rhs": 20
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "regular": 80,
+     "deluxe": 90,
+     "cashews": 70,
+     "raisins": 60,
+     "caramels": 50,
+     "chocolates": 75
+    }
+   }
+  }
+ }
+}

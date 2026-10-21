@@ -1,0 +1,106 @@
+{
+ "id": "optibench-0",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "You want to sell a kind of item in order to maximize your profit. Market research tells you that if you set the price at $1.50, you will be able to sell 5000 items, and for every 10 cents you lower the price below $1.50 you will be able to sell another 1000 items. You can only reduce the price by a multiple of 10 cents. Suppose that your fixed costs ( “start-up costs” ) total $2000, and the per item cost of production ( “marginal cost” ) is $0.50. Find the price to set per item and the number of items sold in order to maximize profit, and also determine the maximum profit you can get.",
+ "answer_keys": [
+  "The maximum profit you can get"
+ ],
+ "objective_key": "The maximum profit you can get",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum profit you can get": 3600.0
+ },
+ "optimum": 3600.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The maximum profit you can get": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "cut_0",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_1",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_2",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_3",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_4",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_5",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_6",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_7",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_8",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_9",
+     "type": "boolean"
+    },
+    {
+     "name": "cut_10",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "exactly one price",
+     "terms": {
+      "cut_0": 1,
+      "cut_1": 1,
+      "cut_2": 1,
+      "cut_3": 1,
+      "cut_4": 1,
+      "cut_5": 1,
+      "cut_6": 1,
+      "cut_7": 1,
+      "cut_8": 1,
+      "cut_9": 1,
+      "cut_10": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "cut_0": 3000,
+     "cut_1": 3400,
+     "cut_2": 3600,
+     "cut_3": 3600,
+     "cut_4": 3400,
+     "cut_5": 3000,
+     "cut_6": 2400,
+     "cut_7": 1600,
+     "cut_8": 600,
+     "cut_9": -600,
+     "cut_10": -2000
+    }
+   }
+  }
+ }
+}

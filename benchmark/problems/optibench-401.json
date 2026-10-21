@@ -1,0 +1,79 @@
+{
+ "id": "optibench-401",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "There has been an oil spill in the ocean and ducks need to be taken to shore to be cleaned either by boat or by canoe. A boat can take 10 ducks per trip while a canoe can take 8 ducks per trip. Since the boats are motor powered, they take 20 minutes per trip while the canoes take 40 minutes per trip. In order to avoid further environmental damage, there can be at most 12 boat trips and at least 60% of the trips should be by canoe. If at least 300 ducks need to be taken to shore, how many of each transportation method should be used to minimize the total amount of time needed to transport the ducks?",
+ "answer_keys": [
+  "The number of boat trips",
+  "The number of canoe trips",
+  "The total amount of time"
+ ],
+ "objective_key": "The total amount of time",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of boat trips": 12.0,
+  "The number of canoe trips": 23.0,
+  "The total amount of time": 1160.0
+ },
+ "optimum": 1160.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of boat trips": "boat",
+   "The number of canoe trips": "canoe",
+   "The total amount of time": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "boat",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    },
+    {
+     "name": "canoe",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    }
+   ],
+   "constraints": [
+    {
+     "name": "ducks moved",
+     "terms": {
+      "boat": 10,
+      "canoe": 8
+     },
+     "sense": ">=",
+     "rhs": 300
+    },
+    {
+     "name": "at most 12 boat trips",
+     "terms": {
+      "boat": 1
+     },
+     "sense": "<=",
+     "rhs": 12
+    },
+    {
+     "name": "at least 60% canoe trips",
+     "terms": {
+      "canoe": 2,
+      "boat": -3
+     },
+     "sense": ">=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "boat": 20,
+     "canoe": 40
+    }
+   }
+  }
+ }
+}

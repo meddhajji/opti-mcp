@@ -1,0 +1,71 @@
+{
+ "id": "optibench-404",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A meat processing plant uses two machines, a meat slicer and a meat packer, to make their hams and pork ribs. To produce one batch of hams requires 4 hours on the meat slicer and 2.5 hours on the meat packer. To produce one batch of pork ribs requires 2 hours on the meat slicer and 3.5 hours on the meat packer. Each machine runs for at most 4000 hours per year. If the profit per batch of hams is $150 and the profit per batch of pork ribs is $300, how many batches of each should be made to maximize profit?",
+ "answer_keys": [
+  "The number of batches of hams",
+  "The number of batches of pork ribs",
+  "The total profit"
+ ],
+ "objective_key": "The total profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of batches of hams": 1.0,
+  "The number of batches of pork ribs": 1142.0,
+  "The total profit": 342750.0
+ },
+ "optimum": 342750.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of batches of hams": "hams",
+   "The number of batches of pork ribs": "ribs",
+   "The total profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "hams",
+     "type": "integer",
+     "lb": 0,
+     "ub": 2000
+    },
+    {
+     "name": "ribs",
+     "type": "integer",
+     "lb": 0,
+     "ub": 2000
+    }
+   ],
+   "constraints": [
+    {
+     "name": "meat slicer hours",
+     "terms": {
+      "hams": 4,
+      "ribs": 2
+     },
+     "sense": "<=",
+     "rhs": 4000
+    },
+    {
+     "name": "meat packer half-hours",
+     "terms": {
+      "hams": 5,
+      "ribs": 7
+     },
+     "sense": "<=",
+     "rhs": 8000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "hams": 150,
+     "ribs": 300
+    }
+   }
+  }
+ }
+}

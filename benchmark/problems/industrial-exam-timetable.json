@@ -1,0 +1,2033 @@
+{
+ "id": "industrial-exam-timetable",
+ "source": "Written for this benchmark (industrial operations)",
+ "kind": "industrial",
+ "question": "An engineering school must schedule 8 exams: Statistics, Machine Learning, Operations Research, Logistics, Cost Evaluation, Lean Management, Cryptography, Control Systems. Two exams that share at least one student cannot take place in the same time slot. These pairs share students: Statistics and Machine Learning; Statistics and Operations Research; Statistics and Logistics; Machine Learning and Operations Research; Machine Learning and Cryptography; Machine Learning and Control Systems; Operations Research and Logistics; Operations Research and Cost Evaluation; Logistics and Lean Management; Cost Evaluation and Lean Management; Cost Evaluation and Control Systems; Lean Management and Control Systems; Cryptography and Control Systems; Statistics and Control Systems. What is the minimum number of time slots needed so that no student has two exams at the same time?",
+ "answer_keys": [
+  "The minimum number of time slots"
+ ],
+ "objective_key": "The minimum number of time slots",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum number of time slots": 3.0
+ },
+ "optimum": 3.0,
+ "independent_check": "exhaustive search over slot assignments for each number of slots",
+ "reference": {
+  "key_to_variable": {
+   "The minimum number of time slots": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "slot1_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Statistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Machine_Learning",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Operations_Research",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Logistics",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Cost_Evaluation",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Lean_Management",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Cryptography",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_Control_Systems",
+     "type": "boolean"
+    },
+    {
+     "name": "slot1_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot2_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot3_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot4_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot5_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot6_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot7_used",
+     "type": "boolean"
+    },
+    {
+     "name": "slot8_used",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Statistics in exactly one slot",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot2_Statistics": 1,
+      "slot3_Statistics": 1,
+      "slot4_Statistics": 1,
+      "slot5_Statistics": 1,
+      "slot6_Statistics": 1,
+      "slot7_Statistics": 1,
+      "slot8_Statistics": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning in exactly one slot",
+     "terms": {
+      "slot1_Machine_Learning": 1,
+      "slot2_Machine_Learning": 1,
+      "slot3_Machine_Learning": 1,
+      "slot4_Machine_Learning": 1,
+      "slot5_Machine_Learning": 1,
+      "slot6_Machine_Learning": 1,
+      "slot7_Machine_Learning": 1,
+      "slot8_Machine_Learning": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research in exactly one slot",
+     "terms": {
+      "slot1_Operations_Research": 1,
+      "slot2_Operations_Research": 1,
+      "slot3_Operations_Research": 1,
+      "slot4_Operations_Research": 1,
+      "slot5_Operations_Research": 1,
+      "slot6_Operations_Research": 1,
+      "slot7_Operations_Research": 1,
+      "slot8_Operations_Research": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics in exactly one slot",
+     "terms": {
+      "slot1_Logistics": 1,
+      "slot2_Logistics": 1,
+      "slot3_Logistics": 1,
+      "slot4_Logistics": 1,
+      "slot5_Logistics": 1,
+      "slot6_Logistics": 1,
+      "slot7_Logistics": 1,
+      "slot8_Logistics": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation in exactly one slot",
+     "terms": {
+      "slot1_Cost_Evaluation": 1,
+      "slot2_Cost_Evaluation": 1,
+      "slot3_Cost_Evaluation": 1,
+      "slot4_Cost_Evaluation": 1,
+      "slot5_Cost_Evaluation": 1,
+      "slot6_Cost_Evaluation": 1,
+      "slot7_Cost_Evaluation": 1,
+      "slot8_Cost_Evaluation": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management in exactly one slot",
+     "terms": {
+      "slot1_Lean_Management": 1,
+      "slot2_Lean_Management": 1,
+      "slot3_Lean_Management": 1,
+      "slot4_Lean_Management": 1,
+      "slot5_Lean_Management": 1,
+      "slot6_Lean_Management": 1,
+      "slot7_Lean_Management": 1,
+      "slot8_Lean_Management": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography in exactly one slot",
+     "terms": {
+      "slot1_Cryptography": 1,
+      "slot2_Cryptography": 1,
+      "slot3_Cryptography": 1,
+      "slot4_Cryptography": 1,
+      "slot5_Cryptography": 1,
+      "slot6_Cryptography": 1,
+      "slot7_Cryptography": 1,
+      "slot8_Cryptography": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Control Systems in exactly one slot",
+     "terms": {
+      "slot1_Control_Systems": 1,
+      "slot2_Control_Systems": 1,
+      "slot3_Control_Systems": 1,
+      "slot4_Control_Systems": 1,
+      "slot5_Control_Systems": 1,
+      "slot6_Control_Systems": 1,
+      "slot7_Control_Systems": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 1)",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot1_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 2)",
+     "terms": {
+      "slot2_Statistics": 1,
+      "slot2_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 3)",
+     "terms": {
+      "slot3_Statistics": 1,
+      "slot3_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 4)",
+     "terms": {
+      "slot4_Statistics": 1,
+      "slot4_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 5)",
+     "terms": {
+      "slot5_Statistics": 1,
+      "slot5_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 6)",
+     "terms": {
+      "slot6_Statistics": 1,
+      "slot6_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 7)",
+     "terms": {
+      "slot7_Statistics": 1,
+      "slot7_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Machine Learning apart (slot 8)",
+     "terms": {
+      "slot8_Statistics": 1,
+      "slot8_Machine_Learning": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 1)",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot1_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 2)",
+     "terms": {
+      "slot2_Statistics": 1,
+      "slot2_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 3)",
+     "terms": {
+      "slot3_Statistics": 1,
+      "slot3_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 4)",
+     "terms": {
+      "slot4_Statistics": 1,
+      "slot4_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 5)",
+     "terms": {
+      "slot5_Statistics": 1,
+      "slot5_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 6)",
+     "terms": {
+      "slot6_Statistics": 1,
+      "slot6_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 7)",
+     "terms": {
+      "slot7_Statistics": 1,
+      "slot7_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Operations Research apart (slot 8)",
+     "terms": {
+      "slot8_Statistics": 1,
+      "slot8_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 1)",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot1_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 2)",
+     "terms": {
+      "slot2_Statistics": 1,
+      "slot2_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 3)",
+     "terms": {
+      "slot3_Statistics": 1,
+      "slot3_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 4)",
+     "terms": {
+      "slot4_Statistics": 1,
+      "slot4_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 5)",
+     "terms": {
+      "slot5_Statistics": 1,
+      "slot5_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 6)",
+     "terms": {
+      "slot6_Statistics": 1,
+      "slot6_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 7)",
+     "terms": {
+      "slot7_Statistics": 1,
+      "slot7_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Logistics apart (slot 8)",
+     "terms": {
+      "slot8_Statistics": 1,
+      "slot8_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 1)",
+     "terms": {
+      "slot1_Machine_Learning": 1,
+      "slot1_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 2)",
+     "terms": {
+      "slot2_Machine_Learning": 1,
+      "slot2_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 3)",
+     "terms": {
+      "slot3_Machine_Learning": 1,
+      "slot3_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 4)",
+     "terms": {
+      "slot4_Machine_Learning": 1,
+      "slot4_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 5)",
+     "terms": {
+      "slot5_Machine_Learning": 1,
+      "slot5_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 6)",
+     "terms": {
+      "slot6_Machine_Learning": 1,
+      "slot6_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 7)",
+     "terms": {
+      "slot7_Machine_Learning": 1,
+      "slot7_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Operations Research apart (slot 8)",
+     "terms": {
+      "slot8_Machine_Learning": 1,
+      "slot8_Operations_Research": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 1)",
+     "terms": {
+      "slot1_Machine_Learning": 1,
+      "slot1_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 2)",
+     "terms": {
+      "slot2_Machine_Learning": 1,
+      "slot2_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 3)",
+     "terms": {
+      "slot3_Machine_Learning": 1,
+      "slot3_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 4)",
+     "terms": {
+      "slot4_Machine_Learning": 1,
+      "slot4_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 5)",
+     "terms": {
+      "slot5_Machine_Learning": 1,
+      "slot5_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 6)",
+     "terms": {
+      "slot6_Machine_Learning": 1,
+      "slot6_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 7)",
+     "terms": {
+      "slot7_Machine_Learning": 1,
+      "slot7_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Cryptography apart (slot 8)",
+     "terms": {
+      "slot8_Machine_Learning": 1,
+      "slot8_Cryptography": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 1)",
+     "terms": {
+      "slot1_Machine_Learning": 1,
+      "slot1_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 2)",
+     "terms": {
+      "slot2_Machine_Learning": 1,
+      "slot2_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 3)",
+     "terms": {
+      "slot3_Machine_Learning": 1,
+      "slot3_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 4)",
+     "terms": {
+      "slot4_Machine_Learning": 1,
+      "slot4_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 5)",
+     "terms": {
+      "slot5_Machine_Learning": 1,
+      "slot5_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 6)",
+     "terms": {
+      "slot6_Machine_Learning": 1,
+      "slot6_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 7)",
+     "terms": {
+      "slot7_Machine_Learning": 1,
+      "slot7_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Machine Learning and Control Systems apart (slot 8)",
+     "terms": {
+      "slot8_Machine_Learning": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 1)",
+     "terms": {
+      "slot1_Operations_Research": 1,
+      "slot1_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 2)",
+     "terms": {
+      "slot2_Operations_Research": 1,
+      "slot2_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 3)",
+     "terms": {
+      "slot3_Operations_Research": 1,
+      "slot3_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 4)",
+     "terms": {
+      "slot4_Operations_Research": 1,
+      "slot4_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 5)",
+     "terms": {
+      "slot5_Operations_Research": 1,
+      "slot5_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 6)",
+     "terms": {
+      "slot6_Operations_Research": 1,
+      "slot6_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 7)",
+     "terms": {
+      "slot7_Operations_Research": 1,
+      "slot7_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Logistics apart (slot 8)",
+     "terms": {
+      "slot8_Operations_Research": 1,
+      "slot8_Logistics": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 1)",
+     "terms": {
+      "slot1_Operations_Research": 1,
+      "slot1_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 2)",
+     "terms": {
+      "slot2_Operations_Research": 1,
+      "slot2_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 3)",
+     "terms": {
+      "slot3_Operations_Research": 1,
+      "slot3_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 4)",
+     "terms": {
+      "slot4_Operations_Research": 1,
+      "slot4_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 5)",
+     "terms": {
+      "slot5_Operations_Research": 1,
+      "slot5_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 6)",
+     "terms": {
+      "slot6_Operations_Research": 1,
+      "slot6_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 7)",
+     "terms": {
+      "slot7_Operations_Research": 1,
+      "slot7_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Operations Research and Cost Evaluation apart (slot 8)",
+     "terms": {
+      "slot8_Operations_Research": 1,
+      "slot8_Cost_Evaluation": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 1)",
+     "terms": {
+      "slot1_Logistics": 1,
+      "slot1_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 2)",
+     "terms": {
+      "slot2_Logistics": 1,
+      "slot2_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 3)",
+     "terms": {
+      "slot3_Logistics": 1,
+      "slot3_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 4)",
+     "terms": {
+      "slot4_Logistics": 1,
+      "slot4_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 5)",
+     "terms": {
+      "slot5_Logistics": 1,
+      "slot5_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 6)",
+     "terms": {
+      "slot6_Logistics": 1,
+      "slot6_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 7)",
+     "terms": {
+      "slot7_Logistics": 1,
+      "slot7_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Logistics and Lean Management apart (slot 8)",
+     "terms": {
+      "slot8_Logistics": 1,
+      "slot8_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 1)",
+     "terms": {
+      "slot1_Cost_Evaluation": 1,
+      "slot1_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 2)",
+     "terms": {
+      "slot2_Cost_Evaluation": 1,
+      "slot2_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 3)",
+     "terms": {
+      "slot3_Cost_Evaluation": 1,
+      "slot3_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 4)",
+     "terms": {
+      "slot4_Cost_Evaluation": 1,
+      "slot4_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 5)",
+     "terms": {
+      "slot5_Cost_Evaluation": 1,
+      "slot5_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 6)",
+     "terms": {
+      "slot6_Cost_Evaluation": 1,
+      "slot6_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 7)",
+     "terms": {
+      "slot7_Cost_Evaluation": 1,
+      "slot7_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Lean Management apart (slot 8)",
+     "terms": {
+      "slot8_Cost_Evaluation": 1,
+      "slot8_Lean_Management": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 1)",
+     "terms": {
+      "slot1_Cost_Evaluation": 1,
+      "slot1_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 2)",
+     "terms": {
+      "slot2_Cost_Evaluation": 1,
+      "slot2_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 3)",
+     "terms": {
+      "slot3_Cost_Evaluation": 1,
+      "slot3_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 4)",
+     "terms": {
+      "slot4_Cost_Evaluation": 1,
+      "slot4_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 5)",
+     "terms": {
+      "slot5_Cost_Evaluation": 1,
+      "slot5_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 6)",
+     "terms": {
+      "slot6_Cost_Evaluation": 1,
+      "slot6_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 7)",
+     "terms": {
+      "slot7_Cost_Evaluation": 1,
+      "slot7_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cost Evaluation and Control Systems apart (slot 8)",
+     "terms": {
+      "slot8_Cost_Evaluation": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 1)",
+     "terms": {
+      "slot1_Lean_Management": 1,
+      "slot1_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 2)",
+     "terms": {
+      "slot2_Lean_Management": 1,
+      "slot2_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 3)",
+     "terms": {
+      "slot3_Lean_Management": 1,
+      "slot3_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 4)",
+     "terms": {
+      "slot4_Lean_Management": 1,
+      "slot4_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 5)",
+     "terms": {
+      "slot5_Lean_Management": 1,
+      "slot5_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 6)",
+     "terms": {
+      "slot6_Lean_Management": 1,
+      "slot6_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 7)",
+     "terms": {
+      "slot7_Lean_Management": 1,
+      "slot7_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Lean Management and Control Systems apart (slot 8)",
+     "terms": {
+      "slot8_Lean_Management": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 1)",
+     "terms": {
+      "slot1_Cryptography": 1,
+      "slot1_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 2)",
+     "terms": {
+      "slot2_Cryptography": 1,
+      "slot2_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 3)",
+     "terms": {
+      "slot3_Cryptography": 1,
+      "slot3_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 4)",
+     "terms": {
+      "slot4_Cryptography": 1,
+      "slot4_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 5)",
+     "terms": {
+      "slot5_Cryptography": 1,
+      "slot5_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 6)",
+     "terms": {
+      "slot6_Cryptography": 1,
+      "slot6_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 7)",
+     "terms": {
+      "slot7_Cryptography": 1,
+      "slot7_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Cryptography and Control Systems apart (slot 8)",
+     "terms": {
+      "slot8_Cryptography": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 1)",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot1_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 2)",
+     "terms": {
+      "slot2_Statistics": 1,
+      "slot2_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 3)",
+     "terms": {
+      "slot3_Statistics": 1,
+      "slot3_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 4)",
+     "terms": {
+      "slot4_Statistics": 1,
+      "slot4_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 5)",
+     "terms": {
+      "slot5_Statistics": 1,
+      "slot5_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 6)",
+     "terms": {
+      "slot6_Statistics": 1,
+      "slot6_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 7)",
+     "terms": {
+      "slot7_Statistics": 1,
+      "slot7_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "Statistics and Control Systems apart (slot 8)",
+     "terms": {
+      "slot8_Statistics": 1,
+      "slot8_Control_Systems": 1
+     },
+     "sense": "<=",
+     "rhs": 1
+    },
+    {
+     "name": "slot 1 counted if used by Statistics",
+     "terms": {
+      "slot1_Statistics": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Statistics",
+     "terms": {
+      "slot2_Statistics": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Statistics",
+     "terms": {
+      "slot3_Statistics": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Statistics",
+     "terms": {
+      "slot4_Statistics": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Statistics",
+     "terms": {
+      "slot5_Statistics": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Statistics",
+     "terms": {
+      "slot6_Statistics": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Statistics",
+     "terms": {
+      "slot7_Statistics": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Statistics",
+     "terms": {
+      "slot8_Statistics": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Machine Learning",
+     "terms": {
+      "slot1_Machine_Learning": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Machine Learning",
+     "terms": {
+      "slot2_Machine_Learning": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Machine Learning",
+     "terms": {
+      "slot3_Machine_Learning": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Machine Learning",
+     "terms": {
+      "slot4_Machine_Learning": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Machine Learning",
+     "terms": {
+      "slot5_Machine_Learning": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Machine Learning",
+     "terms": {
+      "slot6_Machine_Learning": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Machine Learning",
+     "terms": {
+      "slot7_Machine_Learning": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Machine Learning",
+     "terms": {
+      "slot8_Machine_Learning": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Operations Research",
+     "terms": {
+      "slot1_Operations_Research": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Operations Research",
+     "terms": {
+      "slot2_Operations_Research": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Operations Research",
+     "terms": {
+      "slot3_Operations_Research": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Operations Research",
+     "terms": {
+      "slot4_Operations_Research": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Operations Research",
+     "terms": {
+      "slot5_Operations_Research": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Operations Research",
+     "terms": {
+      "slot6_Operations_Research": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Operations Research",
+     "terms": {
+      "slot7_Operations_Research": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Operations Research",
+     "terms": {
+      "slot8_Operations_Research": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Logistics",
+     "terms": {
+      "slot1_Logistics": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Logistics",
+     "terms": {
+      "slot2_Logistics": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Logistics",
+     "terms": {
+      "slot3_Logistics": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Logistics",
+     "terms": {
+      "slot4_Logistics": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Logistics",
+     "terms": {
+      "slot5_Logistics": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Logistics",
+     "terms": {
+      "slot6_Logistics": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Logistics",
+     "terms": {
+      "slot7_Logistics": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Logistics",
+     "terms": {
+      "slot8_Logistics": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Cost Evaluation",
+     "terms": {
+      "slot1_Cost_Evaluation": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Cost Evaluation",
+     "terms": {
+      "slot2_Cost_Evaluation": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Cost Evaluation",
+     "terms": {
+      "slot3_Cost_Evaluation": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Cost Evaluation",
+     "terms": {
+      "slot4_Cost_Evaluation": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Cost Evaluation",
+     "terms": {
+      "slot5_Cost_Evaluation": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Cost Evaluation",
+     "terms": {
+      "slot6_Cost_Evaluation": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Cost Evaluation",
+     "terms": {
+      "slot7_Cost_Evaluation": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Cost Evaluation",
+     "terms": {
+      "slot8_Cost_Evaluation": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Lean Management",
+     "terms": {
+      "slot1_Lean_Management": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Lean Management",
+     "terms": {
+      "slot2_Lean_Management": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Lean Management",
+     "terms": {
+      "slot3_Lean_Management": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Lean Management",
+     "terms": {
+      "slot4_Lean_Management": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Lean Management",
+     "terms": {
+      "slot5_Lean_Management": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Lean Management",
+     "terms": {
+      "slot6_Lean_Management": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Lean Management",
+     "terms": {
+      "slot7_Lean_Management": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Lean Management",
+     "terms": {
+      "slot8_Lean_Management": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Cryptography",
+     "terms": {
+      "slot1_Cryptography": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Cryptography",
+     "terms": {
+      "slot2_Cryptography": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Cryptography",
+     "terms": {
+      "slot3_Cryptography": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Cryptography",
+     "terms": {
+      "slot4_Cryptography": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Cryptography",
+     "terms": {
+      "slot5_Cryptography": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Cryptography",
+     "terms": {
+      "slot6_Cryptography": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Cryptography",
+     "terms": {
+      "slot7_Cryptography": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Cryptography",
+     "terms": {
+      "slot8_Cryptography": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 1 counted if used by Control Systems",
+     "terms": {
+      "slot1_Control_Systems": 1,
+      "slot1_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 2 counted if used by Control Systems",
+     "terms": {
+      "slot2_Control_Systems": 1,
+      "slot2_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 3 counted if used by Control Systems",
+     "terms": {
+      "slot3_Control_Systems": 1,
+      "slot3_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 4 counted if used by Control Systems",
+     "terms": {
+      "slot4_Control_Systems": 1,
+      "slot4_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 5 counted if used by Control Systems",
+     "terms": {
+      "slot5_Control_Systems": 1,
+      "slot5_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 6 counted if used by Control Systems",
+     "terms": {
+      "slot6_Control_Systems": 1,
+      "slot6_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 7 counted if used by Control Systems",
+     "terms": {
+      "slot7_Control_Systems": 1,
+      "slot7_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    },
+    {
+     "name": "slot 8 counted if used by Control Systems",
+     "terms": {
+      "slot8_Control_Systems": 1,
+      "slot8_used": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "slot1_used": 1,
+     "slot2_used": 1,
+     "slot3_used": 1,
+     "slot4_used": 1,
+     "slot5_used": 1,
+     "slot6_used": 1,
+     "slot7_used": 1,
+     "slot8_used": 1
+    }
+   }
+  }
+ }
+}

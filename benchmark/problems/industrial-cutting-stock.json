@@ -1,0 +1,216 @@
+{
+ "id": "industrial-cutting-stock",
+ "source": "Written for this benchmark (industrial operations)",
+ "kind": "industrial",
+ "question": "A carpentry shop buys timber in 6-metre bars. A customer orders 4 pieces of 2.50 m, 10 pieces of 1.80 m and 15 pieces of 1.20 m. Saw cuts lose no material, and leftover offcuts cannot be joined. What is the minimum number of 6-metre bars needed to cut the whole order?",
+ "answer_keys": [
+  "The minimum number of 6-metre bars"
+ ],
+ "objective_key": "The minimum number of 6-metre bars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum number of 6-metre bars": 8.0
+ },
+ "optimum": 8.0,
+ "independent_check": "lower bound: total ordered length / 6 m, rounded up (the optimum reaches it)",
+ "reference": {
+  "key_to_variable": {
+   "The minimum number of 6-metre bars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "pattern_0x250_0x180_1x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_0x180_2x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_0x180_3x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_0x180_4x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_0x180_5x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_1x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_1x180_1x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_1x180_2x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_1x180_3x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_2x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_2x180_1x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_2x180_2x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_0x250_3x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_1x250_0x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_1x250_0x180_1x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_1x250_0x180_2x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_1x250_1x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_1x250_1x180_1x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    },
+    {
+     "name": "pattern_2x250_0x180_0x120",
+     "type": "integer",
+     "lb": 0,
+     "ub": 30
+    }
+   ],
+   "constraints": [
+    {
+     "name": "4 pieces of 250 cm",
+     "terms": {
+      "pattern_1x250_0x180_0x120": 1,
+      "pattern_1x250_0x180_1x120": 1,
+      "pattern_1x250_0x180_2x120": 1,
+      "pattern_1x250_1x180_0x120": 1,
+      "pattern_1x250_1x180_1x120": 1,
+      "pattern_2x250_0x180_0x120": 2
+     },
+     "sense": ">=",
+     "rhs": 4
+    },
+    {
+     "name": "10 pieces of 180 cm",
+     "terms": {
+      "pattern_0x250_1x180_0x120": 1,
+      "pattern_0x250_1x180_1x120": 1,
+      "pattern_0x250_1x180_2x120": 1,
+      "pattern_0x250_1x180_3x120": 1,
+      "pattern_0x250_2x180_0x120": 2,
+      "pattern_0x250_2x180_1x120": 2,
+      "pattern_0x250_2x180_2x120": 2,
+      "pattern_0x250_3x180_0x120": 3,
+      "pattern_1x250_1x180_0x120": 1,
+      "pattern_1x250_1x180_1x120": 1
+     },
+     "sense": ">=",
+     "rhs": 10
+    },
+    {
+     "name": "15 pieces of 120 cm",
+     "terms": {
+      "pattern_0x250_0x180_1x120": 1,
+      "pattern_0x250_0x180_2x120": 2,
+      "pattern_0x250_0x180_3x120": 3,
+      "pattern_0x250_0x180_4x120": 4,
+      "pattern_0x250_0x180_5x120": 5,
+      "pattern_0x250_1x180_1x120": 1,
+      "pattern_0x250_1x180_2x120": 2,
+      "pattern_0x250_1x180_3x120": 3,
+      "pattern_0x250_2x180_1x120": 1,
+      "pattern_0x250_2x180_2x120": 2,
+      "pattern_1x250_0x180_1x120": 1,
+      "pattern_1x250_0x180_2x120": 2,
+      "pattern_1x250_1x180_1x120": 1
+     },
+     "sense": ">=",
+     "rhs": 15
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "pattern_0x250_0x180_1x120": 1,
+     "pattern_0x250_0x180_2x120": 1,
+     "pattern_0x250_0x180_3x120": 1,
+     "pattern_0x250_0x180_4x120": 1,
+     "pattern_0x250_0x180_5x120": 1,
+     "pattern_0x250_1x180_0x120": 1,
+     "pattern_0x250_1x180_1x120": 1,
+     "pattern_0x250_1x180_2x120": 1,
+     "pattern_0x250_1x180_3x120": 1,
+     "pattern_0x250_2x180_0x120": 1,
+     "pattern_0x250_2x180_1x120": 1,
+     "pattern_0x250_2x180_2x120": 1,
+     "pattern_0x250_3x180_0x120": 1,
+     "pattern_1x250_0x180_0x120": 1,
+     "pattern_1x250_0x180_1x120": 1,
+     "pattern_1x250_0x180_2x120": 1,
+     "pattern_1x250_1x180_0x120": 1,
+     "pattern_1x250_1x180_1x120": 1,
+     "pattern_2x250_0x180_0x120": 1
+    }
+   }
+  }
+ }
+}

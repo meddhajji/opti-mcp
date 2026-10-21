@@ -73,9 +73,43 @@ python -m venv .venv
 .venv/Scripts/python -m pytest
 ```
 
-73 tests, including 60 random small problems where the solver's optimum is compared with
+113 tests, including 60 random small problems where the solver's optimum is compared with
 brute-force enumeration of every possible assignment (infeasible cases included), and a
-check that every reported conflict is truly minimal.
+check that every reported conflict is truly minimal. The benchmark scorer is tested on every
+verdict, and every reference answer must score as optimal.
+
+## Benchmark (in progress)
+
+The question it answers: does an agent solve optimisation problems better with the
+plugin than without it, and can a small cheap model with the plugin match a large one?
+
+**Problem set: 20 problems with proven answers** (`benchmark/problems/`).
+
+- **15 from OptiBench** (Yang et al., ICLR 2025, Apache-2.0, see
+  `benchmark/optibench/`): linear problems whose expected answers are all whole numbers,
+  sampled at random, 11 word problems and 4 with tables. Every one was re-modelled by hand
+  (`benchmark/build_optibench.py`) and the solver's proven optimum matches all 15
+  expected answers.
+- **3 OptiBench problems were excluded** while checking candidates, each with the reason
+  recorded in `selection.json`: one asks two questions at once; one is ambiguous (the
+  expected 5,900 holds only if a production line's setup cost is paid even when the line
+  is unused, otherwise 4,000 is cheaper); one has an inconsistent label (its own expected
+  plan earns 12,000, above the stated maximum of 9,500).
+- **5 industrial cases written for this benchmark** (`benchmark/build_industrial.py`):
+  operator-to-machine assignment, cutting stock, 4-week production planning, exam
+  timetabling, cashier staffing. Each optimum is confirmed by a method that does not use
+  the model: exhaustive search, a lower bound or dynamic programming.
+
+**Scorer** (`benchmark/score.py`). The agent ends with
+`FINAL ANSWER: {"<answer key>": <number>, ...}` and gets one verdict: `optimal`,
+`suboptimal`, `infeasible` (breaks a rule, or fractions where whole numbers are needed),
+`inconsistent` (the stated value is not what the stated plan achieves), `impossible`
+(claims better than the proven optimum), `incomplete` or `no_answer`. Plans are checked
+against the reference model rather than compared to one expected plan, so an alternative
+optimal plan counts as optimal, and a broken plan is reported with the rule it breaks.
+
+Next: the runner, which gives each problem to an agent with and without the plugin
+(Claude Code, and a small local model) and records the answers for scoring.
 
 ## Install
 

@@ -1,0 +1,88 @@
+{
+ "id": "optibench-379",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A food delivery person can either have shifts on bikes or scooters. A shift on a bike can deliver 10 orders, takes 5 units of energy, and brings in $50 on tips because it is faster. A shift on a scooter can deliver 7 orders, takes 6 units of energy, and brings in $43 on tips.  The delivery person has available 40 shifts a month and has 230 units of energy and must bring at least 320 orders. He must have at least 5 shifts on a scooter because bikes are harder to get. How many shifts on each type of transportation should the delivery person schedule to maximize tips received?",
+ "answer_keys": [
+  "The number of bike shifts",
+  "The number of scooter shifts",
+  "The total tips received"
+ ],
+ "objective_key": "The total tips received",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of bike shifts": 35.0,
+  "The number of scooter shifts": 5.0,
+  "The total tips received": 1965.0
+ },
+ "optimum": 1965.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of bike shifts": "bike",
+   "The number of scooter shifts": "scooter",
+   "The total tips received": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "bike",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "scooter",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    }
+   ],
+   "constraints": [
+    {
+     "name": "shifts available",
+     "terms": {
+      "bike": 1,
+      "scooter": 1
+     },
+     "sense": "<=",
+     "rhs": 40
+    },
+    {
+     "name": "energy",
+     "terms": {
+      "bike": 5,
+      "scooter": 6
+     },
+     "sense": "<=",
+     "rhs": 230
+    },
+    {
+     "name": "orders",
+     "terms": {
+      "bike": 10,
+      "scooter": 7
+     },
+     "sense": ">=",
+     "rhs": 320
+    },
+    {
+     "name": "at least 5 scooter shifts",
+     "terms": {
+      "scooter": 1
+     },
+     "sense": ">=",
+     "rhs": 5
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "bike": 50,
+     "scooter": 43
+    }
+   }
+  }
+ }
+}

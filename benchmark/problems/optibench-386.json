@@ -1,0 +1,79 @@
+{
+ "id": "optibench-386",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A dog school trains labradors and golden retrievers to deliver newspaper. A labrador can deliver 7 newspapers at a time and requires 5 small bone treats for service. A golden retriever can deliver 10 newspapers at a time and requires 6 small bone treats per service. The school only has 1500 small bone treats available. In addition, at least 50 golden retrievers must be used and at most 60% of the dogs can be labradors. How many of each dog should be used to maximize the number of newspapers that can be delivered?",
+ "answer_keys": [
+  "The number of labradors",
+  "The number of golden retrievers",
+  "The number of newspapers delivered"
+ ],
+ "objective_key": "The number of newspapers delivered",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of labradors": 0.0,
+  "The number of golden retrievers": 250.0,
+  "The number of newspapers delivered": 2500.0
+ },
+ "optimum": 2500.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of labradors": "labradors",
+   "The number of golden retrievers": "goldens",
+   "The number of newspapers delivered": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "labradors",
+     "type": "integer",
+     "lb": 0,
+     "ub": 300
+    },
+    {
+     "name": "goldens",
+     "type": "integer",
+     "lb": 0,
+     "ub": 300
+    }
+   ],
+   "constraints": [
+    {
+     "name": "bone treats",
+     "terms": {
+      "labradors": 5,
+      "goldens": 6
+     },
+     "sense": "<=",
+     "rhs": 1500
+    },
+    {
+     "name": "at least 50 golden retrievers",
+     "terms": {
+      "goldens": 1
+     },
+     "sense": ">=",
+     "rhs": 50
+    },
+    {
+     "name": "at most 60% labradors",
+     "terms": {
+      "labradors": 2,
+      "goldens": -3
+     },
+     "sense": "<=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "labradors": 7,
+     "goldens": 10
+    }
+   }
+  }
+ }
+}
