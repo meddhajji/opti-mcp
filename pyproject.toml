@@ -6,7 +6,8 @@ requires-python = ">=3.10"
 dynamic = ["dependencies"]  # read from requirements.txt, which the plugin launcher also uses
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "groq>=1.7"]  # groq: benchmark harness for weaker models only, never the plugin
+# groq and google-genai: benchmark harness for weaker models only, never the plugin
+dev = ["pytest>=8.0", "groq>=1.7", "google-genai>=2.30"]
 
 [project.scripts]
 optimizer-mcp = "optimizer.server:main"

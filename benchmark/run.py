@@ -16,8 +16,9 @@ from --plugin-dir; the skill still loads from the plugin.
 The prompt is identical in every condition and never mentions the plugin:
 whether the agent chooses to use it is part of what is measured.
 
-With --backend groq, the same problems, prompt and conditions go through
-benchmark/groq_agent.py instead, to test models weaker than Claude Code runs.
+With --backend groq or gemini, the same problems, prompt and conditions go
+through benchmark/groq_agent.py or gemini_agent.py instead (shared logic in
+agent_common.py), to test models weaker than Claude Code runs.
 
 Results are appended to benchmark/results/<run name>.jsonl, one line per
 (problem, model, condition); finished combinations are skipped, so an
@@ -59,8 +60,12 @@ The JSON object must have exactly these keys, each with a number as its value:
 {keys}"""
 
 
-def load_problems(ids: list[str] | None) -> list[dict]:
-    problems = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((BENCH / "problems").glob("*.json"))]
+def load_problems(ids: list[str] | None, problem_set: str | None = None) -> list[dict]:
+    """The hand-built problems, or a generated set from benchmark/sets/<problem_set>/."""
+    folder = BENCH / "sets" / problem_set if problem_set else BENCH / "problems"
+    if not folder.is_dir():
+        sys.exit(f"no problem folder {folder}")
+    problems = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(folder.glob("*.json"))]
     if ids:
         known = {p["id"] for p in problems}
         unknown = set(ids) - known
@@ -119,15 +124,19 @@ def run_claude(prompt: str, model: str, condition: str, budget_usd: float, timeo
     return stream, error
 
 
-def run_groq(prompt: str, model: str, condition: str, timeout_s: int, workdir: Path):
-    import groq_agent  # imported here so the Claude backend does not need the groq package
+def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: int, workdir: Path):
+    """Groq or Gemini models through this repo's own agent loop (imported lazily: optional SDKs)."""
+    import importlib
 
+    from agent_common import DailyLimitReached
+
+    agent = importlib.import_module(f"{backend}_agent")
     empty = {"text": "", "tools": [], "turns": None, "cost_usd": None}
     try:
-        out = asyncio.run(asyncio.wait_for(groq_agent.run(prompt, model, condition, workdir), timeout_s))
+        out = asyncio.run(asyncio.wait_for(agent.run(prompt, model, condition, workdir), timeout_s))
     except TimeoutError:
         return empty | {"stop": "timeout"}, f"timed out after {timeout_s} s"
-    except groq_agent.DailyLimitReached:
+    except DailyLimitReached:
         raise
     except Exception as e:  # one failed run is recorded, never fatal for the whole benchmark
         return empty | {"stop": "error"}, f"{type(e).__name__}: {str(e)[:400]}"
@@ -141,14 +150,15 @@ def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeou
     workdir.mkdir(parents=True, exist_ok=True)
     prompt = PROMPT.format(question=problem["question"], keys=json.dumps(problem["answer_keys"], ensure_ascii=False))
     started = time.monotonic()
-    if backend == "groq":
-        stream, error = run_groq(prompt, model, condition, timeout_s, workdir)  # DailyLimitReached propagates
+    if backend in ("groq", "gemini"):
+        stream, error = run_api(backend, prompt, model, condition, timeout_s, workdir)  # DailyLimitReached propagates
     else:
         stream, error = run_claude(prompt, model, condition, budget_usd, timeout_s, workdir)
     answer = parse_final_answer(stream["text"])
     verdict = score(problem, answer)
     return {
         "problem": problem["id"], "model": model, "condition": condition, "backend": backend,
+        **{k: problem[k] for k in ("family", "level", "noise", "seed") if k in problem},
         "outcome": verdict["outcome"], "detail": verdict["detail"], "answer": answer,
         "tools": Counter(stream["tools"]),
         "plugin_used": any(t.startswith(PLUGIN_TOOLS) or t in OPTIMIZER_TOOLS for t in stream["tools"]),
@@ -174,9 +184,10 @@ def summarise(rows: list[dict]) -> None:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", required=True, help="run name: results go to benchmark/results/<name>.jsonl")
-    ap.add_argument("--backend", choices=("claude", "groq"), default="claude")
+    ap.add_argument("--backend", choices=("claude", "groq", "gemini"), default="claude")
     ap.add_argument("--models", nargs="+", default=["haiku"])
     ap.add_argument("--conditions", nargs="+", default=list(CONDITIONS), choices=CONDITIONS)
+    ap.add_argument("--set", dest="problem_set", help="generated set in benchmark/sets/ (default: the hand-built problems)")
     ap.add_argument("--problems", nargs="*", help="problem ids (default: all)")
     ap.add_argument("--budget-usd", type=float, default=1.0, help="spending cap per run")
     ap.add_argument("--timeout", type=int, default=900, help="seconds per run")
@@ -186,7 +197,7 @@ def main():
     out.parent.mkdir(exist_ok=True)
     rows = [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines()] if out.exists() else []
     done = {(r["problem"], r["model"], r["condition"]) for r in rows}
-    problems = load_problems(args.problems)
+    problems = load_problems(args.problems, args.problem_set)
     todo = [(p, m, c) for p in problems for m in args.models for c in args.conditions if (p["id"], m, c) not in done]
     print(f"{len(todo)} runs to do ({len(done)} already in {out.name}), backend = {args.backend}")
 
@@ -196,7 +207,7 @@ def main():
             row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir, args.backend)
         except Exception as e:
             if type(e).__name__ == "DailyLimitReached":
-                print(f"Stopped: Groq's daily quota for {model} is used up. Re-run the same command later to resume.")
+                print(f"Stopped: the daily quota for {model} is used up. Re-run the same command later to resume.")
                 break
             raise
         rows.append(row)

@@ -144,9 +144,25 @@ prompt, which never mentions the plugin:
   proves optimality, but does not raise the score. With one run per problem, a gap of
   one or two answers is within noise.
 
-Next: a hard tier of realistic-size problems (rotas over a month, many cutting lengths,
-large assignments), where a model cannot hold the whole problem in its head, with three
-runs per problem to measure variance; then a larger model as reference.
+Next: a size sweep on generated problems (below), so results become charts of accuracy
+against problem size rather than single percentages.
+
+### Generated problems and more models (in progress)
+
+`benchmark/generate.py` builds word problems from code, in five families with a size
+level from 1 to 5: product mix (2 to 12 products), project selection (5 to 35 projects),
+assignment (3 to 12 workers), cutting stock (2 to 8 piece lengths) and production
+planning (3 to 12 weeks). Numbers never come from an LLM. Every optimum is proven by the
+solver and, wherever computable, confirmed independently: dynamic programming at every
+size for project selection, assignment and production planning, brute force or a second
+formulation for small product-mix and cutting-stock instances; where no check exists the
+instance says so. A noise level tells the same instance either plainly or as a longer
+story with irrelevant facts, with identical numbers, so noise effects are paired.
+Instance ids (`assignment-L3-N1-2`) regenerate exactly the same problem.
+
+Besides Claude Code, `--backend groq` and `--backend gemini` run open and cheap models
+(gpt-oss-20b, Gemma 4 26B, Gemini Flash-Lite) through this repo's own agent loop
+(`benchmark/agent_common.py`), with the same three conditions, prompt and scorer.
 
 ## Install
 
