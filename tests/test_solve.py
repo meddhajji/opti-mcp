@@ -3,9 +3,9 @@ import random
 
 import pytest
 
+from optimizer.engine import solve_model
 from optimizer.explain import explain_infeasible
 from optimizer.model import Model
-from optimizer.solve import solve
 from optimizer.verify import verify
 
 FURNITURE = {
@@ -22,7 +22,7 @@ FURNITURE = {
 
 
 def test_furniture_example_is_optimal_and_verified():
-    r = solve(Model.model_validate(FURNITURE))
+    r = solve_model(Model.model_validate(FURNITURE))
     assert r["status"] == "OPTIMAL"
     assert r["objective"] == r["best_bound"] == 2700
     assert r["verification"] == {"valid": True, "violations": [], "objective": 2700}
@@ -65,7 +65,7 @@ def brute_force(m: dict) -> int | None:
 def test_solver_matches_brute_force(seed):
     m = random_model(random.Random(seed))
     expected = brute_force(m)
-    r = solve(Model.model_validate(m), workers=1)
+    r = solve_model(Model.model_validate(m), workers=1)
     if expected is None:
         assert r["status"] == "INFEASIBLE"
     else:
@@ -104,7 +104,7 @@ def test_conflict_is_found_and_minimal():
     # irreducible: dropping any one rule of the conflict makes the rest solvable
     for rule in rules:
         kept = [c for c in CONFLICT["constraints"] if c["name"] in rules - {rule}]
-        assert solve(Model.model_validate({**CONFLICT, "constraints": kept}))["status"] in ("OPTIMAL", "FEASIBLE")
+        assert solve_model(Model.model_validate({**CONFLICT, "constraints": kept}))["status"] in ("OPTIMAL", "FEASIBLE")
 
 
 def test_feasible_model_has_nothing_to_explain():
@@ -119,3 +119,28 @@ def test_feasible_model_has_nothing_to_explain():
 def test_invalid_models_are_rejected_with_a_reason(bad, message):
     with pytest.raises(ValueError, match=message):
         Model.model_validate(bad)
+
+
+def test_decimals_are_solved_exactly():
+    # 0.25 lb of cashews per regular box: scaled to whole numbers inside, never rounded
+    m = Model.model_validate({
+        "variables": [{"name": n, "type": "integer", "lb": 0, "ub": 1000} for n in ("regular", "deluxe")],
+        "constraints": [{"name": "cashews", "terms": {"regular": 0.25, "deluxe": 0.5}, "sense": "<=", "rhs": 120.5}],
+        "objective": {"sense": "maximize", "terms": {"regular": 0.8, "deluxe": 0.9}, "constant": 0.05}})
+    r = solve_model(m)
+    assert r["values"] == {"regular": 482, "deluxe": 0} and r["objective"] == 385.65
+    assert r["verification"] == {"valid": True, "violations": [], "objective": 385.65}
+
+
+def test_verification_compares_decimals_exactly():
+    m = Model.model_validate({"variables": [{"name": "x", "type": "integer", "ub": 10}],
+                              "constraints": [{"name": "c", "terms": {"x": 0.1}, "sense": "==", "rhs": 0.3}]})
+    assert verify(m, {"x": 3})["valid"]  # 3 * 0.1 == 0.3 exactly, which floats get wrong
+
+
+def test_too_many_decimals_and_empty_rules_are_refused():
+    with pytest.raises(ValueError, match="more than 6 decimal places"):
+        Model.model_validate({"variables": [{"name": "x", "ub": 1}],
+                              "constraints": [{"name": "c", "terms": {"x": 0.1234567}, "sense": "<=", "rhs": 1}]})
+    with pytest.raises(ValueError, match="has no terms"):
+        Model.model_validate({"variables": [{"name": "x", "ub": 1}], "constraints": [{"name": "c", "terms": {}, "sense": "<=", "rhs": 1}]})

@@ -14,19 +14,15 @@ solvable. Bookkeeping equations marked `definition` are never blamed.
 from ortools.sat.python import cp_model
 
 from .model import Model
-from .solve import SENSE
+from .engine import add_rule, new_vars
 
 
 def _build_with_switches(model: Model):
     cp = cp_model.CpModel()
-    var = {
-        v.name: cp.new_bool_var(v.name) if v.type == "boolean" else cp.new_int_var(v.lb, v.ub, v.name)
-        for v in model.variables
-    }
+    var = new_vars(cp, model)
     switches = {}
     for c in model.constraints:
-        expr = sum(coef * var[name] for name, coef in c.terms.items())
-        ct = cp.add(SENSE[c.sense](expr, c.rhs))
+        ct = add_rule(cp, var, c)
         if not c.definition:
             switches[c.name] = cp.new_bool_var(f"on[{c.name}]")
             ct.only_enforce_if(switches[c.name])

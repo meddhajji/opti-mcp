@@ -219,6 +219,146 @@
      "desks": 42
     }
    }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "cabinets",
+      "profit": 88,
+      "uses": {
+       "wood": 8,
+       "machine time": 7,
+       "labour": 6,
+       "paint": 9,
+       "packing": 4
+      }
+     },
+     {
+      "name": "chairs",
+      "profit": 39,
+      "uses": {
+       "wood": 2,
+       "machine time": 7,
+       "labour": 3,
+       "packing": 9
+      }
+     },
+     {
+      "name": "frames",
+      "profit": 35,
+      "uses": {
+       "wood": 6,
+       "machine time": 3,
+       "labour": 2,
+       "paint": 9,
+       "packing": 9
+      }
+     },
+     {
+      "name": "wardrobes",
+      "profit": 59,
+      "uses": {
+       "wood": 8,
+       "labour": 5,
+       "paint": 2,
+       "packing": 7
+      }
+     },
+     {
+      "name": "shelves",
+      "profit": 42,
+      "uses": {
+       "wood": 6,
+       "machine time": 5,
+       "paint": 7,
+       "packing": 3
+      }
+     },
+     {
+      "name": "benches",
+      "profit": 89,
+      "uses": {
+       "wood": 6,
+       "machine time": 9,
+       "labour": 3,
+       "packing": 3
+      }
+     },
+     {
+      "name": "beds",
+      "profit": 53,
+      "uses": {
+       "wood": 4,
+       "labour": 8,
+       "paint": 6,
+       "packing": 9
+      }
+     },
+     {
+      "name": "tables",
+      "profit": 95,
+      "uses": {
+       "wood": 3,
+       "machine time": 4,
+       "labour": 3,
+       "paint": 9,
+       "packing": 4
+      },
+      "min": 7
+     },
+     {
+      "name": "stools",
+      "profit": 93,
+      "uses": {
+       "wood": 8,
+       "labour": 1,
+       "paint": 3,
+       "packing": 3
+      }
+     },
+     {
+      "name": "bookcases",
+      "profit": 68,
+      "uses": {
+       "wood": 2,
+       "machine time": 7,
+       "labour": 2,
+       "paint": 2,
+       "packing": 8
+      }
+     },
+     {
+      "name": "doors",
+      "profit": 71,
+      "uses": {
+       "wood": 3,
+       "labour": 6,
+       "packing": 5
+      },
+      "min": 1
+     },
+     {
+      "name": "desks",
+      "profit": 42,
+      "uses": {
+       "wood": 9,
+       "machine time": 3,
+       "labour": 7,
+       "paint": 9,
+       "packing": 1
+      }
+     }
+    ],
+    "available": {
+     "wood": 376,
+     "machine time": 255,
+     "labour": 255,
+     "paint": 315,
+     "packing": 364
+    }
+   }
   }
  }
 }

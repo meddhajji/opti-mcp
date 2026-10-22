@@ -20,7 +20,11 @@ With --backend groq or gemini, the same problems, prompt and conditions go
 through benchmark/groq_agent.py or gemini_agent.py instead (shared logic in
 agent_common.py), to test models weaker than Claude Code runs. There,
 --answer-tool replaces the FINAL ANSWER line with a submit_answer tool call, so
-the answer is structured data rather than text to parse.
+the answer is structured data rather than text to parse, and a fourth condition
+is available:
+
+  library    run_python, where scripts can also `import optimizer`, plus the
+             same guidance as the skill (the plugin used as a Python library)
 
 Results are appended to benchmark/results/<run name>.jsonl, one line per
 (problem, model, condition); finished combinations are skipped, so an
@@ -49,10 +53,11 @@ from score import OUTCOMES, parse_final_answer, score  # noqa: E402
 
 CLAUDE = os.environ.get("CLAUDE_BIN") or shutil.which("claude") or str(Path.home() / ".local/bin/claude.exe")
 PLUGIN_TOOLS = "mcp__optimizer"  # every tool of the optimizer MCP server, as Claude Code names them
-OPTIMIZER_TOOLS = {"solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}  # raw MCP names
+OPTIMIZER_TOOLS = {"solve", "get_format",  # raw MCP names, v0.2, then v0.1
+                   "solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}
 MCP_CONFIG = json.dumps({"mcpServers": {"optimizer": {
     "command": "python", "args": [str(REPO / "scripts" / "launch.py")]}}})
-CONDITIONS = ("reasoning", "code", "plugin")
+CONDITIONS = ("reasoning", "code", "plugin", "library")  # library: API backends only
 
 PROMPT = """{question}
 
@@ -179,7 +184,8 @@ def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeou
         **{k: problem[k] for k in ("family", "level", "noise", "seed") if k in problem},
         "outcome": verdict["outcome"], "detail": verdict["detail"], "answer": answer,
         "tools": Counter(stream["tools"]),
-        "plugin_used": any(t.startswith(PLUGIN_TOOLS) or t in OPTIMIZER_TOOLS for t in stream["tools"]),
+        "plugin_used": any(t.startswith(PLUGIN_TOOLS) or t in OPTIMIZER_TOOLS for t in stream["tools"])
+                       or any("optimizer" in c["arguments"] for c in stream.get("calls") or [] if c["name"] == "run_python"),
         "turns": stream["turns"], "cost_usd": stream["cost_usd"], "tokens": stream.get("tokens"),
         "seconds": round(time.monotonic() - started, 1),
         "stop": stream["stop"], "error": error, "text_tail": stream["text"][-600:],
@@ -204,7 +210,7 @@ def main():
     ap.add_argument("--name", required=True, help="run name: results go to benchmark/results/<name>.jsonl")
     ap.add_argument("--backend", choices=("claude", "groq", "gemini"), default="claude")
     ap.add_argument("--models", nargs="+", default=["haiku"])
-    ap.add_argument("--conditions", nargs="+", default=list(CONDITIONS), choices=CONDITIONS)
+    ap.add_argument("--conditions", nargs="+", default=["reasoning", "code", "plugin"], choices=CONDITIONS)
     ap.add_argument("--set", dest="problem_set", help="generated set in benchmark/sets/ (default: the hand-built problems)")
     ap.add_argument("--problems", nargs="*", help="problem ids (default: all)")
     ap.add_argument("--budget-usd", type=float, default=1.0, help="spending cap per run")
@@ -212,8 +218,8 @@ def main():
     ap.add_argument("--answer-tool", action="store_true",
                     help="answers come through a submit_answer tool call (groq and gemini backends)")
     args = ap.parse_args()
-    if args.answer_tool and args.backend == "claude":
-        sys.exit("--answer-tool needs --backend groq or gemini")
+    if args.backend == "claude" and (args.answer_tool or "library" in args.conditions):
+        sys.exit("--answer-tool and the library condition need --backend groq or gemini")
 
     out = BENCH / "results" / f"{args.name}.jsonl"
     out.parent.mkdir(exist_ok=True)

@@ -6,6 +6,8 @@ how they call their model:
              the system Python, like Claude Code's Bash tool
   plugin     the optimizer MCP tools, listed live from the real server
              (scripts/launch.py), plus the optimize skill as instructions
+  library    run_python, where scripts can also `import optimizer` (OR-Tools from the
+             plugin's own environment), plus the same guidance as the skill
 
 With answer keys given, every condition also gets a submit_answer tool with one number
 per key, and the run ends when it is called: the answer arrives as structured
@@ -85,6 +87,28 @@ def skill_text() -> str:
     return re.sub(r"\A---.*?---\s*", "", text, flags=re.DOTALL)  # drop the YAML front matter
 
 
+LIBRARY_TEXT = (
+    "The Python package `optimizer` is installed. It solves optimisation problems exactly: answers are proved "
+    "optimal and checked independently. Use it in run_python instead of working out the optimum yourself:\n\n"
+    "    from optimizer import solve, get_format\n"
+    "    print(solve(kind, data))  # a dict: status, the plan and its value\n\n"
+    "{catalogue}\n\n"
+    "For shifts and model, print(get_format(kind)) first. If a rule is ambiguous, say which reading you used. If the "
+    "answer is INVALID_INPUT, fix what it lists and run again. If no plan exists, report the conflicting rules; never "
+    "drop a rule yourself."
+)
+
+
+def instructions(condition: str) -> str | None:
+    """The system text a condition starts with: the skill for the plugin, the same guidance for the library."""
+    if condition == "plugin":
+        return skill_text()
+    if condition == "library":
+        from optimizer.kinds import catalogue
+        return LIBRARY_TEXT.format(catalogue=catalogue())
+    return None
+
+
 def deref(schema: dict) -> dict:
     """Inline $ref pointers into $defs: some models handle flat schemas better."""
     defs = schema.get("$defs", {})
@@ -101,11 +125,27 @@ def deref(schema: dict) -> dict:
     return walk(schema)
 
 
-def run_python(code: str, workdir: Path) -> str:
-    script = workdir / "script.py"
+def library_site() -> Path:
+    """The plugin's own environment (created by scripts/launch.py), which holds OR-Tools."""
+    found = sorted((REPO / ".plugin-data" / "venv").rglob("site-packages"))
+    if not found:
+        raise RuntimeError("no plugin environment yet: run `python scripts/launch.py` once to create it")
+    return found[0]
+
+
+def run_python(code: str, workdir: Path, library: bool = False) -> str:
+    """Runs with the system Python, like the code condition. With library, the optimizer
+    package comes first on the path and the plugin's packages last, so the system's own
+    numpy and scipy are the ones scripts get, exactly as in the code condition."""
+    script = (workdir / "script.py").resolve()
     script.write_text(code, encoding="utf-8")
+    cmd = ["python", str(script)]
+    if library:
+        boot = (f"import runpy, sys; sys.path.insert(0, {str(REPO)!r}); sys.path.append({str(library_site())!r}); "
+                "sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name='__main__')")
+        cmd = ["python", "-c", boot, str(script)]
     try:
-        proc = subprocess.run(["python", str(script)], cwd=workdir, capture_output=True, text=True,
+        proc = subprocess.run(cmd, cwd=workdir, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=PYTHON_TIMEOUT_S)
         out = proc.stdout + (f"\n[stderr]\n{proc.stderr}" if proc.stderr else "")
     except subprocess.TimeoutExpired:
@@ -137,9 +177,11 @@ async def _condition_tools(condition: str, workdir: Path):
                 return "\n".join(getattr(c, "text", "") for c in res.content)
 
             yield specs, call_mcp
-    elif condition == "code":
+    elif condition in ("code", "library"):
         async def call_python(name, args):
-            return run_python(args.get("code", ""), workdir) if name == "run_python" else f"Unknown tool {name}"
+            if name != "run_python":
+                return f"Unknown tool {name}"
+            return run_python(args.get("code", ""), workdir, library=condition == "library")
 
         yield [RUN_PYTHON], call_python
     else:

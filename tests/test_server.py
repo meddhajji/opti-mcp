@@ -1,87 +1,81 @@
-"""The MCP tools as an agent sees them: schemas, results and error messages."""
+"""The MCP tools as an agent sees them: what they cost to read, results and error messages."""
 import asyncio
 import json
+import sys
+from pathlib import Path
 
-import pytest
 from mcp.client import Client
 
-from optimizer.model import Model
 from optimizer.server import server
 
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "benchmark"))
 
-def call(tool: str, args: dict) -> dict:
+from agent_common import skill_text  # noqa: E402
+
+# What an agent reads on every request, at about 4 characters per token. Version 0.1 cost
+# 3,904 tokens (four tools with full schemas, a 1,000-token skill); this guards the light design.
+TOKEN_BUDGET = 700
+
+
+def tools() -> list:
+    async def go():
+        async with Client(server) as c:
+            return (await c.list_tools()).tools
+    return asyncio.run(go())
+
+
+def call(tool: str, args: dict):
     async def go():
         async with Client(server) as c:
             res = await c.call_tool(tool, args)
-            return json.loads("".join(getattr(x, "text", "") for x in res.content))
+            return "".join(getattr(x, "text", "") for x in res.content)
     return asyncio.run(go())
+
+
+def test_two_tools_within_the_token_budget():
+    specs = [{"type": "function", "function": {"name": t.name, "description": t.description, "parameters": t.input_schema}}
+             for t in tools()]
+    assert [s["function"]["name"] for s in specs] == ["solve", "get_format"]
+    tokens = (len(json.dumps(specs)) + len(skill_text())) / 4
+    assert tokens <= TOKEN_BUDGET, f"the plugin now costs ~{tokens:.0f} tokens per request"
+
+
+def test_answers_are_one_line_of_json():
+    text = call("solve", {"kind": "selection", "data": {"items": [{"name": "a", "cost": 3, "value": 4}], "budget": 5}})
+    assert "\n" not in text
+    assert json.loads(text) == {"status": "OPTIMAL", "meaning": "Best possible solution, proved optimal.",
+                                "total_value": 4, "plan": {"chosen": ["a"], "spent": 3}, "checked": True}
+
+
+def test_get_format_is_plain_text():
+    assert call("get_format", {"kind": "cutting"}).startswith("cutting: Cut ordered pieces")
 
 
 def test_unbounded_integer_is_rejected_not_capped_at_one():
     # This exact request used to come back OPTIMAL with x = 1 and a passing verification.
-    result = call("solve_model", {"model": {
+    result = json.loads(call("solve", {"kind": "model", "data": {
         "variables": [{"name": "x", "type": "integer", "lb": 0}],
-        "objective": {"sense": "maximize", "terms": {"x": 5}}}})
-    assert result["status"] == "INVALID_MODEL"
+        "objective": {"sense": "maximize", "terms": {"x": 5}}}}))
+    assert result["status"] == "INVALID_INPUT"
     assert result["problems"] == ["variables[0]: integer variable 'x' needs an upper bound 'ub': use the largest "
                                   "value that makes sense, for example what the available resources allow"]
 
 
-def test_mistakes_are_listed_in_plain_words():
-    result = call("solve_model", {"model": {
-        "variables": [{"name": "x", "type": "integer", "lb": 0, "ub": 9}],
-        "constraints": [{"name": "c", "terms": {"y": 1}, "sense": "<=", "rhs": 3}]}})
-    assert result["status"] == "INVALID_MODEL"
-    assert result["problems"] == ["constraint c uses unknown variables ['y']"]
-    assert "pydantic" not in json.dumps(result)
-
-
-def test_valid_model_still_solves():
-    result = call("solve_model", {"model": {
-        "variables": [{"name": "x", "type": "integer", "lb": 0, "ub": 9}],
-        "objective": {"sense": "maximize", "terms": {"x": 5}}}})
-    assert result["status"] == "OPTIMAL" and result["values"] == {"x": 9}
-
-
-def test_answers_capped_by_a_bound_are_flagged():
-    # An invented ub can cap the answer just like the old default did; OPTIMAL alone does not show it.
-    result = call("solve_model", {"model": {
+def test_general_model_flags_answers_capped_by_a_bound():
+    result = json.loads(call("solve", {"kind": "model", "data": {
         "variables": [{"name": "x", "type": "integer", "ub": 10}, {"name": "b", "type": "boolean"}],
-        "objective": {"sense": "maximize", "terms": {"x": 5, "b": 1}}}})
-    assert result["status"] == "OPTIMAL" and result["at_upper_bound"] == ["x"]
-    assert "raise it" in result["warning"]
+        "objective": {"sense": "maximize", "terms": {"x": 5, "b": 1}}}}))
+    assert result["status"] == "OPTIMAL" and result["at_upper_bound"] == ["x"] and "raise it" in result["warning"]
 
-
-def test_no_flag_when_a_constraint_is_the_limit():
-    result = call("solve_model", {"model": {
-        "variables": [{"name": "x", "type": "integer", "ub": 100}],
+    result = json.loads(call("solve", {"kind": "model", "data": {
+        "variables": [{"name": "x", "type": "integer", "ub": 100}, {"name": "y", "type": "integer", "ub": 100}],
         "constraints": [{"name": "wood", "terms": {"x": 2}, "sense": "<=", "rhs": 14}],
-        "objective": {"sense": "maximize", "terms": {"x": 5}}}})
-    assert result["values"] == {"x": 7}
-    assert "at_upper_bound" not in result and "warning" not in result
+        "objective": {"sense": "maximize", "terms": {"x": 5}}}}))
+    assert result["values"] == {"x": 7} and result["note"] == "variables not listed are 0"
+    assert "at_upper_bound" not in result
 
 
-def test_every_tool_validates_its_input():
-    bad = {"variables": [{"name": "x"}]}  # integer by default, no ub
-    for tool, args in (("verify_solution", {"model": bad, "values": {"x": 1}}),
-                       ("explain_infeasibility", {"model": bad})):
-        assert call(tool, args)["status"] == "INVALID_MODEL"
-    assert call("schedule_shifts", {"request": {"days": ["Mon"]}})["status"] == "INVALID_MODEL"
-
-
-def test_schemas_are_flat_for_small_models():
-    async def go():
-        async with Client(server) as c:
-            return {t.name: t.input_schema for t in (await c.list_tools()).tools}
-    schemas = asyncio.run(go())
-    for name, schema in schemas.items():
-        assert "$ref" not in json.dumps(schema), name
-    variable = schemas["solve_model"]["properties"]["model"]["properties"]["variables"]["items"]
-    assert "required for integer variables" in json.dumps(variable)
-
-
-def test_model_class_requires_ub_for_integers_only():
-    with pytest.raises(ValueError, match="needs an upper bound"):
-        Model.model_validate({"variables": [{"name": "x", "type": "integer"}]})
-    m = Model.model_validate({"variables": [{"name": "b", "type": "boolean"}]})
-    assert (m.variables[0].lb, m.variables[0].ub) == (0, 1)
+def test_unknown_kind_is_refused_by_the_schema():
+    text = call("solve", {"kind": "knapsack", "data": {}})
+    assert "knapsack" in text or "Input should be" in text

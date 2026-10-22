@@ -15,7 +15,7 @@ from pathlib import Path
 import groq
 
 from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, deref,  # noqa: F401
-                          env_key, run_python, skill_text)
+                          env_key, instructions, run_python, skill_text)
 
 # Reasoning models (gpt-oss) spend output tokens thinking before they answer; Groq's
 # default cap (2,048) cut answers off mid-thought, which Claude Code runs never hit.
@@ -118,8 +118,8 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     answer is what submit_answer received (always None without answer_keys)."""
     client = client or groq.Groq(api_key=api_key(), max_retries=0)
     messages = [{"role": "user", "content": prompt}]
-    if condition == "plugin":
-        messages.insert(0, {"role": "system", "content": skill_text()})
+    if instructions(condition):
+        messages.insert(0, {"role": "system", "content": instructions(condition)})
     events, tokens = [], {"prompt": 0, "completion": 0}
 
     async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):

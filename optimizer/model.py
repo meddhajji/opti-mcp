@@ -19,14 +19,24 @@ Example, as JSON:
     "objective": {"sense": "maximize", "terms": {"chairs": 30, "tables": 80}}
   }
 
-Coefficients and bounds are integers: the CP-SAT solver works on whole
-numbers. Scale decimals first (prices in cents, weights in grams).
+Variables take whole-number values. Coefficients may be decimals (0.25 pounds
+of cashews per box), up to 6 decimal places: the engine scales each rule to
+whole numbers exactly, so nothing is rounded.
 """
+from decimal import Decimal
 from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
 Sense = Literal["<=", ">=", "=="]
+Number = int | float
+MAX_DECIMALS = 6
+
+
+def check_decimals(where: str, numbers) -> None:
+    for x in numbers:
+        if -Decimal(str(x)).normalize().as_tuple().exponent > MAX_DECIMALS:
+            raise ValueError(f"{where}: {x} has more than {MAX_DECIMALS} decimal places")
 
 
 class Variable(BaseModel):
@@ -55,9 +65,9 @@ class Variable(BaseModel):
 
 class Constraint(BaseModel):
     name: str = Field(description="Human-readable: it is what infeasibility explanations quote.")
-    terms: dict[str, int] = Field(description="variable name -> integer coefficient")
+    terms: dict[str, Number] = Field(description="variable name -> coefficient")
     sense: Sense
-    rhs: int
+    rhs: Number
     definition: bool = Field(
         False,
         description="True for bookkeeping equations (e.g. total = sum of parts) that are never "
@@ -67,8 +77,8 @@ class Constraint(BaseModel):
 
 class Objective(BaseModel):
     sense: Literal["minimize", "maximize"]
-    terms: dict[str, int]
-    constant: int = 0
+    terms: dict[str, Number]
+    constant: Number = 0
 
 
 class Model(BaseModel):
@@ -91,8 +101,12 @@ class Model(BaseModel):
             unknown = set(c.terms) - known
             if unknown:
                 raise ValueError(f"constraint {c.name} uses unknown variables {sorted(unknown)}")
+            if not c.terms:
+                raise ValueError(f"constraint {c.name} has no terms")
+            check_decimals(f"constraint {c.name}", [*c.terms.values(), c.rhs])
         if self.objective:
             unknown = set(self.objective.terms) - known
             if unknown:
                 raise ValueError(f"objective uses unknown variables {sorted(unknown)}")
+            check_decimals("objective", [*self.objective.terms.values(), self.objective.constant])
         return self

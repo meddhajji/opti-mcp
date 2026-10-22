@@ -38,18 +38,18 @@ class FakeGemini:
 
 def test_plugin_condition_with_the_real_mcp_server(tmp_path):
     fake = FakeGemini([
-        response([types.Part(function_call=types.FunctionCall(name="solve_model", args={"model": KNAPSACK}))]),
+        response([types.Part(function_call=types.FunctionCall(name="solve", args={"kind": "model", "data": KNAPSACK}))]),
         response([types.Part(text='FINAL ANSWER: {"value": 12}')]),
     ])
     out = asyncio.run(gemini_agent.run("Q", "gemini-3.5-flash-lite", "plugin", tmp_path, client=fake))
-    assert out["tools"] == ["solve_model"] and out["turns"] == 2
+    assert out["tools"] == ["solve"] and out["turns"] == 2
     assert out["text"] == 'FINAL ANSWER: {"value": 12}'
     first, second = fake.requests
     assert "Optimize" in first["config"].system_instruction
     names = {d.name for d in first["config"].tools[0].function_declarations}
-    assert names == {"solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}
+    assert names == {"solve", "get_format"}
     function_response = second["contents"][-1].parts[0].function_response
-    assert function_response.name == "solve_model" and '"OPTIMAL"' in function_response.response["result"]
+    assert function_response.name == "solve" and '"OPTIMAL"' in function_response.response["result"]
     assert out["tokens"] == {"prompt": 200, "completion": 50}  # thinking tokens counted as output
 
 

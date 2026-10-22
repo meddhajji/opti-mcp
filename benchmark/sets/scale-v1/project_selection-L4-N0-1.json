@@ -159,6 +159,114 @@
      "P20": 42000
     }
    }
+  },
+  "kind": {
+   "kind": "selection",
+   "data": {
+    "items": [
+     {
+      "name": "P1",
+      "cost": 89000,
+      "value": 93000
+     },
+     {
+      "name": "P2",
+      "cost": 38000,
+      "value": 73000
+     },
+     {
+      "name": "P3",
+      "cost": 48000,
+      "value": 66000
+     },
+     {
+      "name": "P4",
+      "cost": 17000,
+      "value": 36000
+     },
+     {
+      "name": "P5",
+      "cost": 75000,
+      "value": 94000
+     },
+     {
+      "name": "P6",
+      "cost": 78000,
+      "value": 109000
+     },
+     {
+      "name": "P7",
+      "cost": 83000,
+      "value": 75000
+     },
+     {
+      "name": "P8",
+      "cost": 35000,
+      "value": 36000
+     },
+     {
+      "name": "P9",
+      "cost": 29000,
+      "value": 63000
+     },
+     {
+      "name": "P10",
+      "cost": 48000,
+      "value": 73000
+     },
+     {
+      "name": "P11",
+      "cost": 34000,
+      "value": 33000
+     },
+     {
+      "name": "P12",
+      "cost": 64000,
+      "value": 84000
+     },
+     {
+      "name": "P13",
+      "cost": 32000,
+      "value": 60000
+     },
+     {
+      "name": "P14",
+      "cost": 72000,
+      "value": 138000
+     },
+     {
+      "name": "P15",
+      "cost": 50000,
+      "value": 55000
+     },
+     {
+      "name": "P16",
+      "cost": 82000,
+      "value": 128000
+     },
+     {
+      "name": "P17",
+      "cost": 68000,
+      "value": 141000
+     },
+     {
+      "name": "P18",
+      "cost": 49000,
+      "value": 66000
+     },
+     {
+      "name": "P19",
+      "cost": 84000,
+      "value": 112000
+     },
+     {
+      "name": "P20",
+      "cost": 23000,
+      "value": 42000
+     }
+    ],
+    "budget": 439000
+   }
   }
  }
 }

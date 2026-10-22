@@ -319,6 +319,33 @@
      "stock_w9": 4
     }
    }
+  },
+  "kind": {
+   "kind": "production",
+   "data": {
+    "demand": [
+     177,
+     131,
+     113,
+     181,
+     166,
+     162,
+     156,
+     105,
+     207
+    ],
+    "regular": {
+     "capacity": 161,
+     "cost": 41
+    },
+    "overtime": {
+     "capacity": 38,
+     "cost": 56
+    },
+    "holding_cost": 4,
+    "storage": 96,
+    "start_stock": 26
+   }
   }
  }
 }

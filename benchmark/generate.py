@@ -34,7 +34,7 @@ BENCH = Path(__file__).resolve().parent
 sys.path.insert(0, str(BENCH.parent))
 
 from optimizer.model import Model  # noqa: E402
-from optimizer.solve import solve  # noqa: E402
+from optimizer.engine import solve_model  # noqa: E402
 
 FAMILIES = ("product_mix", "project_selection", "assignment", "cutting_stock", "production_planning")
 NAMES = ["Amine", "Salma", "Youssef", "Imane", "Omar", "Khadija", "Hamza", "Sara", "Mehdi", "Nour",
@@ -105,9 +105,13 @@ def product_mix(rng: random.Random, level: int) -> dict:
     for p, k in minimum.items():
         facts.append(f"A customer order requires at least {k} {p}.")
     facts.append("Everything produced will be sold, and only whole units can be made.")
+    kind = ("product_mix", {
+        "products": [{"name": p, "profit": profit[p], "uses": {r[0]: use[p, r[0]] for r in resources if use[p, r[0]]},
+                      **({"min": minimum[p]} if p in minimum else {})} for p in products],
+        "available": {r[0]: cap[r[0]] for r in resources}})
     return {"facts": [f for f in facts if f], "ask": "How many of each product should be made to maximise total profit?",
             "objective_key": "The maximum total profit in dollars", "model": ref, "check": check,
-            "setting": "a furniture workshop"}
+            "setting": "a furniture workshop", "kind": kind}
 
 
 # ---------------------------------------------------------------- project selection
@@ -131,7 +135,9 @@ def project_selection(rng: random.Random, level: int) -> dict:
              f"The total budget is {money(budget * 1000)} dollars."]
     return {"facts": facts, "ask": "Which projects should be funded to maximise the total yearly benefit?",
             "objective_key": "The maximum total yearly benefit in dollars", "model": ref,
-            "check": (best[budget] * 1000, "dynamic programming over the budget"), "setting": "a manufacturing company"}
+            "check": (best[budget] * 1000, "dynamic programming over the budget"), "setting": "a manufacturing company",
+            "kind": ("selection", {"items": [{"name": p, "cost": cost[p] * 1000, "value": gain[p] * 1000} for p in names],
+                                   "budget": budget * 1000})}
 
 
 # ---------------------------------------------------------------- assignment
@@ -159,7 +165,8 @@ def assignment(rng: random.Random, level: int) -> dict:
              + table(["Worker"] + jobs, [[w] + row for w, row in zip(workers, t)]) + "\n"]
     return {"facts": facts, "ask": "Which worker should do which job so that the total time is as small as possible?",
             "objective_key": "The minimum total time in minutes", "model": ref,
-            "check": (dp[(1 << n) - 1], "dynamic programming over subsets of jobs"), "setting": "a maintenance team"}
+            "check": (dp[(1 << n) - 1], "dynamic programming over subsets of jobs"), "setting": "a maintenance team",
+            "kind": ("assignment", {"workers": workers, "jobs": jobs, "cost": t})}
 
 
 # ---------------------------------------------------------------- cutting stock
@@ -182,7 +189,8 @@ def cutting_stock(rng: random.Random, level: int) -> dict:
              "Pieces ordered: " + ", ".join(f"{demand[L]} pieces of {L / 100:.2f} m" for L in lengths) + "."]
     return {"facts": facts, "ask": f"What is the minimum number of {BAR // 100}-metre bars needed to cut the whole order?",
             "objective_key": f"The minimum number of {BAR // 100}-metre bars", "model": ref, "check": check,
-            "setting": "a metal workshop", "pieces": demand}
+            "setting": "a metal workshop", "pieces": demand,
+            "kind": ("cutting", {"bar_length": BAR / 100, "pieces": [{"length": L / 100, "count": demand[L]} for L in lengths]})}
 
 
 def fitting_patterns(lengths: list[int], room: int) -> list[tuple]:
@@ -201,7 +209,7 @@ def bars_by_assignment(demand: dict[int, int], bars: int) -> bool:
               [(f"piece {p} cut once", {x[p, b]: 1 for b in range(bars)}, "==", 1) for p in range(len(pieces))]
               + [(f"bar {b} length", {x[p, b]: pieces[p] for p in range(len(pieces))}, "<=", BAR) for b in range(bars)],
               "minimize", {})
-    return solve(Model.model_validate(m), time_limit_s=60)["status"] in ("OPTIMAL", "FEASIBLE")
+    return solve_model(Model.model_validate(m), time_limit_s=60)["status"] in ("OPTIMAL", "FEASIBLE")
 
 
 # ---------------------------------------------------------------- production planning
@@ -235,7 +243,10 @@ def production_planning(rng: random.Random, level: int) -> dict:
              f"There are {stock0} units in stock at the start."]
     return {"facts": facts, "ask": f"What is the minimum total cost of meeting demand over the {weeks} weeks?",
             "objective_key": "The minimum total cost in dollars", "model": ref,
-            "check": (best, "dynamic programming over weekly stock levels"), "setting": "a factory"}
+            "check": (best, "dynamic programming over weekly stock levels"), "setting": "a factory",
+            "kind": ("production", {"demand": demand, "regular": {"capacity": reg_cap, "cost": reg_cost},
+                                    "overtime": {"capacity": ot_cap, "cost": ot_cost}, "holding_cost": hold,
+                                    "storage": store, "start_stock": stock0})}
 
 
 def production_dp(demand, reg_cap, ot_cap, reg_cost, ot_cost, hold, store, stock0) -> int | None:
@@ -291,7 +302,7 @@ BUILDERS = {f: globals()[f] for f in FAMILIES}
 def solved_spec(family: str, level: int, seed: int) -> dict:
     """The instance's numbers, reference model and proven optimum: shared by every noise level."""
     spec = BUILDERS[family](random.Random(f"{family}-{level}-{seed}"), level)
-    result = solve(Model.model_validate(spec["model"]), time_limit_s=120, workers=8)
+    result = solve_model(Model.model_validate(spec["model"]), time_limit_s=120, workers=8)
     if result["status"] != "OPTIMAL":
         raise RuntimeError(f"{family}-L{level}-{seed}: reference solve ended {result['status']}")
     return spec | {"optimum": result["objective"], "solve_seconds": result["solve_seconds"]}
@@ -323,7 +334,9 @@ def build(family: str, level: int, noise: int, seed: int, spec: dict | None = No
         "question": question, "answer_keys": [key], "objective_key": key,
         "objective_sense": ref.objective.sense, "expected": {key: float(optimum)}, "optimum": float(optimum),
         "independent_check": check[1] if check else "none available at this size (solver proof only)",
-        "reference": {"key_to_variable": {key: "objective"}, "objective_divisor": 1, "model": spec["model"]},
+        "reference": {"key_to_variable": {key: "objective"}, "objective_divisor": 1, "model": spec["model"],
+                      # the data a perfect reader would pass to the matching kind (tests and error analysis only)
+                      "kind": {"kind": spec["kind"][0], "data": spec["kind"][1]}},
     }
 
 

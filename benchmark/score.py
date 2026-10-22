@@ -23,7 +23,7 @@ import re
 
 from optimizer.explain import explain_infeasible
 from optimizer.model import Model
-from optimizer.solve import solve
+from optimizer.engine import solve_model
 
 FINAL = re.compile(r"FINAL ANSWER\s*:?\s*(?:```(?:json)?\s*)?(\{.*?\})", re.IGNORECASE | re.DOTALL)
 OUTCOMES = ["optimal", "suboptimal", "infeasible", "inconsistent", "impossible", "incomplete", "no_answer"]
@@ -92,7 +92,7 @@ def score(problem: dict, answer: dict | None) -> dict:
         {"name": f"agent: {v} = {int(x)}", "terms": {v: 1}, "sense": "==", "rhs": int(x)} for v, x in decisions.items()
     ])
     model = Model.model_validate(fixed)
-    result = solve(model, time_limit_s=20, workers=4)
+    result = solve_model(model, time_limit_s=20, workers=4)
     if result["status"] == "INFEASIBLE":
         conflict = explain_infeasible(model, time_limit_s=20)
         broken = [c["rule"] for c in conflict.get("conflict", []) if not c["rule"].startswith("agent:")]

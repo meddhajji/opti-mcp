@@ -2,7 +2,10 @@
 
 Deliberately plain Python arithmetic, with no solver involved: if the solver
 (or whoever produced the values) made a mistake, this is what catches it.
+Decimal coefficients are compared as exact fractions, never as rounded floats.
 """
+from fractions import Fraction
+
 from .model import Model
 
 OPS = {
@@ -12,10 +15,20 @@ OPS = {
 }
 
 
-def evaluate_objective(model: Model, values: dict[str, int]) -> int | None:
+def exact(x) -> Fraction:
+    return Fraction(str(x))
+
+
+def shown(x: Fraction):
+    """An exact value as JSON shows it best: an int when whole."""
+    return int(x) if x.denominator == 1 else float(x)
+
+
+def evaluate_objective(model: Model, values: dict[str, int]):
     if model.objective is None:
         return None
-    return model.objective.constant + sum(c * values[v] for v, c in model.objective.terms.items())
+    o = model.objective
+    return shown(exact(o.constant) + sum(exact(c) * values[v] for v, c in o.terms.items()))
 
 
 def verify(model: Model, values: dict[str, int]) -> dict:
@@ -34,7 +47,7 @@ def verify(model: Model, values: dict[str, int]) -> dict:
         return {"valid": False, "violations": violations, "objective": None}
 
     for c in model.constraints:
-        lhs = sum(coef * values[name] for name, coef in c.terms.items())
-        if not OPS[c.sense](lhs, c.rhs):
-            violations.append({"rule": c.name, "problem": f"left side is {lhs}, needs {c.sense} {c.rhs}"})
+        lhs = sum(exact(coef) * values[name] for name, coef in c.terms.items())
+        if not OPS[c.sense](lhs, exact(c.rhs)):
+            violations.append({"rule": c.name, "problem": f"left side is {shown(lhs)}, needs {c.sense} {c.rhs}"})
     return {"valid": not violations, "violations": violations, "objective": evaluate_objective(model, values)}

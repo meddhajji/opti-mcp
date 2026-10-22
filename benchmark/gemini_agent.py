@@ -15,7 +15,7 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from agent_common import MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, env_key, skill_text
+from agent_common import MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, env_key, instructions
 
 MAX_RETRIES = 8
 
@@ -54,7 +54,7 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     """Returns {text, tools, turns, tokens, events, calls, answer} in the shape run.py records;
     answer is what submit_answer received (always None without answer_keys)."""
     client = client or genai.Client(api_key=env_key("GEMINI_API_KEY"))
-    system = skill_text() if condition == "plugin" else None
+    system = instructions(condition)
     if system and "gemma" in model:
         prompt, system = f"{system}\n\n---\n\n{prompt}", None
     contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]

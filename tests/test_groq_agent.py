@@ -52,16 +52,15 @@ JACKETS_MODEL = {
 
 def test_plugin_condition_calls_the_real_mcp_server(tmp_path):
     fake = FakeGroq([
-        reply(calls=[tool_call("solve_model", {"model": JACKETS_MODEL})]),
+        reply(calls=[tool_call("solve", {"kind": "model", "data": JACKETS_MODEL})]),
         reply('FINAL ANSWER: {"profit": 2850}'),
     ])
     out = asyncio.run(groq_agent.run("Q", "fake-model", "plugin", tmp_path, client=fake))
-    assert out["tools"] == ["solve_model"] and out["turns"] == 2
+    assert out["tools"] == ["solve"] and out["turns"] == 2
     assert out["text"].endswith('{"profit": 2850}')
     first, second = fake.requests
     assert first["messages"][0]["role"] == "system" and "Optimize" in first["messages"][0]["content"]
-    assert {t["function"]["name"] for t in first["tools"]} == {
-        "solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}
+    assert {t["function"]["name"] for t in first["tools"]} == {"solve", "get_format"}
     tool_message = second["messages"][-1]
     assert tool_message["role"] == "tool" and '"OPTIMAL"' in tool_message["content"]
     assert out["tokens"] == {"prompt": 200, "completion": 40}
@@ -73,6 +72,19 @@ def test_code_condition_runs_the_models_python(tmp_path):
     assert out["tools"] == ["run_python"]
     assert fake.requests[1]["messages"][-1]["content"].strip() == "42"
     assert [t["function"]["name"] for t in fake.requests[0]["tools"]] == ["run_python"]
+
+
+def test_library_condition_can_import_the_optimizer(tmp_path):
+    code = ("from optimizer import solve\n"
+            "print(solve('selection', {'items': [{'name': 'a', 'cost': 3, 'value': 4}], 'budget': 5})['total_value'])")
+    fake = FakeGroq([reply(calls=[tool_call("run_python", {"code": code})]), reply("FINAL ANSWER: {}")])
+    asyncio.run(groq_agent.run("Q", "fake-model", "library", tmp_path, client=fake))
+    system = fake.requests[0]["messages"][0]
+    assert system["role"] == "system" and "from optimizer import solve" in system["content"] and "cutting:" in system["content"]
+    assert fake.requests[1]["messages"][-1]["content"].strip() == "4"
+    fake = FakeGroq([reply(calls=[tool_call("run_python", {"code": "import optimizer"})]), reply("FINAL ANSWER: {}")])
+    asyncio.run(groq_agent.run("Q", "fake-model", "code", tmp_path / "c", client=fake))
+    assert "ModuleNotFoundError" in fake.requests[1]["messages"][-1]["content"]  # plain code has no optimizer
 
 
 def test_reasoning_condition_sends_no_tools(tmp_path):
@@ -94,7 +106,7 @@ FIELD = "the_maximum_profit_in_dollars"
 
 def test_submit_answer_ends_the_run_with_structured_numbers(tmp_path):
     fake = FakeGroq([
-        reply(calls=[tool_call("solve_model", {"model": JACKETS_MODEL})]),
+        reply(calls=[tool_call("solve", {"kind": "model", "data": JACKETS_MODEL})]),
         reply(calls=[tool_call("submit_answer", {FIELD: 2850})]),
         reply("never requested"),
     ])

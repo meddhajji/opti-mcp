@@ -1,30 +1,54 @@
 # Optimizer: exact optimisation for coding agents
 
-A Claude Code plugin (and MCP server usable by any MCP-capable agent) that lets an agent
-solve optimisation problems with a real solver instead of guessing. Ask "plan the shifts
-for my five staff this week" or "how many chairs and tables should the workshop make" and
-the answer is computed by Google OR-Tools, proved optimal, and re-checked independently
-before the agent shows it.
+A Claude Code plugin (and MCP server usable by any MCP-capable agent, or a plain Python
+library) that lets an agent solve optimisation problems with a real solver instead of
+guessing. Ask "which worker should do which job", "how should we cut these bars" or "plan
+the shifts for my five staff this week": the agent passes the numbers, Google OR-Tools
+finds the answer and proves it optimal, and an independent check confirms it before the
+agent shows it.
 
 Runs entirely on your machine. No API key, no LLM calls inside the plugin: the agent
-describes the problem, the solver decides, the verifier checks.
+reads the problem, the solver decides, the verifier checks.
 
 ## Why
 
-Asked to optimise, coding agents tend to write a quick heuristic (a greedy loop, a random
-search) whose answer looks plausible but is not optimal, quietly drop a rule, or invent a
-plan when none exists. This plugin gives them:
+Asked to optimise, agents tend to answer from intuition or write a quick heuristic (a
+greedy loop, a brute force that stops scaling) whose answer looks plausible but is not
+optimal, quietly drop a rule, or invent a plan when none exists. Small models also lose
+accuracy as their input grows, so the tool itself must be cheap to read.
+
+## Two tools, about 620 tokens
 
 | Tool | What it does |
 |---|---|
-| `schedule_shifts` | Optimal staff rota from a plain description: people needed per shift, unavailability, max/min shifts, one shift per day, rest between days, max consecutive days, preferences. Goals in strict order: no unnecessary shift, then fairness, then preferences. |
-| `solve_model` | Any integer optimisation model (variables, linear constraints, objective) written as JSON. |
-| `verify_solution` | Re-checks any proposed solution with plain arithmetic and lists every violated rule. |
-| `explain_infeasibility` | When no solution exists, returns a minimal set of rules that cannot all hold, so the user knows exactly what to relax. |
+| `solve(kind, data)` | Solves one problem of a known kind from its plain data. Its description is the catalogue below, one line per kind. |
+| `get_format(kind)` | The full format of one kind with an example, fetched only when needed. |
 
-The `optimize` skill tells the agent when to use which tool, to restate the rules before
-solving, and to report the solver's status honestly (OPTIMAL means proved best; FEASIBLE
-means valid but the time limit stopped the proof).
+| Kind | The agent passes | It gets back |
+|---|---|---|
+| `assignment` | workers, jobs, a cost table (null = not allowed) | who does which job, total |
+| `selection` | items with cost and value, a budget (or one per resource), exclusive groups, dependencies | which to choose, value, spent |
+| `cutting` | bar length, pieces with length and count | how to cut each bar, number of bars, waste |
+| `production` | demand per period, regular and overtime capacity and cost, holding cost, storage | what to make each period, stock, total cost |
+| `product_mix` | products with profit and resource use, resources available | units of each product, total profit |
+| `transport` | supply, demand, cost per route | what to ship on each route, total cost |
+| `shifts` | days, shifts, staff with availability and limits, staffing needs | an optimal, fair rota |
+| `model` | any integer model: variables, linear rules, objective | values (zeros left out), objective |
+
+Every answer carries the solver status (OPTIMAL means proved best; FEASIBLE means valid
+but the time limit stopped the proof) and the result of an independent check. When no
+plan exists, it lists the smallest set of rules that conflict, in plain words, such as
+`period 2: demand of 300 met on time` and `period 2: regular at most 120`. Decimals are
+fine everywhere (0.25 lb per box): they are scaled to whole numbers exactly, never rounded.
+
+The same functions work as a library, which suits agents that write code:
+
+```python
+from optimizer import solve
+solve("cutting", {"bar_length": 6, "pieces": [{"length": 2.5, "count": 4}, {"length": 1.2, "count": 7}]})
+# {"status": "OPTIMAL", "bars": 4, "plan": {"cuts": [{"cut": "1 x 2.5 + 2 x 1.2", "bars": 4, "waste": 1.1}],
+#  "extra_pieces": {"1.2": 1}}, "checked": true, ...}
+```
 
 ## Example
 
@@ -49,18 +73,20 @@ Omar unavailable Fri evening
 
 ## How it works
 
-- `optimizer/model.py`: the JSON model format (integer variables and coefficients, the
-  form CP-SAT works on; decimals are scaled first).
-- `optimizer/solve.py`: builds and solves the model with CP-SAT, then always runs the
-  verifier on the answer.
-- `optimizer/verify.py`: independent check, no solver involved.
+- `optimizer/kinds.py`: each kind turns plain data into a model with readable rule names,
+  solves it, and answers in the problem's own words. The loops and variables live here,
+  not in the agent's reply.
+- `optimizer/model.py`: the general model format (whole-number variables, linear rules).
+- `optimizer/engine.py`: builds and solves a model with CP-SAT, scaling decimals exactly,
+  then always runs the verifier on the answer.
+- `optimizer/verify.py`: independent check with exact fractions, no solver involved.
 - `optimizer/explain.py`: puts an on/off switch on every rule, asks the solver which
   switches make the problem impossible, then removes rules one by one while it stays
   impossible (deletion filter). The result is an irreducible infeasible subset: removing
   any single rule from it removes the conflict.
 - `optimizer/scheduling.py`: turns a rota description into a model using four patterns
   (yes/no assignment, coverage, min-max fairness, weighted priorities).
-- `optimizer/server.py`: the MCP server.
+- `optimizer/server.py`: the MCP server, two tools.
 - `scripts/launch.py`: what the plugin starts. On first run it creates a private Python
   environment in the plugin's data folder and installs OR-Tools there (about a minute),
   then reuses it.
@@ -73,11 +99,14 @@ python -m venv .venv
 .venv/Scripts/python -m pytest
 ```
 
-167 tests, including 60 random small problems where the solver's optimum is compared with
-brute-force enumeration of every possible assignment (infeasible cases included), and a
-check that every reported conflict is truly minimal. The MCP tools are tested as an agent
-calls them, including the error messages it gets back. The benchmark scorer is tested on
-every verdict, and every reference answer must score as optimal.
+200 tests. Every kind is checked independently: brute force over every plan for
+assignment, selection, product mix and transport, dynamic programming for production
+planning, and for cutting stock a different formulation (each piece given to a bar) plus
+the total-length lower bound. Each generated benchmark
+instance must reach its proven optimum from the data a perfect reader would pass. The
+general model is compared with brute-force enumeration on 60 random problems, every
+reported conflict is checked to be truly minimal, and a test fails if the tools an agent
+reads grow past 700 tokens. The benchmark scorer is tested on every verdict.
 
 ## Benchmark (in progress)
 
@@ -198,8 +227,38 @@ would still fail: its machine-rental constraints were also wrong (250 instead of
 lesson: "verified" only means the answer satisfies the model the agent wrote, so the
 plugin must refuse to fill in anything the agent left out.
 
-Next: a size sweep on generated problems (below), so results become charts of accuracy
-against problem size rather than single percentages.
+### Making it light (v0.2, 22 Oct 2026)
+
+The gpt-oss-20b runs exposed what v0.1 cost a small model. Measured on one yardstick
+(about 4 characters per token, `tests/test_server.py` keeps it under 700):
+
+| Tokens | v0.1 | v0.2 |
+|---|---|---|
+| Read on every request (tool descriptions and skill) | 3,906 | 620 |
+| Written for one correct call: assignment, 12 workers | 4,246 | 166 |
+| Written for one correct call: cutting stock, 8 piece lengths | 11,136 | 65 |
+| Returned by the tool: assignment, 12 workers | about 850 | about 60 |
+
+Groq's free tier caps each request at 8,000 tokens, prompt and reply together, so with
+v0.1 a correct model of the largest generated problems could not even be sent. What
+changed:
+
+- One `solve` tool whose description is a catalogue, one line per kind. The full format
+  of a kind is fetched only when needed (`get_format`), the way skills load their details.
+- The kind writes the model. The agent passes the data it has already read (a cost
+  table, a list of pieces); the loops and the variables are written by tested code.
+- Answers are one line of JSON in the problem's words, with zeros left out.
+- Decimals are accepted and scaled exactly. The #400 failure above was a hand-scaling
+  mistake (0.25 lb written as 25 on a scale where 1 lb was 1000).
+- The skill is 140 tokens instead of 1,000.
+- The same functions can be imported as a Python library, for agents that write code.
+
+**The risk, stated up front.** The kinds cover exactly the five families the generator
+produces, so on generated problems they could look good simply because they match the
+test. Two checks against that: the families are the textbook ones (assignment, knapsack,
+cutting stock, lot sizing, product mix, plus transport) chosen because they are what
+industrial engineers meet most, and the 20 hand-written problems, which were not written
+for the kinds, are rerun with v0.2.
 
 ### Generated problems and more models (in progress)
 
@@ -216,7 +275,19 @@ Instance ids (`assignment-L3-N1-2`) regenerate exactly the same problem.
 
 Besides Claude Code, `--backend groq` and `--backend gemini` run open and cheap models
 (gpt-oss-20b, Gemma 4 26B, Gemini Flash-Lite) through this repo's own agent loop
-(`benchmark/agent_common.py`), with the same three conditions, prompt and scorer.
+(`benchmark/agent_common.py`), with the same conditions, prompt and scorer. Two additions
+for these runs:
+
+- `--answer-tool`: the agent ends by calling `submit_answer` with one number per answer
+  key, so no answer is ever parsed from prose (two correct gpt-oss answers were lost to a
+  bold `**FINAL ANSWER:**`). An agent that stops without calling it is reminded once.
+- A fourth condition, `library`: plain code execution where scripts can also
+  `import optimizer`, with the same guidance as the skill (about 500 tokens).
+
+**Running now:** gpt-oss-20b on `benchmark/sets/scale-v1` (10 problems, one per family at
+size levels 4 and 5) in three conditions: code, plugin v0.2 and library. Then plugin v0.2
+and library on the 20 hand-written problems, with the same answer format as the v0.1
+baseline.
 
 ## Install
 
@@ -226,11 +297,21 @@ Requires Python 3.10 or newer, available as `python`.
 claude --plugin-dir /path/to/optimization-plugin
 ```
 
+As a library:
+
+```bash
+pip install git+https://github.com/meddhajji/optimization-plugin
+```
+
 ## Status and next steps
 
-Version 0.1: the four tools, the `optimize` skill, tests. Next:
+Version 0.2: eight problem kinds behind two tools, the `optimize` skill, the Python
+library, 200 tests, and the benchmark above. Next:
 
-1. A benchmark measuring agents with and without the plugin on optimisation word
-   problems with known answers (OptiBench and real cases), including a small local model.
-2. More high-level tools: assignment, production planning, delivery routing, cutting stock.
-3. Continuous variables (linear programming with HiGHS).
+1. Finish the scale runs, then the size sweep (levels 1 to 5, several seeds, noise on
+   and off) as charts of accuracy and tokens against problem size, for gpt-oss-20b,
+   Gemma 4 26B and Gemini Flash-Lite.
+2. Infeasible instances, to measure whether agents report conflicts instead of
+   inventing a plan.
+3. More kinds where agents fail most: vehicle routing, bin packing, job-shop scheduling.
+4. Continuous variables (linear programming with HiGHS).

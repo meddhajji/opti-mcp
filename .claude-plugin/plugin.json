@@ -1,17 +1,27 @@
 {
   "name": "optimizer",
   "displayName": "Optimizer",
-  "version": "0.1.0",
-  "description": "Exact optimisation for agents: proven-optimal staff schedules and integer models, every answer independently verified, and plain explanations when no solution exists. Runs locally, no API key.",
+  "version": "0.2.0",
+  "description": "Exact optimisation for agents in about 600 tokens: assignment, project selection, cutting stock, production planning, product mix, transport, staff rotas and general integer models, every answer proved optimal and independently verified, with plain explanations when no plan exists. Runs locally, no API key.",
   "author": {
     "name": "Mohamed Hajji"
   },
   "license": "MIT",
-  "keywords": ["optimization", "operations-research", "scheduling", "or-tools", "cp-sat", "mcp"],
+  "keywords": [
+    "optimization",
+    "operations-research",
+    "scheduling",
+    "cutting-stock",
+    "or-tools",
+    "cp-sat",
+    "mcp"
+  ],
   "mcpServers": {
     "optimizer": {
       "command": "python",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launch.py"]
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/scripts/launch.py"
+      ]
     }
   }
 }

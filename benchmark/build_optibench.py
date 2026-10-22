@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent))
 
 from optimizer.model import Model  # noqa: E402
-from optimizer.solve import solve  # noqa: E402
+from optimizer.engine import solve_model  # noqa: E402
 
 
 def m(variables, constraints, sense, objective):
@@ -193,7 +193,7 @@ def main():
         assert set(keymap) == set(expected), f"#{p['index']}: answer keys and key map differ"
         objective_key = next(k for k, v in keymap.items() if v == "objective")
 
-        result = solve(model, workers=8)
+        result = solve_model(model, workers=8)
         assert result["status"] == "OPTIMAL", f"#{p['index']}: {result['status']}"
         optimum = result["objective"] / divisor
         agrees = abs(optimum - expected[objective_key]) < 1e-6

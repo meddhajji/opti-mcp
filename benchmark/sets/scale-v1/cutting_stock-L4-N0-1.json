@@ -540,6 +540,38 @@
      "cut_1x315_0x300_1x285_0x240_0x140_0x105": 1
     }
    }
+  },
+  "kind": {
+   "kind": "cutting",
+   "data": {
+    "bar_length": 6.0,
+    "pieces": [
+     {
+      "length": 3.15,
+      "count": 9
+     },
+     {
+      "length": 3.0,
+      "count": 13
+     },
+     {
+      "length": 2.85,
+      "count": 16
+     },
+     {
+      "length": 2.4,
+      "count": 17
+     },
+     {
+      "length": 1.4,
+      "count": 16
+     },
+     {
+      "length": 1.05,
+      "count": 8
+     }
+    ]
+   }
   }
  }
 }

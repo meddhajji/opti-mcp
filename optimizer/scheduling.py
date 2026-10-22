@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from .explain import explain_infeasible
 from .model import Constraint, Model, Objective, Variable
-from .solve import solve
+from .engine import solve_model
 
 ANY = "*"
 
@@ -156,7 +156,7 @@ def build_model(request: ScheduleRequest) -> Model:
 
 def schedule_shifts(request: ScheduleRequest, time_limit_s: float = 20.0) -> dict:
     model = build_model(request)
-    result = solve(model, time_limit_s=time_limit_s)
+    result = solve_model(model, time_limit_s=time_limit_s)
     out = {
         "status": result["status"],
         "meaning": result["meaning"],

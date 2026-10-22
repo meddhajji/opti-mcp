@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent))
 
 from optimizer.model import Model  # noqa: E402
-from optimizer.solve import solve  # noqa: E402
+from optimizer.engine import solve_model  # noqa: E402
 
 SOURCE = "Written for this benchmark (industrial operations)"
 
@@ -188,7 +188,7 @@ def main():
     for build in (assignment, cutting_stock, production_planning, exam_timetable, staffing):
         pid, question, model_dict, keymap, independent, method = build()
         model = Model.model_validate(model_dict)
-        result = solve(model, workers=8)
+        result = solve_model(model, workers=8)
         assert result["status"] == "OPTIMAL", f"{pid}: {result['status']}"
         assert result["objective"] == independent, f"{pid}: solver {result['objective']} vs check {independent}"
         values = result["values"]

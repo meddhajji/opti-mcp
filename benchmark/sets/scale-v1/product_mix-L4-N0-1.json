@@ -150,6 +150,94 @@
      "bookcases": 44
     }
    }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "frames",
+      "profit": 36,
+      "uses": {
+       "wood": 7,
+       "labour": 9,
+       "paint": 5
+      }
+     },
+     {
+      "name": "chairs",
+      "profit": 60,
+      "uses": {
+       "wood": 4,
+       "machine time": 9,
+       "labour": 3
+      },
+      "min": 1
+     },
+     {
+      "name": "cabinets",
+      "profit": 94,
+      "uses": {
+       "wood": 3,
+       "labour": 7,
+       "paint": 1
+      }
+     },
+     {
+      "name": "tables",
+      "profit": 69,
+      "uses": {
+       "wood": 9,
+       "labour": 8,
+       "paint": 5
+      }
+     },
+     {
+      "name": "benches",
+      "profit": 20,
+      "uses": {
+       "wood": 8,
+       "machine time": 6,
+       "labour": 9
+      }
+     },
+     {
+      "name": "beds",
+      "profit": 71,
+      "uses": {
+       "wood": 9,
+       "machine time": 8,
+       "labour": 5,
+       "paint": 9
+      }
+     },
+     {
+      "name": "shelves",
+      "profit": 85,
+      "uses": {
+       "wood": 9,
+       "machine time": 8,
+       "labour": 2,
+       "paint": 3
+      }
+     },
+     {
+      "name": "bookcases",
+      "profit": 44,
+      "uses": {
+       "wood": 8,
+       "labour": 5,
+       "paint": 9
+      }
+     }
+    ],
+    "available": {
+     "wood": 490,
+     "machine time": 135,
+     "labour": 351,
+     "paint": 130
+    }
+   }
   }
  }
 }
