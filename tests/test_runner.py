@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "benchmark"))
 
-from run import PLUGIN_TOOLS, PROMPT, command, parse_stream  # noqa: E402
+from run import PLUGIN_TOOLS, PROMPT, SUBMIT_PROMPT, command, load_problems, parse_stream  # noqa: E402
 
 
 def test_conditions_differ_only_in_what_they_allow():
@@ -21,8 +21,27 @@ def test_conditions_differ_only_in_what_they_allow():
 
 
 def test_prompt_never_mentions_the_plugin():
-    text = PROMPT.format(question="Q", keys='["a"]').lower()
-    assert "plugin" not in text and "optimizer" not in text and "solver" not in text
+    for prompt in (PROMPT, SUBMIT_PROMPT):
+        text = prompt.format(question="Q", keys='["a"]').lower()
+        assert "plugin" not in text and "optimizer" not in text and "solver" not in text
+
+
+def test_answer_tool_takes_the_answer_from_the_call_not_the_text(tmp_path, monkeypatch):
+    import run
+
+    problem = load_problems(["optibench-573"])[0]
+    seen = {}
+
+    def fake_api(backend, prompt, model, condition, timeout_s, workdir, answer_keys=None):
+        seen.update(prompt=prompt, keys=answer_keys)
+        answer = {k: problem["expected"][k] for k in problem["answer_keys"]}
+        return {"text": "FINAL ANSWER: {}", "tools": ["submit_answer"], "turns": 1, "cost_usd": None,
+                "stop": "success", "answer": answer}, None
+
+    monkeypatch.setattr(run, "run_api", fake_api)
+    row = run.run_one(problem, "m", "code", 1.0, 60, tmp_path, "groq", answer_tool=True)
+    assert row["outcome"] == "optimal" and row["protocol"] == "submit_answer"
+    assert seen["keys"] == problem["answer_keys"] and "submit_answer" in seen["prompt"]
 
 
 def test_parse_stream_collects_tools_and_final_text():

@@ -1,0 +1,597 @@
+{
+ "id": "assignment-L4-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "assignment",
+ "level": 4,
+ "noise": 0,
+ "seed": 1,
+ "question": "A team leader must give each of 8 workers exactly one of 8 jobs (J1, J2, J3, J4, J5, J6, J7, J8), and every job must be done by exactly one worker.\nTime in minutes each worker needs for each job:\n\n| Worker | J1 | J2 | J3 | J4 | J5 | J6 | J7 | J8 |\n|---|---|---|---|---|---|---|---|---|\n| Amine | 10 | 27 | 15 | 54 | 53 | 54 | 47 | 9 |\n| Karim | 31 | 53 | 59 | 15 | 19 | 33 | 19 | 13 |\n| Salma | 17 | 60 | 36 | 41 | 42 | 55 | 44 | 58 |\n| Zineb | 33 | 47 | 9 | 28 | 12 | 49 | 41 | 10 |\n| Driss | 36 | 44 | 27 | 33 | 34 | 18 | 27 | 51 |\n| Sara | 17 | 41 | 7 | 30 | 38 | 37 | 30 | 32 |\n| Hamza | 9 | 36 | 26 | 27 | 50 | 13 | 21 | 5 |\n| Rachid | 7 | 50 | 59 | 42 | 11 | 17 | 53 | 22 |\n\nWhich worker should do which job so that the total time is as small as possible?",
+ "answer_keys": [
+  "The minimum total time in minutes"
+ ],
+ "objective_key": "The minimum total time in minutes",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total time in minutes": 126.0
+ },
+ "optimum": 126.0,
+ "independent_check": "dynamic programming over subsets of jobs",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total time in minutes": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "assign_Amine_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Amine_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Hamza_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J8",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Amine does exactly one job",
+     "terms": {
+      "assign_Amine_J1": 1,
+      "assign_Amine_J2": 1,
+      "assign_Amine_J3": 1,
+      "assign_Amine_J4": 1,
+      "assign_Amine_J5": 1,
+      "assign_Amine_J6": 1,
+      "assign_Amine_J7": 1,
+      "assign_Amine_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Karim does exactly one job",
+     "terms": {
+      "assign_Karim_J1": 1,
+      "assign_Karim_J2": 1,
+      "assign_Karim_J3": 1,
+      "assign_Karim_J4": 1,
+      "assign_Karim_J5": 1,
+      "assign_Karim_J6": 1,
+      "assign_Karim_J7": 1,
+      "assign_Karim_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Salma does exactly one job",
+     "terms": {
+      "assign_Salma_J1": 1,
+      "assign_Salma_J2": 1,
+      "assign_Salma_J3": 1,
+      "assign_Salma_J4": 1,
+      "assign_Salma_J5": 1,
+      "assign_Salma_J6": 1,
+      "assign_Salma_J7": 1,
+      "assign_Salma_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Zineb does exactly one job",
+     "terms": {
+      "assign_Zineb_J1": 1,
+      "assign_Zineb_J2": 1,
+      "assign_Zineb_J3": 1,
+      "assign_Zineb_J4": 1,
+      "assign_Zineb_J5": 1,
+      "assign_Zineb_J6": 1,
+      "assign_Zineb_J7": 1,
+      "assign_Zineb_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Driss does exactly one job",
+     "terms": {
+      "assign_Driss_J1": 1,
+      "assign_Driss_J2": 1,
+      "assign_Driss_J3": 1,
+      "assign_Driss_J4": 1,
+      "assign_Driss_J5": 1,
+      "assign_Driss_J6": 1,
+      "assign_Driss_J7": 1,
+      "assign_Driss_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Sara does exactly one job",
+     "terms": {
+      "assign_Sara_J1": 1,
+      "assign_Sara_J2": 1,
+      "assign_Sara_J3": 1,
+      "assign_Sara_J4": 1,
+      "assign_Sara_J5": 1,
+      "assign_Sara_J6": 1,
+      "assign_Sara_J7": 1,
+      "assign_Sara_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Hamza does exactly one job",
+     "terms": {
+      "assign_Hamza_J1": 1,
+      "assign_Hamza_J2": 1,
+      "assign_Hamza_J3": 1,
+      "assign_Hamza_J4": 1,
+      "assign_Hamza_J5": 1,
+      "assign_Hamza_J6": 1,
+      "assign_Hamza_J7": 1,
+      "assign_Hamza_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Rachid does exactly one job",
+     "terms": {
+      "assign_Rachid_J1": 1,
+      "assign_Rachid_J2": 1,
+      "assign_Rachid_J3": 1,
+      "assign_Rachid_J4": 1,
+      "assign_Rachid_J5": 1,
+      "assign_Rachid_J6": 1,
+      "assign_Rachid_J7": 1,
+      "assign_Rachid_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J1 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J1": 1,
+      "assign_Karim_J1": 1,
+      "assign_Salma_J1": 1,
+      "assign_Zineb_J1": 1,
+      "assign_Driss_J1": 1,
+      "assign_Sara_J1": 1,
+      "assign_Hamza_J1": 1,
+      "assign_Rachid_J1": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J2 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J2": 1,
+      "assign_Karim_J2": 1,
+      "assign_Salma_J2": 1,
+      "assign_Zineb_J2": 1,
+      "assign_Driss_J2": 1,
+      "assign_Sara_J2": 1,
+      "assign_Hamza_J2": 1,
+      "assign_Rachid_J2": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J3 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J3": 1,
+      "assign_Karim_J3": 1,
+      "assign_Salma_J3": 1,
+      "assign_Zineb_J3": 1,
+      "assign_Driss_J3": 1,
+      "assign_Sara_J3": 1,
+      "assign_Hamza_J3": 1,
+      "assign_Rachid_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J4 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J4": 1,
+      "assign_Karim_J4": 1,
+      "assign_Salma_J4": 1,
+      "assign_Zineb_J4": 1,
+      "assign_Driss_J4": 1,
+      "assign_Sara_J4": 1,
+      "assign_Hamza_J4": 1,
+      "assign_Rachid_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J5 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J5": 1,
+      "assign_Karim_J5": 1,
+      "assign_Salma_J5": 1,
+      "assign_Zineb_J5": 1,
+      "assign_Driss_J5": 1,
+      "assign_Sara_J5": 1,
+      "assign_Hamza_J5": 1,
+      "assign_Rachid_J5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J6 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J6": 1,
+      "assign_Karim_J6": 1,
+      "assign_Salma_J6": 1,
+      "assign_Zineb_J6": 1,
+      "assign_Driss_J6": 1,
+      "assign_Sara_J6": 1,
+      "assign_Hamza_J6": 1,
+      "assign_Rachid_J6": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J7 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J7": 1,
+      "assign_Karim_J7": 1,
+      "assign_Salma_J7": 1,
+      "assign_Zineb_J7": 1,
+      "assign_Driss_J7": 1,
+      "assign_Sara_J7": 1,
+      "assign_Hamza_J7": 1,
+      "assign_Rachid_J7": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J8 done by exactly one worker",
+     "terms": {
+      "assign_Amine_J8": 1,
+      "assign_Karim_J8": 1,
+      "assign_Salma_J8": 1,
+      "assign_Zineb_J8": 1,
+      "assign_Driss_J8": 1,
+      "assign_Sara_J8": 1,
+      "assign_Hamza_J8": 1,
+      "assign_Rachid_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "assign_Amine_J1": 10,
+     "assign_Amine_J2": 27,
+     "assign_Amine_J3": 15,
+     "assign_Amine_J4": 54,
+     "assign_Amine_J5": 53,
+     "assign_Amine_J6": 54,
+     "assign_Amine_J7": 47,
+     "assign_Amine_J8": 9,
+     "assign_Karim_J1": 31,
+     "assign_Karim_J2": 53,
+     "assign_Karim_J3": 59,
+     "assign_Karim_J4": 15,
+     "assign_Karim_J5": 19,
+     "assign_Karim_J6": 33,
+     "assign_Karim_J7": 19,
+     "assign_Karim_J8": 13,
+     "assign_Salma_J1": 17,
+     "assign_Salma_J2": 60,
+     "assign_Salma_J3": 36,
+     "assign_Salma_J4": 41,
+     "assign_Salma_J5": 42,
+     "assign_Salma_J6": 55,
+     "assign_Salma_J7": 44,
+     "assign_Salma_J8": 58,
+     "assign_Zineb_J1": 33,
+     "assign_Zineb_J2": 47,
+     "assign_Zineb_J3": 9,
+     "assign_Zineb_J4": 28,
+     "assign_Zineb_J5": 12,
+     "assign_Zineb_J6": 49,
+     "assign_Zineb_J7": 41,
+     "assign_Zineb_J8": 10,
+     "assign_Driss_J1": 36,
+     "assign_Driss_J2": 44,
+     "assign_Driss_J3": 27,
+     "assign_Driss_J4": 33,
+     "assign_Driss_J5": 34,
+     "assign_Driss_J6": 18,
+     "assign_Driss_J7": 27,
+     "assign_Driss_J8": 51,
+     "assign_Sara_J1": 17,
+     "assign_Sara_J2": 41,
+     "assign_Sara_J3": 7,
+     "assign_Sara_J4": 30,
+     "assign_Sara_J5": 38,
+     "assign_Sara_J6": 37,
+     "assign_Sara_J7": 30,
+     "assign_Sara_J8": 32,
+     "assign_Hamza_J1": 9,
+     "assign_Hamza_J2": 36,
+     "assign_Hamza_J3": 26,
+     "assign_Hamza_J4": 27,
+     "assign_Hamza_J5": 50,
+     "assign_Hamza_J6": 13,
+     "assign_Hamza_J7": 21,
+     "assign_Hamza_J8": 5,
+     "assign_Rachid_J1": 7,
+     "assign_Rachid_J2": 50,
+     "assign_Rachid_J3": 59,
+     "assign_Rachid_J4": 42,
+     "assign_Rachid_J5": 11,
+     "assign_Rachid_J6": 17,
+     "assign_Rachid_J7": 53,
+     "assign_Rachid_J8": 22
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,254 @@
+{
+ "id": "project_selection-L5-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "project_selection",
+ "level": 5,
+ "noise": 0,
+ "seed": 1,
+ "question": "The company is choosing among 35 improvement projects, labelled P1 to P35.\nEach project is either done in full or not at all. Cost and expected yearly benefit:\n\n| Project | Cost (dollars) | Yearly benefit (dollars) |\n|---|---|---|\n| P1 | 78,000 | 127,000 |\n| P2 | 31,000 | 67,000 |\n| P3 | 25,000 | 48,000 |\n| P4 | 75,000 | 71,000 |\n| P5 | 17,000 | 31,000 |\n| P6 | 88,000 | 85,000 |\n| P7 | 73,000 | 120,000 |\n| P8 | 37,000 | 46,000 |\n| P9 | 90,000 | 73,000 |\n| P10 | 52,000 | 89,000 |\n| P11 | 31,000 | 50,000 |\n| P12 | 13,000 | 16,000 |\n| P13 | 79,000 | 169,000 |\n| P14 | 61,000 | 106,000 |\n| P15 | 87,000 | 78,000 |\n| P16 | 35,000 | 67,000 |\n| P17 | 90,000 | 141,000 |\n| P18 | 12,000 | 15,000 |\n| P19 | 31,000 | 40,000 |\n| P20 | 54,000 | 58,000 |\n| P21 | 40,000 | 42,000 |\n| P22 | 34,000 | 46,000 |\n| P23 | 85,000 | 143,000 |\n| P24 | 73,000 | 130,000 |\n| P25 | 61,000 | 67,000 |\n| P26 | 37,000 | 44,000 |\n| P27 | 58,000 | 111,000 |\n| P28 | 38,000 | 76,000 |\n| P29 | 56,000 | 51,000 |\n| P30 | 47,000 | 96,000 |\n| P31 | 27,000 | 26,000 |\n| P32 | 27,000 | 51,000 |\n| P33 | 67,000 | 76,000 |\n| P34 | 34,000 | 61,000 |\n| P35 | 25,000 | 34,000 |\n\nThe total budget is 856,000 dollars.\nWhich projects should be funded to maximise the total yearly benefit?",
+ "answer_keys": [
+  "The maximum total yearly benefit in dollars"
+ ],
+ "objective_key": "The maximum total yearly benefit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total yearly benefit in dollars": 1557000.0
+ },
+ "optimum": 1557000.0,
+ "independent_check": "dynamic programming over the budget",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total yearly benefit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "P1",
+     "type": "boolean"
+    },
+    {
+     "name": "P2",
+     "type": "boolean"
+    },
+    {
+     "name": "P3",
+     "type": "boolean"
+    },
+    {
+     "name": "P4",
+     "type": "boolean"
+    },
+    {
+     "name": "P5",
+     "type": "boolean"
+    },
+    {
+     "name": "P6",
+     "type": "boolean"
+    },
+    {
+     "name": "P7",
+     "type": "boolean"
+    },
+    {
+     "name": "P8",
+     "type": "boolean"
+    },
+    {
+     "name": "P9",
+     "type": "boolean"
+    },
+    {
+     "name": "P10",
+     "type": "boolean"
+    },
+    {
+     "name": "P11",
+     "type": "boolean"
+    },
+    {
+     "name": "P12",
+     "type": "boolean"
+    },
+    {
+     "name": "P13",
+     "type": "boolean"
+    },
+    {
+     "name": "P14",
+     "type": "boolean"
+    },
+    {
+     "name": "P15",
+     "type": "boolean"
+    },
+    {
+     "name": "P16",
+     "type": "boolean"
+    },
+    {
+     "name": "P17",
+     "type": "boolean"
+    },
+    {
+     "name": "P18",
+     "type": "boolean"
+    },
+    {
+     "name": "P19",
+     "type": "boolean"
+    },
+    {
+     "name": "P20",
+     "type": "boolean"
+    },
+    {
+     "name": "P21",
+     "type": "boolean"
+    },
+    {
+     "name": "P22",
+     "type": "boolean"
+    },
+    {
+     "name": "P23",
+     "type": "boolean"
+    },
+    {
+     "name": "P24",
+     "type": "boolean"
+    },
+    {
+     "name": "P25",
+     "type": "boolean"
+    },
+    {
+     "name": "P26",
+     "type": "boolean"
+    },
+    {
+     "name": "P27",
+     "type": "boolean"
+    },
+    {
+     "name": "P28",
+     "type": "boolean"
+    },
+    {
+     "name": "P29",
+     "type": "boolean"
+    },
+    {
+     "name": "P30",
+     "type": "boolean"
+    },
+    {
+     "name": "P31",
+     "type": "boolean"
+    },
+    {
+     "name": "P32",
+     "type": "boolean"
+    },
+    {
+     "name": "P33",
+     "type": "boolean"
+    },
+    {
+     "name": "P34",
+     "type": "boolean"
+    },
+    {
+     "name": "P35",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "budget",
+     "terms": {
+      "P1": 78000,
+      "P2": 31000,
+      "P3": 25000,
+      "P4": 75000,
+      "P5": 17000,
+      "P6": 88000,
+      "P7": 73000,
+      "P8": 37000,
+      "P9": 90000,
+      "P10": 52000,
+      "P11": 31000,
+      "P12": 13000,
+      "P13": 79000,
+      "P14": 61000,
+      "P15": 87000,
+      "P16": 35000,
+      "P17": 90000,
+      "P18": 12000,
+      "P19": 31000,
+      "P20": 54000,
+      "P21": 40000,
+      "P22": 34000,
+      "P23": 85000,
+      "P24": 73000,
+      "P25": 61000,
+      "P26": 37000,
+      "P27": 58000,
+      "P28": 38000,
+      "P29": 56000,
+      "P30": 47000,
+      "P31": 27000,
+      "P32": 27000,
+      "P33": 67000,
+      "P34": 34000,
+      "P35": 25000
+     },
+     "sense": "<=",
+     "rhs": 856000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "P1": 127000,
+     "P2": 67000,
+     "P3": 48000,
+     "P4": 71000,
+     "P5": 31000,
+     "P6": 85000,
+     "P7": 120000,
+     "P8": 46000,
+     "P9": 73000,
+     "P10": 89000,
+     "P11": 50000,
+     "P12": 16000,
+     "P13": 169000,
+     "P14": 106000,
+     "P15": 78000,
+     "P16": 67000,
+     "P17": 141000,
+     "P18": 15000,
+     "P19": 40000,
+     "P20": 58000,
+     "P21": 42000,
+     "P22": 46000,
+     "P23": 143000,
+     "P24": 130000,
+     "P25": 67000,
+     "P26": 44000,
+     "P27": 111000,
+     "P28": 76000,
+     "P29": 51000,
+     "P30": 96000,
+     "P31": 26000,
+     "P32": 51000,
+     "P33": 76000,
+     "P34": 61000,
+     "P35": 34000
+    }
+   }
+  }
+ }
+}

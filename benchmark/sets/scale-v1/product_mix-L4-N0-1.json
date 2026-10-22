@@ -1,0 +1,155 @@
+{
+ "id": "product_mix-L4-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 4,
+ "noise": 0,
+ "seed": 1,
+ "question": "The workshop makes frames, chairs, cabinets, tables, benches, beds, shelves and bookcases.\nResources needed per unit and profit per unit:\n\n| Product | Units of wood | Machine hours | Labour hours | Litres of paint | Profit (dollars) |\n|---|---|---|---|---|---|\n| frames | 7 | 0 | 9 | 5 | 36 |\n| chairs | 4 | 9 | 3 | 0 | 60 |\n| cabinets | 3 | 0 | 7 | 1 | 94 |\n| tables | 9 | 0 | 8 | 5 | 69 |\n| benches | 8 | 6 | 9 | 0 | 20 |\n| beds | 9 | 8 | 5 | 9 | 71 |\n| shelves | 9 | 8 | 2 | 3 | 85 |\n| bookcases | 8 | 0 | 5 | 9 | 44 |\n\nThis week the workshop has 490 units of wood, 135 machine hours, 351 labour hours and 130 litres of paint available.\nA customer order requires at least 1 chairs.\nEverything produced will be sold, and only whole units can be made.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 5565.0
+ },
+ "optimum": 5565.0,
+ "independent_check": "none available at this size (solver proof only)",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "frames",
+     "type": "integer",
+     "lb": 0,
+     "ub": 26
+    },
+    {
+     "name": "chairs",
+     "type": "integer",
+     "lb": 0,
+     "ub": 15
+    },
+    {
+     "name": "cabinets",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "tables",
+     "type": "integer",
+     "lb": 0,
+     "ub": 26
+    },
+    {
+     "name": "benches",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "beds",
+     "type": "integer",
+     "lb": 0,
+     "ub": 14
+    },
+    {
+     "name": "shelves",
+     "type": "integer",
+     "lb": 0,
+     "ub": 16
+    },
+    {
+     "name": "bookcases",
+     "type": "integer",
+     "lb": 0,
+     "ub": 14
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "frames": 7,
+      "chairs": 4,
+      "cabinets": 3,
+      "tables": 9,
+      "benches": 8,
+      "beds": 9,
+      "shelves": 9,
+      "bookcases": 8
+     },
+     "sense": "<=",
+     "rhs": 490
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "chairs": 9,
+      "benches": 6,
+      "beds": 8,
+      "shelves": 8
+     },
+     "sense": "<=",
+     "rhs": 135
+    },
+    {
+     "name": "labour hours available",
+     "terms": {
+      "frames": 9,
+      "chairs": 3,
+      "cabinets": 7,
+      "tables": 8,
+      "benches": 9,
+      "beds": 5,
+      "shelves": 2,
+      "bookcases": 5
+     },
+     "sense": "<=",
+     "rhs": 351
+    },
+    {
+     "name": "litres of paint available",
+     "terms": {
+      "frames": 5,
+      "cabinets": 1,
+      "tables": 5,
+      "beds": 9,
+      "shelves": 3,
+      "bookcases": 9
+     },
+     "sense": "<=",
+     "rhs": 130
+    },
+    {
+     "name": "at least 1 chairs",
+     "terms": {
+      "chairs": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "frames": 36,
+     "chairs": 60,
+     "cabinets": 94,
+     "tables": 69,
+     "benches": 20,
+     "beds": 71,
+     "shelves": 85,
+     "bookcases": 44
+    }
+   }
+  }
+ }
+}

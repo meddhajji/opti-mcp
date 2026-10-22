@@ -1,0 +1,420 @@
+{
+ "id": "production_planning-L5-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "production_planning",
+ "level": 5,
+ "noise": 0,
+ "seed": 1,
+ "question": "A factory plans production for the next 12 weeks.\nWeekly demand, which must be met on time with no backorders: week 1: 221, week 2: 212, week 3: 174, week 4: 187, week 5: 248, week 6: 139, week 7: 226, week 8: 151, week 9: 251, week 10: 240, week 11: 197, week 12: 117 units.\nEach week it can make up to 173 units in regular time at 50 dollars per unit, plus up to 50 units in overtime at 72 dollars per unit.\nUnits kept in stock at the end of a week cost 2 dollars each, and the warehouse holds at most 95 units.\nThere are 20 units in stock at the start.\nWhat is the minimum total cost of meeting demand over the 12 weeks?",
+ "answer_keys": [
+  "The minimum total cost in dollars"
+ ],
+ "objective_key": "The minimum total cost in dollars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total cost in dollars": 124498.0
+ },
+ "optimum": 124498.0,
+ "independent_check": "dynamic programming over weekly stock levels",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total cost in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "regular_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w5",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w5",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w5",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w6",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w6",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w6",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w7",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w7",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w7",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w8",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w8",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w8",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w9",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w9",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w9",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w10",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w10",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w10",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w11",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w11",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w11",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    },
+    {
+     "name": "regular_w12",
+     "type": "integer",
+     "lb": 0,
+     "ub": 173
+    },
+    {
+     "name": "overtime_w12",
+     "type": "integer",
+     "lb": 0,
+     "ub": 50
+    },
+    {
+     "name": "stock_w12",
+     "type": "integer",
+     "lb": 0,
+     "ub": 95
+    }
+   ],
+   "constraints": [
+    {
+     "name": "stock balance week 1",
+     "terms": {
+      "regular_w1": 1,
+      "overtime_w1": 1,
+      "stock_w1": -1
+     },
+     "sense": "==",
+     "rhs": 201
+    },
+    {
+     "name": "stock balance week 2",
+     "terms": {
+      "regular_w2": 1,
+      "overtime_w2": 1,
+      "stock_w2": -1,
+      "stock_w1": 1
+     },
+     "sense": "==",
+     "rhs": 212
+    },
+    {
+     "name": "stock balance week 3",
+     "terms": {
+      "regular_w3": 1,
+      "overtime_w3": 1,
+      "stock_w3": -1,
+      "stock_w2": 1
+     },
+     "sense": "==",
+     "rhs": 174
+    },
+    {
+     "name": "stock balance week 4",
+     "terms": {
+      "regular_w4": 1,
+      "overtime_w4": 1,
+      "stock_w4": -1,
+      "stock_w3": 1
+     },
+     "sense": "==",
+     "rhs": 187
+    },
+    {
+     "name": "stock balance week 5",
+     "terms": {
+      "regular_w5": 1,
+      "overtime_w5": 1,
+      "stock_w5": -1,
+      "stock_w4": 1
+     },
+     "sense": "==",
+     "rhs": 248
+    },
+    {
+     "name": "stock balance week 6",
+     "terms": {
+      "regular_w6": 1,
+      "overtime_w6": 1,
+      "stock_w6": -1,
+      "stock_w5": 1
+     },
+     "sense": "==",
+     "rhs": 139
+    },
+    {
+     "name": "stock balance week 7",
+     "terms": {
+      "regular_w7": 1,
+      "overtime_w7": 1,
+      "stock_w7": -1,
+      "stock_w6": 1
+     },
+     "sense": "==",
+     "rhs": 226
+    },
+    {
+     "name": "stock balance week 8",
+     "terms": {
+      "regular_w8": 1,
+      "overtime_w8": 1,
+      "stock_w8": -1,
+      "stock_w7": 1
+     },
+     "sense": "==",
+     "rhs": 151
+    },
+    {
+     "name": "stock balance week 9",
+     "terms": {
+      "regular_w9": 1,
+      "overtime_w9": 1,
+      "stock_w9": -1,
+      "stock_w8": 1
+     },
+     "sense": "==",
+     "rhs": 251
+    },
+    {
+     "name": "stock balance week 10",
+     "terms": {
+      "regular_w10": 1,
+      "overtime_w10": 1,
+      "stock_w10": -1,
+      "stock_w9": 1
+     },
+     "sense": "==",
+     "rhs": 240
+    },
+    {
+     "name": "stock balance week 11",
+     "terms": {
+      "regular_w11": 1,
+      "overtime_w11": 1,
+      "stock_w11": -1,
+      "stock_w10": 1
+     },
+     "sense": "==",
+     "rhs": 197
+    },
+    {
+     "name": "stock balance week 12",
+     "terms": {
+      "regular_w12": 1,
+      "overtime_w12": 1,
+      "stock_w12": -1,
+      "stock_w11": 1
+     },
+     "sense": "==",
+     "rhs": 117
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "regular_w1": 50,
+     "overtime_w1": 72,
+     "stock_w1": 2,
+     "regular_w2": 50,
+     "overtime_w2": 72,
+     "stock_w2": 2,
+     "regular_w3": 50,
+     "overtime_w3": 72,
+     "stock_w3": 2,
+     "regular_w4": 50,
+     "overtime_w4": 72,
+     "stock_w4": 2,
+     "regular_w5": 50,
+     "overtime_w5": 72,
+     "stock_w5": 2,
+     "regular_w6": 50,
+     "overtime_w6": 72,
+     "stock_w6": 2,
+     "regular_w7": 50,
+     "overtime_w7": 72,
+     "stock_w7": 2,
+     "regular_w8": 50,
+     "overtime_w8": 72,
+     "stock_w8": 2,
+     "regular_w9": 50,
+     "overtime_w9": 72,
+     "stock_w9": 2,
+     "regular_w10": 50,
+     "overtime_w10": 72,
+     "stock_w10": 2,
+     "regular_w11": 50,
+     "overtime_w11": 72,
+     "stock_w11": 2,
+     "regular_w12": 50,
+     "overtime_w12": 72,
+     "stock_w12": 2
+    }
+   }
+  }
+ }
+}

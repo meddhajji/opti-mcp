@@ -14,7 +14,7 @@ from pathlib import Path
 
 import groq
 
-from agent_common import (MAX_TURNS, CallLog, DailyLimitReached, condition_tools, deref,  # noqa: F401
+from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, deref,  # noqa: F401
                           env_key, run_python, skill_text)
 
 # Reasoning models (gpt-oss) spend output tokens thinking before they answer; Groq's
@@ -40,6 +40,20 @@ def is_daily_limit(error: Exception) -> bool:
     return "per day" in text or "(TPD)" in text or "(RPD)" in text
 
 
+# Groq's daily token limit is a rolling 24-hour window: tokens used at time t free up at
+# t + 24 h. So instead of stopping, wait when Groq says the request fits again soon.
+MAX_DAILY_WAIT_S = int(os.environ.get("GROQ_MAX_DAILY_WAIT_S", "1200"))
+
+
+def try_again_seconds(error: Exception) -> float | None:
+    """From "Please try again in 7m30.5s" (also "1h2m3s", "17.28s"), in seconds."""
+    m = re.search(r"try again in ((?:\d+h)?(?:\d+m)?(?:[\d.]+s)?)", str(error))
+    if not m or not m.group(1):
+        return None
+    parts = re.findall(r"([\d.]+)([hms])", m.group(1))
+    return sum(float(v) * {"h": 3600, "m": 60, "s": 1}[u] for v, u in parts) if parts else None
+
+
 def retry_after_seconds(error: Exception) -> float:
     headers = getattr(getattr(error, "response", None), "headers", {}) or {}
     try:
@@ -53,11 +67,16 @@ class RequestTooLarge(RuntimeError):
 
 
 def completion_budget(kwargs: dict) -> int:
-    """Largest output cap that fits under the per-minute limit after the prompt (estimated)."""
+    """Largest output cap that fits under the per-minute limit after the prompt (estimated).
+
+    The estimate leans optimistic (4.5 characters per token; measured: about 3.6 for prose,
+    4.9 for the plugin's JSON-heavy prompts): an overshoot is rejected with the exact excess
+    and chat() retries with a smaller cap, while an underestimate would silently take output
+    room away from long tool calls."""
     import json
 
     prompt_chars = len(json.dumps(kwargs.get("messages", []))) + len(json.dumps(kwargs.get("tools", [])))
-    return max(MIN_COMPLETION_TOKENS, min(MAX_COMPLETION_TOKENS, TPM_LIMIT - int(prompt_chars / 3.2) - 300))
+    return max(MIN_COMPLETION_TOKENS, min(MAX_COMPLETION_TOKENS, TPM_LIMIT - int(prompt_chars / 4.5) - 300))
 
 
 def overshoot(error: Exception) -> int | None:
@@ -69,12 +88,18 @@ def overshoot(error: Exception) -> int | None:
 def chat(client, **kwargs):
     """One completion: sizes the output cap, waits out per-minute limits, stops on daily ones."""
     kwargs["max_completion_tokens"] = completion_budget(kwargs)
-    for _ in range(8):
+    minute_retries = 0
+    while minute_retries < 8:
         try:
             return client.chat.completions.create(**kwargs)
         except groq.RateLimitError as e:
             if is_daily_limit(e):
-                raise DailyLimitReached(str(e)[:300]) from e
+                wait = try_again_seconds(e)
+                if wait is None or wait > MAX_DAILY_WAIT_S:
+                    raise DailyLimitReached(str(e)[:300]) from e
+                time.sleep(wait + 2)  # rolling window: this much has freed up by then
+                continue
+            minute_retries += 1
             time.sleep(min(retry_after_seconds(e) + 1, 120))
         except groq.APIStatusError as e:
             excess = overshoot(e) if e.status_code == 413 else None
@@ -87,18 +112,20 @@ def chat(client, **kwargs):
     raise RuntimeError("still rate-limited after 8 retries")
 
 
-async def run(prompt: str, model: str, condition: str, workdir: Path, client=None) -> dict:
-    """Returns {text, tools, turns, tokens, events, calls} in the shape run.py records."""
+async def run(prompt: str, model: str, condition: str, workdir: Path, client=None,
+              answer_keys: list[str] | None = None) -> dict:
+    """Returns {text, tools, turns, tokens, events, calls, answer} in the shape run.py records;
+    answer is what submit_answer received (always None without answer_keys)."""
     client = client or groq.Groq(api_key=api_key(), max_retries=0)
     messages = [{"role": "user", "content": prompt}]
     if condition == "plugin":
         messages.insert(0, {"role": "system", "content": skill_text()})
     events, tokens = [], {"prompt": 0, "completion": 0}
 
-    async with condition_tools(condition, workdir) as (specs, call_tool):
-        log = CallLog(call_tool)
+    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
+        log = CallLog(call_tool, answer_keys)
         tools = [{"type": "function", "function": s} for s in specs]
-        text, turns = "", MAX_TURNS
+        text, turns, reminded = "", MAX_TURNS, False
         for turn in range(1, MAX_TURNS + 1):
             kwargs = {"model": model, "messages": messages}
             if "gpt-oss" in model:
@@ -127,9 +154,18 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
             messages.append({"role": "assistant", "content": message.content or "",
                              **({"tool_calls": [c.model_dump() for c in calls]} if calls else {})})
             if not calls:
+                if answer_keys and not reminded:
+                    reminded = True
+                    events.append(f"turn {turn}: stopped without submit_answer, reminded")
+                    messages.append({"role": "user", "content": REMINDER})
+                    continue
                 text, turns = message.content or "", turn
                 break
             for call in calls:
                 result = await log.execute(call.function.name, call.function.arguments or "{}")
                 messages.append({"role": "tool", "tool_call_id": call.id, "content": result})
-    return {"text": text, "tools": log.names, "turns": turns, "tokens": tokens, "events": events, "calls": log.calls}
+            if log.answer is not None:
+                text, turns = message.content or "", turn
+                break
+    return {"text": text, "tools": log.names, "turns": turns, "tokens": tokens, "events": events, "calls": log.calls,
+            "answer": log.answer}

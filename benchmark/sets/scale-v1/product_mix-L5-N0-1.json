@@ -1,0 +1,224 @@
+{
+ "id": "product_mix-L5-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 5,
+ "noise": 0,
+ "seed": 1,
+ "question": "The workshop makes cabinets, chairs, frames, wardrobes, shelves, benches, beds, tables, stools, bookcases, doors and desks.\nResources needed per unit and profit per unit:\n\n| Product | Units of wood | Machine hours | Labour hours | Litres of paint | Packing hours | Profit (dollars) |\n|---|---|---|---|---|---|---|\n| cabinets | 8 | 7 | 6 | 9 | 4 | 88 |\n| chairs | 2 | 7 | 3 | 0 | 9 | 39 |\n| frames | 6 | 3 | 2 | 9 | 9 | 35 |\n| wardrobes | 8 | 0 | 5 | 2 | 7 | 59 |\n| shelves | 6 | 5 | 0 | 7 | 3 | 42 |\n| benches | 6 | 9 | 3 | 0 | 3 | 89 |\n| beds | 4 | 0 | 8 | 6 | 9 | 53 |\n| tables | 3 | 4 | 3 | 9 | 4 | 95 |\n| stools | 8 | 0 | 1 | 3 | 3 | 93 |\n| bookcases | 2 | 7 | 2 | 2 | 8 | 68 |\n| doors | 3 | 0 | 6 | 0 | 5 | 71 |\n| desks | 9 | 3 | 7 | 9 | 1 | 42 |\n\nThis week the workshop has 376 units of wood, 255 machine hours, 255 labour hours, 315 litres of paint and 364 packing hours available.\nA customer order requires at least 7 tables.\nA customer order requires at least 1 doors.\nEverything produced will be sold, and only whole units can be made.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 7135.0
+ },
+ "optimum": 7135.0,
+ "independent_check": "none available at this size (solver proof only)",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "cabinets",
+     "type": "integer",
+     "lb": 0,
+     "ub": 35
+    },
+    {
+     "name": "chairs",
+     "type": "integer",
+     "lb": 0,
+     "ub": 36
+    },
+    {
+     "name": "frames",
+     "type": "integer",
+     "lb": 0,
+     "ub": 35
+    },
+    {
+     "name": "wardrobes",
+     "type": "integer",
+     "lb": 0,
+     "ub": 47
+    },
+    {
+     "name": "shelves",
+     "type": "integer",
+     "lb": 0,
+     "ub": 45
+    },
+    {
+     "name": "benches",
+     "type": "integer",
+     "lb": 0,
+     "ub": 28
+    },
+    {
+     "name": "beds",
+     "type": "integer",
+     "lb": 0,
+     "ub": 31
+    },
+    {
+     "name": "tables",
+     "type": "integer",
+     "lb": 0,
+     "ub": 35
+    },
+    {
+     "name": "stools",
+     "type": "integer",
+     "lb": 0,
+     "ub": 47
+    },
+    {
+     "name": "bookcases",
+     "type": "integer",
+     "lb": 0,
+     "ub": 36
+    },
+    {
+     "name": "doors",
+     "type": "integer",
+     "lb": 0,
+     "ub": 42
+    },
+    {
+     "name": "desks",
+     "type": "integer",
+     "lb": 0,
+     "ub": 35
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "cabinets": 8,
+      "chairs": 2,
+      "frames": 6,
+      "wardrobes": 8,
+      "shelves": 6,
+      "benches": 6,
+      "beds": 4,
+      "tables": 3,
+      "stools": 8,
+      "bookcases": 2,
+      "doors": 3,
+      "desks": 9
+     },
+     "sense": "<=",
+     "rhs": 376
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "cabinets": 7,
+      "chairs": 7,
+      "frames": 3,
+      "shelves": 5,
+      "benches": 9,
+      "tables": 4,
+      "bookcases": 7,
+      "desks": 3
+     },
+     "sense": "<=",
+     "rhs": 255
+    },
+    {
+     "name": "labour hours available",
+     "terms": {
+      "cabinets": 6,
+      "chairs": 3,
+      "frames": 2,
+      "wardrobes": 5,
+      "benches": 3,
+      "beds": 8,
+      "tables": 3,
+      "stools": 1,
+      "bookcases": 2,
+      "doors": 6,
+      "desks": 7
+     },
+     "sense": "<=",
+     "rhs": 255
+    },
+    {
+     "name": "litres of paint available",
+     "terms": {
+      "cabinets": 9,
+      "frames": 9,
+      "wardrobes": 2,
+      "shelves": 7,
+      "beds": 6,
+      "tables": 9,
+      "stools": 3,
+      "bookcases": 2,
+      "desks": 9
+     },
+     "sense": "<=",
+     "rhs": 315
+    },
+    {
+     "name": "packing hours available",
+     "terms": {
+      "cabinets": 4,
+      "chairs": 9,
+      "frames": 9,
+      "wardrobes": 7,
+      "shelves": 3,
+      "benches": 3,
+      "beds": 9,
+      "tables": 4,
+      "stools": 3,
+      "bookcases": 8,
+      "doors": 5,
+      "desks": 1
+     },
+     "sense": "<=",
+     "rhs": 364
+    },
+    {
+     "name": "at least 7 tables",
+     "terms": {
+      "tables": 1
+     },
+     "sense": ">=",
+     "rhs": 7
+    },
+    {
+     "name": "at least 1 doors",
+     "terms": {
+      "doors": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "cabinets": 88,
+     "chairs": 39,
+     "frames": 35,
+     "wardrobes": 59,
+     "shelves": 42,
+     "benches": 89,
+     "beds": 53,
+     "tables": 95,
+     "stools": 93,
+     "bookcases": 68,
+     "doors": 71,
+     "desks": 42
+    }
+   }
+  }
+ }
+}

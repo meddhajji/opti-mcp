@@ -7,6 +7,11 @@ how they call their model:
   plugin     the optimizer MCP tools, listed live from the real server
              (scripts/launch.py), plus the optimize skill as instructions
 
+With answer keys given, every condition also gets a submit_answer tool with one number
+per key, and the run ends when it is called: the answer arrives as structured
+arguments instead of being parsed from prose. A model that stops without calling it is
+reminded once.
+
 Benchmark harness only: the plugin itself never calls an LLM.
 """
 import json
@@ -30,6 +35,32 @@ RUN_PYTHON = {
                    "stderr). Time limit 60 seconds. Only already-installed packages are available.",
     "parameters": {"type": "object", "properties": {"code": {"type": "string"}}, "required": ["code"]},
 }
+
+
+SUBMIT = "submit_answer"
+REMINDER = "You have not submitted an answer. Call submit_answer now with your final answer."
+
+
+def answer_fields(answer_keys: list[str]) -> dict[str, str]:
+    """{tool argument name: answer key}. Keys are sentences; argument names must be identifiers."""
+    fields = {}
+    for key in answer_keys:
+        base = re.sub(r"[^a-z0-9]+", "_", key.lower()).strip("_")[:60] or "value"
+        name, i = base, 2
+        while name in fields:
+            name, i = f"{base}_{i}", i + 1
+        fields[name] = key
+    return fields
+
+
+def submit_spec(answer_keys: list[str]) -> dict:
+    fields = answer_fields(answer_keys)
+    return {
+        "name": SUBMIT,
+        "description": "Submit your final answer. Call it once, when you are done: the conversation ends there.",
+        "parameters": {"type": "object", "required": list(fields),
+                       "properties": {f: {"type": "number", "description": key} for f, key in fields.items()}},
+    }
 
 
 class DailyLimitReached(RuntimeError):
@@ -83,9 +114,16 @@ def run_python(code: str, workdir: Path) -> str:
 
 
 @asynccontextmanager
-async def condition_tools(condition: str, workdir: Path):
-    """Yields (tool specs {name, description, parameters}, async call_tool(name, args) -> str)."""
+async def condition_tools(condition: str, workdir: Path, answer_keys: list[str] | None = None):
+    """Yields (tool specs {name, description, parameters}, async call_tool(name, args) -> str).
+    With answer_keys the submit_answer spec is added; CallLog handles its calls."""
     workdir.mkdir(parents=True, exist_ok=True)
+    async with _condition_tools(condition, workdir) as (specs, call_tool):
+        yield specs + ([submit_spec(answer_keys)] if answer_keys else []), call_tool
+
+
+@asynccontextmanager
+async def _condition_tools(condition: str, workdir: Path):
     if condition == "plugin":
         params = StdioServerParameters(command="python", args=[str(REPO / "scripts" / "launch.py")], cwd=str(workdir))
         async with Client(params) as mcp:
@@ -112,17 +150,34 @@ async def condition_tools(condition: str, workdir: Path):
 
 
 class CallLog:
-    """Runs tool calls, reporting failures back to the model, and records each one."""
+    """Runs tool calls, reporting failures back to the model, and records each one.
+    With answer keys it also takes submit_answer calls: `answer` is set by the first valid one."""
 
-    def __init__(self, call_tool):
+    def __init__(self, call_tool, answer_keys: list[str] | None = None):
         self.call_tool, self.names, self.calls = call_tool, [], []
+        self.fields = answer_fields(answer_keys) if answer_keys else {}
+        self.answer = None
 
     async def execute(self, name: str, args) -> str:
         self.names.append(name)
         raw = args if isinstance(args, str) else json.dumps(args)
         try:
-            result = await self.call_tool(name, json.loads(args or "{}") if isinstance(args, str) else (args or {}))
+            parsed = json.loads(args or "{}") if isinstance(args, str) else (args or {})
+            result = self.submit(parsed) if name == SUBMIT and self.fields else await self.call_tool(name, parsed)
         except Exception as e:  # an agent tells the model what went wrong
             result = f"Tool error: {type(e).__name__}: {str(e)[:500]}"
         self.calls.append({"name": name, "arguments": raw[:2000], "result": result[:800]})
         return result[:TOOL_RESULT_CHARS]
+
+    def submit(self, args: dict) -> str:
+        values, missing = {}, []
+        for field, key in self.fields.items():
+            try:
+                value = args[field]
+                values[key] = float(value.replace(",", "")) if isinstance(value, str) else float(value)
+            except (KeyError, TypeError, ValueError):
+                missing.append(field)
+        if missing:
+            return f"Not recorded: give a number for each of {missing}, then call submit_answer again."
+        self.answer = values
+        return "Answer recorded."

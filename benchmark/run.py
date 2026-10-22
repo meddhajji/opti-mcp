@@ -18,7 +18,9 @@ whether the agent chooses to use it is part of what is measured.
 
 With --backend groq or gemini, the same problems, prompt and conditions go
 through benchmark/groq_agent.py or gemini_agent.py instead (shared logic in
-agent_common.py), to test models weaker than Claude Code runs.
+agent_common.py), to test models weaker than Claude Code runs. There,
+--answer-tool replaces the FINAL ANSWER line with a submit_answer tool call, so
+the answer is structured data rather than text to parse.
 
 Results are appended to benchmark/results/<run name>.jsonl, one line per
 (problem, model, condition); finished combinations are skipped, so an
@@ -57,6 +59,12 @@ PROMPT = """{question}
 When you are done, end your reply with one line in exactly this form:
 FINAL ANSWER: {{json object}}
 The JSON object must have exactly these keys, each with a number as its value:
+{keys}"""
+
+# With --answer-tool the answer is the submit_answer call's arguments, never parsed from prose.
+SUBMIT_PROMPT = """{question}
+
+When you are done, call the submit_answer tool once with your final answer: a number for each of
 {keys}"""
 
 
@@ -124,7 +132,8 @@ def run_claude(prompt: str, model: str, condition: str, budget_usd: float, timeo
     return stream, error
 
 
-def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: int, workdir: Path):
+def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: int, workdir: Path,
+            answer_keys: list[str] | None = None):
     """Groq or Gemini models through this repo's own agent loop (imported lazily: optional SDKs)."""
     import importlib
 
@@ -133,7 +142,8 @@ def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: in
     agent = importlib.import_module(f"{backend}_agent")
     empty = {"text": "", "tools": [], "turns": None, "cost_usd": None}
     try:
-        out = asyncio.run(asyncio.wait_for(agent.run(prompt, model, condition, workdir), timeout_s))
+        out = asyncio.run(asyncio.wait_for(agent.run(prompt, model, condition, workdir, answer_keys=answer_keys),
+                                           timeout_s))
     except TimeoutError:
         return empty | {"stop": "timeout"}, f"timed out after {timeout_s} s"
     except DailyLimitReached:
@@ -141,23 +151,31 @@ def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: in
     except Exception as e:  # one failed run is recorded, never fatal for the whole benchmark
         return empty | {"stop": "error"}, f"{type(e).__name__}: {str(e)[:400]}"
     stream = {"text": out["text"], "tools": out["tools"], "turns": out["turns"], "cost_usd": None,
-              "tokens": out["tokens"], "stop": "; ".join(out["events"]) or "success", "calls": out["calls"]}
+              "tokens": out["tokens"], "stop": "; ".join(out["events"]) or "success", "calls": out["calls"],
+              "answer": out.get("answer")}
     return stream, None
 
 
 def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeout_s: int, workdir: Path,
-            backend: str = "claude") -> dict:
+            backend: str = "claude", answer_tool: bool = False) -> dict:
     workdir.mkdir(parents=True, exist_ok=True)
-    prompt = PROMPT.format(question=problem["question"], keys=json.dumps(problem["answer_keys"], ensure_ascii=False))
+    keys = problem["answer_keys"]
+    prompt = (SUBMIT_PROMPT if answer_tool else PROMPT).format(
+        question=problem["question"], keys=json.dumps(keys, ensure_ascii=False))
     started = time.monotonic()
-    if backend in ("groq", "gemini"):
-        stream, error = run_api(backend, prompt, model, condition, timeout_s, workdir)  # DailyLimitReached propagates
+    if backend in ("groq", "gemini"):  # DailyLimitReached propagates
+        stream, error = run_api(backend, prompt, model, condition, timeout_s, workdir, keys if answer_tool else None)
+    elif answer_tool:
+        raise ValueError("submit_answer is only implemented for the groq and gemini backends")
     else:
         stream, error = run_claude(prompt, model, condition, budget_usd, timeout_s, workdir)
-    answer = parse_final_answer(stream["text"])
+    answer = stream.get("answer") if answer_tool else parse_final_answer(stream["text"])
     verdict = score(problem, answer)
+    if answer_tool and answer is None:
+        verdict["detail"] = "submit_answer was never called with valid numbers"
     return {
         "problem": problem["id"], "model": model, "condition": condition, "backend": backend,
+        **({"protocol": "submit_answer"} if answer_tool else {}),
         **{k: problem[k] for k in ("family", "level", "noise", "seed") if k in problem},
         "outcome": verdict["outcome"], "detail": verdict["detail"], "answer": answer,
         "tools": Counter(stream["tools"]),
@@ -191,7 +209,11 @@ def main():
     ap.add_argument("--problems", nargs="*", help="problem ids (default: all)")
     ap.add_argument("--budget-usd", type=float, default=1.0, help="spending cap per run")
     ap.add_argument("--timeout", type=int, default=900, help="seconds per run")
+    ap.add_argument("--answer-tool", action="store_true",
+                    help="answers come through a submit_answer tool call (groq and gemini backends)")
     args = ap.parse_args()
+    if args.answer_tool and args.backend == "claude":
+        sys.exit("--answer-tool needs --backend groq or gemini")
 
     out = BENCH / "results" / f"{args.name}.jsonl"
     out.parent.mkdir(exist_ok=True)
@@ -204,7 +226,8 @@ def main():
     for i, (problem, model, condition) in enumerate(todo, 1):
         workdir = BENCH / "runs" / args.name / f"{problem['id']}-{model.replace('/', '_')}-{condition}"
         try:
-            row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir, args.backend)
+            row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir, args.backend,
+                          args.answer_tool)
         except Exception as e:
             if type(e).__name__ == "DailyLimitReached":
                 print(f"Stopped: the daily quota for {model} is used up. Re-run the same command later to resume.")

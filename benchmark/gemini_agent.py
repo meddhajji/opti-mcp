@@ -15,7 +15,7 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from agent_common import MAX_TURNS, CallLog, DailyLimitReached, condition_tools, env_key, skill_text
+from agent_common import MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, env_key, skill_text
 
 MAX_RETRIES = 8
 
@@ -49,8 +49,10 @@ def answer_text(content) -> str:
     return "".join(p.text for p in (content.parts or []) if p.text and not getattr(p, "thought", False))
 
 
-async def run(prompt: str, model: str, condition: str, workdir: Path, client=None) -> dict:
-    """Returns {text, tools, turns, tokens, events, calls} in the shape run.py records."""
+async def run(prompt: str, model: str, condition: str, workdir: Path, client=None,
+              answer_keys: list[str] | None = None) -> dict:
+    """Returns {text, tools, turns, tokens, events, calls, answer} in the shape run.py records;
+    answer is what submit_answer received (always None without answer_keys)."""
     client = client or genai.Client(api_key=env_key("GEMINI_API_KEY"))
     system = skill_text() if condition == "plugin" else None
     if system and "gemma" in model:
@@ -58,8 +60,8 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]
     events, tokens = [], {"prompt": 0, "completion": 0}
 
-    async with condition_tools(condition, workdir) as (specs, call_tool):
-        log = CallLog(call_tool)
+    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
+        log = CallLog(call_tool, answer_keys)
         config = types.GenerateContentConfig(
             system_instruction=system,
             tools=[types.Tool(function_declarations=[
@@ -67,7 +69,7 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
                 for s in specs])] if specs else None,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         )
-        text, turns = "", MAX_TURNS
+        text, turns, reminded = "", MAX_TURNS, False
         for turn in range(1, MAX_TURNS + 1):
             response = generate(client, model=model, contents=contents, config=config)
             usage = response.usage_metadata
@@ -89,6 +91,11 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
             contents.append(candidate.content)  # kept whole: Gemini needs its thought signatures back
             calls = [p.function_call for p in candidate.content.parts or [] if p.function_call]
             if not calls:
+                if answer_keys and not reminded:
+                    reminded = True
+                    events.append(f"turn {turn}: stopped without submit_answer, reminded")
+                    contents.append(types.Content(role="user", parts=[types.Part(text=REMINDER)]))
+                    continue
                 text, turns = answer_text(candidate.content), turn
                 break
             results = []
@@ -96,4 +103,8 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
                 result = await log.execute(call.name, dict(call.args or {}))
                 results.append(types.Part.from_function_response(name=call.name, response={"result": result}))
             contents.append(types.Content(role="user", parts=results))
-    return {"text": text, "tools": log.names, "turns": turns, "tokens": tokens, "events": events, "calls": log.calls}
+            if log.answer is not None:
+                text, turns = answer_text(candidate.content), turn
+                break
+    return {"text": text, "tools": log.names, "turns": turns, "tokens": tokens, "events": events, "calls": log.calls,
+            "answer": log.answer}

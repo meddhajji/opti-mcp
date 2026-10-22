@@ -88,6 +88,44 @@ def test_bad_tool_arguments_are_reported_back_to_the_model(tmp_path):
     assert fake.requests[1]["messages"][-1]["content"].startswith("Tool error: JSONDecodeError")
 
 
+KEYS = ["The maximum profit in dollars"]
+FIELD = "the_maximum_profit_in_dollars"
+
+
+def test_submit_answer_ends_the_run_with_structured_numbers(tmp_path):
+    fake = FakeGroq([
+        reply(calls=[tool_call("solve_model", {"model": JACKETS_MODEL})]),
+        reply(calls=[tool_call("submit_answer", {FIELD: 2850})]),
+        reply("never requested"),
+    ])
+    out = asyncio.run(groq_agent.run("Q", "fake-model", "plugin", tmp_path, client=fake, answer_keys=KEYS))
+    assert out["answer"] == {"The maximum profit in dollars": 2850.0} and out["turns"] == 2
+    assert len(fake.requests) == 2  # nothing is asked after the answer
+    submit = next(t["function"] for t in fake.requests[0]["tools"] if t["function"]["name"] == "submit_answer")
+    assert submit["parameters"]["required"] == [FIELD]
+    assert submit["parameters"]["properties"][FIELD]["description"] == KEYS[0]
+
+
+def test_a_model_that_stops_without_submitting_is_reminded_once(tmp_path):
+    fake = FakeGroq([reply("The profit is 2850."), reply(calls=[tool_call("submit_answer", {FIELD: "2,850"})])])
+    out = asyncio.run(groq_agent.run("Q", "fake-model", "code", tmp_path, client=fake, answer_keys=KEYS))
+    assert out["answer"] == {KEYS[0]: 2850.0}
+    assert "submit_answer" in fake.requests[1]["messages"][-1]["content"]
+
+    fake = FakeGroq([reply("2850"), reply("I said 2850.")])
+    out = asyncio.run(groq_agent.run("Q", "fake-model", "code", tmp_path, client=fake, answer_keys=KEYS))
+    assert out["answer"] is None and len(fake.requests) == 2
+
+
+def test_an_invalid_submission_is_sent_back(tmp_path):
+    fake = FakeGroq([reply(calls=[tool_call("submit_answer", {FIELD: "a lot"})]),
+                     reply(calls=[tool_call("submit_answer", {FIELD: 2850}, cid="call_2")])])
+    out = asyncio.run(groq_agent.run("Q", "fake-model", "reasoning", tmp_path, client=fake, answer_keys=KEYS))
+    assert fake.requests[1]["messages"][-1]["content"].startswith("Not recorded")
+    assert out["answer"] == {KEYS[0]: 2850.0}
+    assert [t["function"]["name"] for t in fake.requests[0]["tools"]] == ["submit_answer"]  # reasoning: nothing else
+
+
 def test_deref_inlines_definitions():
     schema = {"type": "object", "properties": {"m": {"$ref": "#/$defs/M"}},
               "$defs": {"M": {"type": "object", "properties": {"v": {"$ref": "#/$defs/V"}}}, "V": {"type": "integer"}}}

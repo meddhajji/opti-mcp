@@ -1,0 +1,164 @@
+{
+ "id": "project_selection-L4-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "project_selection",
+ "level": 4,
+ "noise": 0,
+ "seed": 1,
+ "question": "The company is choosing among 20 improvement projects, labelled P1 to P20.\nEach project is either done in full or not at all. Cost and expected yearly benefit:\n\n| Project | Cost (dollars) | Yearly benefit (dollars) |\n|---|---|---|\n| P1 | 89,000 | 93,000 |\n| P2 | 38,000 | 73,000 |\n| P3 | 48,000 | 66,000 |\n| P4 | 17,000 | 36,000 |\n| P5 | 75,000 | 94,000 |\n| P6 | 78,000 | 109,000 |\n| P7 | 83,000 | 75,000 |\n| P8 | 35,000 | 36,000 |\n| P9 | 29,000 | 63,000 |\n| P10 | 48,000 | 73,000 |\n| P11 | 34,000 | 33,000 |\n| P12 | 64,000 | 84,000 |\n| P13 | 32,000 | 60,000 |\n| P14 | 72,000 | 138,000 |\n| P15 | 50,000 | 55,000 |\n| P16 | 82,000 | 128,000 |\n| P17 | 68,000 | 141,000 |\n| P18 | 49,000 | 66,000 |\n| P19 | 84,000 | 112,000 |\n| P20 | 23,000 | 42,000 |\n\nThe total budget is 439,000 dollars.\nWhich projects should be funded to maximise the total yearly benefit?",
+ "answer_keys": [
+  "The maximum total yearly benefit in dollars"
+ ],
+ "objective_key": "The maximum total yearly benefit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total yearly benefit in dollars": 790000.0
+ },
+ "optimum": 790000.0,
+ "independent_check": "dynamic programming over the budget",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total yearly benefit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "P1",
+     "type": "boolean"
+    },
+    {
+     "name": "P2",
+     "type": "boolean"
+    },
+    {
+     "name": "P3",
+     "type": "boolean"
+    },
+    {
+     "name": "P4",
+     "type": "boolean"
+    },
+    {
+     "name": "P5",
+     "type": "boolean"
+    },
+    {
+     "name": "P6",
+     "type": "boolean"
+    },
+    {
+     "name": "P7",
+     "type": "boolean"
+    },
+    {
+     "name": "P8",
+     "type": "boolean"
+    },
+    {
+     "name": "P9",
+     "type": "boolean"
+    },
+    {
+     "name": "P10",
+     "type": "boolean"
+    },
+    {
+     "name": "P11",
+     "type": "boolean"
+    },
+    {
+     "name": "P12",
+     "type": "boolean"
+    },
+    {
+     "name": "P13",
+     "type": "boolean"
+    },
+    {
+     "name": "P14",
+     "type": "boolean"
+    },
+    {
+     "name": "P15",
+     "type": "boolean"
+    },
+    {
+     "name": "P16",
+     "type": "boolean"
+    },
+    {
+     "name": "P17",
+     "type": "boolean"
+    },
+    {
+     "name": "P18",
+     "type": "boolean"
+    },
+    {
+     "name": "P19",
+     "type": "boolean"
+    },
+    {
+     "name": "P20",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "budget",
+     "terms": {
+      "P1": 89000,
+      "P2": 38000,
+      "P3": 48000,
+      "P4": 17000,
+      "P5": 75000,
+      "P6": 78000,
+      "P7": 83000,
+      "P8": 35000,
+      "P9": 29000,
+      "P10": 48000,
+      "P11": 34000,
+      "P12": 64000,
+      "P13": 32000,
+      "P14": 72000,
+      "P15": 50000,
+      "P16": 82000,
+      "P17": 68000,
+      "P18": 49000,
+      "P19": 84000,
+      "P20": 23000
+     },
+     "sense": "<=",
+     "rhs": 439000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "P1": 93000,
+     "P2": 73000,
+     "P3": 66000,
+     "P4": 36000,
+     "P5": 94000,
+     "P6": 109000,
+     "P7": 75000,
+     "P8": 36000,
+     "P9": 63000,
+     "P10": 73000,
+     "P11": 33000,
+     "P12": 84000,
+     "P13": 60000,
+     "P14": 138000,
+     "P15": 55000,
+     "P16": 128000,
+     "P17": 141000,
+     "P18": 66000,
+     "P19": 112000,
+     "P20": 42000
+    }
+   }
+  }
+ }
+}

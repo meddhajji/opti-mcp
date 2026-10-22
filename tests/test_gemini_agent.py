@@ -86,6 +86,16 @@ def test_malformed_tool_call_is_retried(tmp_path):
     assert any("MALFORMED" in e for e in out["events"])
 
 
+def test_submit_answer_ends_the_run(tmp_path):
+    submit = types.FunctionCall(name="submit_answer", args={"the_value": 12})
+    fake = FakeGemini([response([types.Part(text="Done.")]), response([types.Part(function_call=submit)])])
+    out = asyncio.run(gemini_agent.run("Q", "gemini-3.5-flash-lite", "reasoning", tmp_path, client=fake,
+                                       answer_keys=["The value"]))
+    assert out["answer"] == {"The value": 12.0} and out["turns"] == 2
+    assert "submit_answer" in fake.requests[1]["contents"][-1].parts[0].text  # the reminder
+    assert [d.name for d in fake.requests[0]["config"].tools[0].function_declarations] == ["submit_answer"]
+
+
 def test_quota_errors_are_classified():
     assert is_daily_limit(Exception("quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier'"))
     assert not is_daily_limit(Exception("quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier'"))

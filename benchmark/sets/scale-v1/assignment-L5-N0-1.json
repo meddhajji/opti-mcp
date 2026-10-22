@@ -1,0 +1,1213 @@
+{
+ "id": "assignment-L5-N0-1",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "assignment",
+ "level": 5,
+ "noise": 0,
+ "seed": 1,
+ "question": "A team leader must give each of 12 workers exactly one of 12 jobs (J1, J2, J3, J4, J5, J6, J7, J8, J9, J10, J11, J12), and every job must be done by exactly one worker.\nTime in minutes each worker needs for each job:\n\n| Worker | J1 | J2 | J3 | J4 | J5 | J6 | J7 | J8 | J9 | J10 | J11 | J12 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| Youssef | 60 | 11 | 39 | 18 | 28 | 44 | 52 | 32 | 51 | 36 | 35 | 45 |\n| Mehdi | 41 | 36 | 46 | 30 | 49 | 58 | 14 | 34 | 16 | 17 | 42 | 39 |\n| Rachid | 47 | 34 | 60 | 14 | 52 | 10 | 29 | 49 | 30 | 26 | 31 | 37 |\n| Driss | 55 | 8 | 15 | 39 | 26 | 32 | 8 | 38 | 39 | 45 | 30 | 36 |\n| Omar | 36 | 48 | 25 | 34 | 28 | 49 | 5 | 58 | 15 | 36 | 53 | 56 |\n| Karim | 56 | 26 | 32 | 37 | 42 | 25 | 30 | 45 | 51 | 6 | 16 | 43 |\n| Lina | 28 | 19 | 50 | 30 | 7 | 45 | 45 | 23 | 53 | 41 | 42 | 30 |\n| Sara | 35 | 15 | 19 | 47 | 51 | 20 | 40 | 41 | 5 | 52 | 26 | 38 |\n| Ilyas | 45 | 42 | 30 | 14 | 7 | 31 | 36 | 60 | 21 | 14 | 60 | 6 |\n| Imane | 19 | 9 | 19 | 39 | 29 | 17 | 38 | 20 | 9 | 11 | 40 | 52 |\n| Anas | 39 | 19 | 47 | 17 | 26 | 58 | 32 | 60 | 5 | 36 | 34 | 29 |\n| Salma | 32 | 58 | 43 | 50 | 24 | 19 | 45 | 20 | 40 | 57 | 11 | 6 |\n\nWhich worker should do which job so that the total time is as small as possible?",
+ "answer_keys": [
+  "The minimum total time in minutes"
+ ],
+ "objective_key": "The minimum total time in minutes",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total time in minutes": 146.0
+ },
+ "optimum": 146.0,
+ "independent_check": "dynamic programming over subsets of jobs",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total time in minutes": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "assign_Youssef_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Youssef_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Rachid_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Omar_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Karim_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Lina_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Sara_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Ilyas_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Imane_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J12",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J5",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J6",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J7",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J8",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J9",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J10",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J11",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J12",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Youssef does exactly one job",
+     "terms": {
+      "assign_Youssef_J1": 1,
+      "assign_Youssef_J2": 1,
+      "assign_Youssef_J3": 1,
+      "assign_Youssef_J4": 1,
+      "assign_Youssef_J5": 1,
+      "assign_Youssef_J6": 1,
+      "assign_Youssef_J7": 1,
+      "assign_Youssef_J8": 1,
+      "assign_Youssef_J9": 1,
+      "assign_Youssef_J10": 1,
+      "assign_Youssef_J11": 1,
+      "assign_Youssef_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Mehdi does exactly one job",
+     "terms": {
+      "assign_Mehdi_J1": 1,
+      "assign_Mehdi_J2": 1,
+      "assign_Mehdi_J3": 1,
+      "assign_Mehdi_J4": 1,
+      "assign_Mehdi_J5": 1,
+      "assign_Mehdi_J6": 1,
+      "assign_Mehdi_J7": 1,
+      "assign_Mehdi_J8": 1,
+      "assign_Mehdi_J9": 1,
+      "assign_Mehdi_J10": 1,
+      "assign_Mehdi_J11": 1,
+      "assign_Mehdi_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Rachid does exactly one job",
+     "terms": {
+      "assign_Rachid_J1": 1,
+      "assign_Rachid_J2": 1,
+      "assign_Rachid_J3": 1,
+      "assign_Rachid_J4": 1,
+      "assign_Rachid_J5": 1,
+      "assign_Rachid_J6": 1,
+      "assign_Rachid_J7": 1,
+      "assign_Rachid_J8": 1,
+      "assign_Rachid_J9": 1,
+      "assign_Rachid_J10": 1,
+      "assign_Rachid_J11": 1,
+      "assign_Rachid_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Driss does exactly one job",
+     "terms": {
+      "assign_Driss_J1": 1,
+      "assign_Driss_J2": 1,
+      "assign_Driss_J3": 1,
+      "assign_Driss_J4": 1,
+      "assign_Driss_J5": 1,
+      "assign_Driss_J6": 1,
+      "assign_Driss_J7": 1,
+      "assign_Driss_J8": 1,
+      "assign_Driss_J9": 1,
+      "assign_Driss_J10": 1,
+      "assign_Driss_J11": 1,
+      "assign_Driss_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Omar does exactly one job",
+     "terms": {
+      "assign_Omar_J1": 1,
+      "assign_Omar_J2": 1,
+      "assign_Omar_J3": 1,
+      "assign_Omar_J4": 1,
+      "assign_Omar_J5": 1,
+      "assign_Omar_J6": 1,
+      "assign_Omar_J7": 1,
+      "assign_Omar_J8": 1,
+      "assign_Omar_J9": 1,
+      "assign_Omar_J10": 1,
+      "assign_Omar_J11": 1,
+      "assign_Omar_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Karim does exactly one job",
+     "terms": {
+      "assign_Karim_J1": 1,
+      "assign_Karim_J2": 1,
+      "assign_Karim_J3": 1,
+      "assign_Karim_J4": 1,
+      "assign_Karim_J5": 1,
+      "assign_Karim_J6": 1,
+      "assign_Karim_J7": 1,
+      "assign_Karim_J8": 1,
+      "assign_Karim_J9": 1,
+      "assign_Karim_J10": 1,
+      "assign_Karim_J11": 1,
+      "assign_Karim_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Lina does exactly one job",
+     "terms": {
+      "assign_Lina_J1": 1,
+      "assign_Lina_J2": 1,
+      "assign_Lina_J3": 1,
+      "assign_Lina_J4": 1,
+      "assign_Lina_J5": 1,
+      "assign_Lina_J6": 1,
+      "assign_Lina_J7": 1,
+      "assign_Lina_J8": 1,
+      "assign_Lina_J9": 1,
+      "assign_Lina_J10": 1,
+      "assign_Lina_J11": 1,
+      "assign_Lina_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Sara does exactly one job",
+     "terms": {
+      "assign_Sara_J1": 1,
+      "assign_Sara_J2": 1,
+      "assign_Sara_J3": 1,
+      "assign_Sara_J4": 1,
+      "assign_Sara_J5": 1,
+      "assign_Sara_J6": 1,
+      "assign_Sara_J7": 1,
+      "assign_Sara_J8": 1,
+      "assign_Sara_J9": 1,
+      "assign_Sara_J10": 1,
+      "assign_Sara_J11": 1,
+      "assign_Sara_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Ilyas does exactly one job",
+     "terms": {
+      "assign_Ilyas_J1": 1,
+      "assign_Ilyas_J2": 1,
+      "assign_Ilyas_J3": 1,
+      "assign_Ilyas_J4": 1,
+      "assign_Ilyas_J5": 1,
+      "assign_Ilyas_J6": 1,
+      "assign_Ilyas_J7": 1,
+      "assign_Ilyas_J8": 1,
+      "assign_Ilyas_J9": 1,
+      "assign_Ilyas_J10": 1,
+      "assign_Ilyas_J11": 1,
+      "assign_Ilyas_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Imane does exactly one job",
+     "terms": {
+      "assign_Imane_J1": 1,
+      "assign_Imane_J2": 1,
+      "assign_Imane_J3": 1,
+      "assign_Imane_J4": 1,
+      "assign_Imane_J5": 1,
+      "assign_Imane_J6": 1,
+      "assign_Imane_J7": 1,
+      "assign_Imane_J8": 1,
+      "assign_Imane_J9": 1,
+      "assign_Imane_J10": 1,
+      "assign_Imane_J11": 1,
+      "assign_Imane_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Anas does exactly one job",
+     "terms": {
+      "assign_Anas_J1": 1,
+      "assign_Anas_J2": 1,
+      "assign_Anas_J3": 1,
+      "assign_Anas_J4": 1,
+      "assign_Anas_J5": 1,
+      "assign_Anas_J6": 1,
+      "assign_Anas_J7": 1,
+      "assign_Anas_J8": 1,
+      "assign_Anas_J9": 1,
+      "assign_Anas_J10": 1,
+      "assign_Anas_J11": 1,
+      "assign_Anas_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Salma does exactly one job",
+     "terms": {
+      "assign_Salma_J1": 1,
+      "assign_Salma_J2": 1,
+      "assign_Salma_J3": 1,
+      "assign_Salma_J4": 1,
+      "assign_Salma_J5": 1,
+      "assign_Salma_J6": 1,
+      "assign_Salma_J7": 1,
+      "assign_Salma_J8": 1,
+      "assign_Salma_J9": 1,
+      "assign_Salma_J10": 1,
+      "assign_Salma_J11": 1,
+      "assign_Salma_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J1 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J1": 1,
+      "assign_Mehdi_J1": 1,
+      "assign_Rachid_J1": 1,
+      "assign_Driss_J1": 1,
+      "assign_Omar_J1": 1,
+      "assign_Karim_J1": 1,
+      "assign_Lina_J1": 1,
+      "assign_Sara_J1": 1,
+      "assign_Ilyas_J1": 1,
+      "assign_Imane_J1": 1,
+      "assign_Anas_J1": 1,
+      "assign_Salma_J1": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J2 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J2": 1,
+      "assign_Mehdi_J2": 1,
+      "assign_Rachid_J2": 1,
+      "assign_Driss_J2": 1,
+      "assign_Omar_J2": 1,
+      "assign_Karim_J2": 1,
+      "assign_Lina_J2": 1,
+      "assign_Sara_J2": 1,
+      "assign_Ilyas_J2": 1,
+      "assign_Imane_J2": 1,
+      "assign_Anas_J2": 1,
+      "assign_Salma_J2": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J3 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J3": 1,
+      "assign_Mehdi_J3": 1,
+      "assign_Rachid_J3": 1,
+      "assign_Driss_J3": 1,
+      "assign_Omar_J3": 1,
+      "assign_Karim_J3": 1,
+      "assign_Lina_J3": 1,
+      "assign_Sara_J3": 1,
+      "assign_Ilyas_J3": 1,
+      "assign_Imane_J3": 1,
+      "assign_Anas_J3": 1,
+      "assign_Salma_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J4 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J4": 1,
+      "assign_Mehdi_J4": 1,
+      "assign_Rachid_J4": 1,
+      "assign_Driss_J4": 1,
+      "assign_Omar_J4": 1,
+      "assign_Karim_J4": 1,
+      "assign_Lina_J4": 1,
+      "assign_Sara_J4": 1,
+      "assign_Ilyas_J4": 1,
+      "assign_Imane_J4": 1,
+      "assign_Anas_J4": 1,
+      "assign_Salma_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J5 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J5": 1,
+      "assign_Mehdi_J5": 1,
+      "assign_Rachid_J5": 1,
+      "assign_Driss_J5": 1,
+      "assign_Omar_J5": 1,
+      "assign_Karim_J5": 1,
+      "assign_Lina_J5": 1,
+      "assign_Sara_J5": 1,
+      "assign_Ilyas_J5": 1,
+      "assign_Imane_J5": 1,
+      "assign_Anas_J5": 1,
+      "assign_Salma_J5": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J6 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J6": 1,
+      "assign_Mehdi_J6": 1,
+      "assign_Rachid_J6": 1,
+      "assign_Driss_J6": 1,
+      "assign_Omar_J6": 1,
+      "assign_Karim_J6": 1,
+      "assign_Lina_J6": 1,
+      "assign_Sara_J6": 1,
+      "assign_Ilyas_J6": 1,
+      "assign_Imane_J6": 1,
+      "assign_Anas_J6": 1,
+      "assign_Salma_J6": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J7 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J7": 1,
+      "assign_Mehdi_J7": 1,
+      "assign_Rachid_J7": 1,
+      "assign_Driss_J7": 1,
+      "assign_Omar_J7": 1,
+      "assign_Karim_J7": 1,
+      "assign_Lina_J7": 1,
+      "assign_Sara_J7": 1,
+      "assign_Ilyas_J7": 1,
+      "assign_Imane_J7": 1,
+      "assign_Anas_J7": 1,
+      "assign_Salma_J7": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J8 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J8": 1,
+      "assign_Mehdi_J8": 1,
+      "assign_Rachid_J8": 1,
+      "assign_Driss_J8": 1,
+      "assign_Omar_J8": 1,
+      "assign_Karim_J8": 1,
+      "assign_Lina_J8": 1,
+      "assign_Sara_J8": 1,
+      "assign_Ilyas_J8": 1,
+      "assign_Imane_J8": 1,
+      "assign_Anas_J8": 1,
+      "assign_Salma_J8": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J9 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J9": 1,
+      "assign_Mehdi_J9": 1,
+      "assign_Rachid_J9": 1,
+      "assign_Driss_J9": 1,
+      "assign_Omar_J9": 1,
+      "assign_Karim_J9": 1,
+      "assign_Lina_J9": 1,
+      "assign_Sara_J9": 1,
+      "assign_Ilyas_J9": 1,
+      "assign_Imane_J9": 1,
+      "assign_Anas_J9": 1,
+      "assign_Salma_J9": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J10 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J10": 1,
+      "assign_Mehdi_J10": 1,
+      "assign_Rachid_J10": 1,
+      "assign_Driss_J10": 1,
+      "assign_Omar_J10": 1,
+      "assign_Karim_J10": 1,
+      "assign_Lina_J10": 1,
+      "assign_Sara_J10": 1,
+      "assign_Ilyas_J10": 1,
+      "assign_Imane_J10": 1,
+      "assign_Anas_J10": 1,
+      "assign_Salma_J10": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J11 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J11": 1,
+      "assign_Mehdi_J11": 1,
+      "assign_Rachid_J11": 1,
+      "assign_Driss_J11": 1,
+      "assign_Omar_J11": 1,
+      "assign_Karim_J11": 1,
+      "assign_Lina_J11": 1,
+      "assign_Sara_J11": 1,
+      "assign_Ilyas_J11": 1,
+      "assign_Imane_J11": 1,
+      "assign_Anas_J11": 1,
+      "assign_Salma_J11": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J12 done by exactly one worker",
+     "terms": {
+      "assign_Youssef_J12": 1,
+      "assign_Mehdi_J12": 1,
+      "assign_Rachid_J12": 1,
+      "assign_Driss_J12": 1,
+      "assign_Omar_J12": 1,
+      "assign_Karim_J12": 1,
+      "assign_Lina_J12": 1,
+      "assign_Sara_J12": 1,
+      "assign_Ilyas_J12": 1,
+      "assign_Imane_J12": 1,
+      "assign_Anas_J12": 1,
+      "assign_Salma_J12": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "assign_Youssef_J1": 60,
+     "assign_Youssef_J2": 11,
+     "assign_Youssef_J3": 39,
+     "assign_Youssef_J4": 18,
+     "assign_Youssef_J5": 28,
+     "assign_Youssef_J6": 44,
+     "assign_Youssef_J7": 52,
+     "assign_Youssef_J8": 32,
+     "assign_Youssef_J9": 51,
+     "assign_Youssef_J10": 36,
+     "assign_Youssef_J11": 35,
+     "assign_Youssef_J12": 45,
+     "assign_Mehdi_J1": 41,
+     "assign_Mehdi_J2": 36,
+     "assign_Mehdi_J3": 46,
+     "assign_Mehdi_J4": 30,
+     "assign_Mehdi_J5": 49,
+     "assign_Mehdi_J6": 58,
+     "assign_Mehdi_J7": 14,
+     "assign_Mehdi_J8": 34,
+     "assign_Mehdi_J9": 16,
+     "assign_Mehdi_J10": 17,
+     "assign_Mehdi_J11": 42,
+     "assign_Mehdi_J12": 39,
+     "assign_Rachid_J1": 47,
+     "assign_Rachid_J2": 34,
+     "assign_Rachid_J3": 60,
+     "assign_Rachid_J4": 14,
+     "assign_Rachid_J5": 52,
+     "assign_Rachid_J6": 10,
+     "assign_Rachid_J7": 29,
+     "assign_Rachid_J8": 49,
+     "assign_Rachid_J9": 30,
+     "assign_Rachid_J10": 26,
+     "assign_Rachid_J11": 31,
+     "assign_Rachid_J12": 37,
+     "assign_Driss_J1": 55,
+     "assign_Driss_J2": 8,
+     "assign_Driss_J3": 15,
+     "assign_Driss_J4": 39,
+     "assign_Driss_J5": 26,
+     "assign_Driss_J6": 32,
+     "assign_Driss_J7": 8,
+     "assign_Driss_J8": 38,
+     "assign_Driss_J9": 39,
+     "assign_Driss_J10": 45,
+     "assign_Driss_J11": 30,
+     "assign_Driss_J12": 36,
+     "assign_Omar_J1": 36,
+     "assign_Omar_J2": 48,
+     "assign_Omar_J3": 25,
+     "assign_Omar_J4": 34,
+     "assign_Omar_J5": 28,
+     "assign_Omar_J6": 49,
+     "assign_Omar_J7": 5,
+     "assign_Omar_J8": 58,
+     "assign_Omar_J9": 15,
+     "assign_Omar_J10": 36,
+     "assign_Omar_J11": 53,
+     "assign_Omar_J12": 56,
+     "assign_Karim_J1": 56,
+     "assign_Karim_J2": 26,
+     "assign_Karim_J3": 32,
+     "assign_Karim_J4": 37,
+     "assign_Karim_J5": 42,
+     "assign_Karim_J6": 25,
+     "assign_Karim_J7": 30,
+     "assign_Karim_J8": 45,
+     "assign_Karim_J9": 51,
+     "assign_Karim_J10": 6,
+     "assign_Karim_J11": 16,
+     "assign_Karim_J12": 43,
+     "assign_Lina_J1": 28,
+     "assign_Lina_J2": 19,
+     "assign_Lina_J3": 50,
+     "assign_Lina_J4": 30,
+     "assign_Lina_J5": 7,
+     "assign_Lina_J6": 45,
+     "assign_Lina_J7": 45,
+     "assign_Lina_J8": 23,
+     "assign_Lina_J9": 53,
+     "assign_Lina_J10": 41,
+     "assign_Lina_J11": 42,
+     "assign_Lina_J12": 30,
+     "assign_Sara_J1": 35,
+     "assign_Sara_J2": 15,
+     "assign_Sara_J3": 19,
+     "assign_Sara_J4": 47,
+     "assign_Sara_J5": 51,
+     "assign_Sara_J6": 20,
+     "assign_Sara_J7": 40,
+     "assign_Sara_J8": 41,
+     "assign_Sara_J9": 5,
+     "assign_Sara_J10": 52,
+     "assign_Sara_J11": 26,
+     "assign_Sara_J12": 38,
+     "assign_Ilyas_J1": 45,
+     "assign_Ilyas_J2": 42,
+     "assign_Ilyas_J3": 30,
+     "assign_Ilyas_J4": 14,
+     "assign_Ilyas_J5": 7,
+     "assign_Ilyas_J6": 31,
+     "assign_Ilyas_J7": 36,
+     "assign_Ilyas_J8": 60,
+     "assign_Ilyas_J9": 21,
+     "assign_Ilyas_J10": 14,
+     "assign_Ilyas_J11": 60,
+     "assign_Ilyas_J12": 6,
+     "assign_Imane_J1": 19,
+     "assign_Imane_J2": 9,
+     "assign_Imane_J3": 19,
+     "assign_Imane_J4": 39,
+     "assign_Imane_J5": 29,
+     "assign_Imane_J6": 17,
+     "assign_Imane_J7": 38,
+     "assign_Imane_J8": 20,
+     "assign_Imane_J9": 9,
+     "assign_Imane_J10": 11,
+     "assign_Imane_J11": 40,
+     "assign_Imane_J12": 52,
+     "assign_Anas_J1": 39,
+     "assign_Anas_J2": 19,
+     "assign_Anas_J3": 47,
+     "assign_Anas_J4": 17,
+     "assign_Anas_J5": 26,
+     "assign_Anas_J6": 58,
+     "assign_Anas_J7": 32,
+     "assign_Anas_J8": 60,
+     "assign_Anas_J9": 5,
+     "assign_Anas_J10": 36,
+     "assign_Anas_J11": 34,
+     "assign_Anas_J12": 29,
+     "assign_Salma_J1": 32,
+     "assign_Salma_J2": 58,
+     "assign_Salma_J3": 43,
+     "assign_Salma_J4": 50,
+     "assign_Salma_J5": 24,
+     "assign_Salma_J6": 19,
+     "assign_Salma_J7": 45,
+     "assign_Salma_J8": 20,
+     "assign_Salma_J9": 40,
+     "assign_Salma_J10": 57,
+     "assign_Salma_J11": 11,
+     "assign_Salma_J12": 6
+    }
+   }
+  }
+ }
+}
