@@ -32,13 +32,22 @@ Sense = Literal["<=", ">=", "=="]
 class Variable(BaseModel):
     name: str
     type: Literal["integer", "boolean"] = "integer"
-    lb: int = Field(0, description="Lower bound (ignored for booleans).")
-    ub: int = Field(1, description="Upper bound (ignored for booleans). Integer variables need finite bounds.")
+    lb: int = Field(0, description="Lower bound, 0 if omitted. Ignored for booleans.")
+    ub: int | None = Field(
+        None,
+        description="Upper bound, required for integer variables: the largest value that makes sense, "
+                    "for example what the available resources allow. Ignored for booleans.",
+    )
 
     @model_validator(mode="after")
     def _bounds(self):
         if self.type == "boolean":
             self.lb, self.ub = 0, 1
+        elif self.ub is None:
+            # Never guess a bound: a silent default once capped quantities at 1 and returned a
+            # confident, "verified" answer to the wrong problem (see benchmark README).
+            raise ValueError(f"integer variable '{self.name}' needs an upper bound 'ub': use the largest value "
+                             "that makes sense, for example what the available resources allow")
         if self.lb > self.ub:
             raise ValueError(f"variable {self.name}: lb {self.lb} > ub {self.ub}")
         return self

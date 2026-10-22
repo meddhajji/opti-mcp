@@ -112,8 +112,8 @@ def test_feasible_model_has_nothing_to_explain():
 
 
 @pytest.mark.parametrize("bad, message", [
-    ({"variables": [{"name": "x"}, {"name": "x"}]}, "duplicate variable"),
-    ({"variables": [{"name": "x"}], "constraints": [{"name": "c", "terms": {"y": 1}, "sense": "<=", "rhs": 1}]}, "unknown variables"),
+    ({"variables": [{"name": "x", "ub": 1}, {"name": "x", "ub": 1}]}, "duplicate variable"),
+    ({"variables": [{"name": "x", "ub": 1}], "constraints": [{"name": "c", "terms": {"y": 1}, "sense": "<=", "rhs": 1}]}, "unknown variables"),
     ({"variables": [{"name": "x", "lb": 5, "ub": 1}]}, "lb 5 > ub 1"),
 ])
 def test_invalid_models_are_rejected_with_a_reason(bad, message):

@@ -73,10 +73,11 @@ python -m venv .venv
 .venv/Scripts/python -m pytest
 ```
 
-113 tests, including 60 random small problems where the solver's optimum is compared with
+167 tests, including 60 random small problems where the solver's optimum is compared with
 brute-force enumeration of every possible assignment (infeasible cases included), and a
-check that every reported conflict is truly minimal. The benchmark scorer is tested on every
-verdict, and every reference answer must score as optimal.
+check that every reported conflict is truly minimal. The MCP tools are tested as an agent
+calls them, including the error messages it gets back. The benchmark scorer is tested on
+every verdict, and every reference answer must score as optimal.
 
 ## Benchmark (in progress)
 
@@ -143,6 +144,59 @@ prompt, which never mentions the plugin:
   nearly perfect by reasoning alone; the plugin removes invalid fractional plans and
   proves optimality, but does not raise the score. With one run per problem, a gap of
   one or two answers is within noise.
+
+### Second model: gpt-oss-20b on Groq's free tier, same 20 problems (22 Oct 2026)
+
+`python benchmark/report.py gpt-oss-20b-full` (raw answers in
+`benchmark/results/gpt-oss-20b-full.jsonl`). Run through this repo's own agent loop with
+`reasoning_effort` low, on plugin version 0.1 (before the fix below).
+
+| Condition | Optimal | Suboptimal | Infeasible | Impossible | No answer |
+|---|---|---|---|---|---|
+| code | **14 / 20** | 3 | 2 | 0 | 1 |
+| plugin | **11 / 20** | 5 | 1 | 1 | 2 |
+| reasoning | **8 / 20** | 6 | 4 | 0 | 2 |
+
+- **A 20B model gains from tools, but here more from writing code than from the plugin.**
+  It chose the plugin in only 10 of 20 runs (Haiku: 17), and those 10 runs scored 4
+  optimal. Solving was never the problem; writing the model was:
+  - Two runs hit the bound bug described below (#21, #75).
+  - Three runs had modelling errors. On production planning the first model was
+    infeasible, so the agent set the demand of three of the four weeks to zero (which the
+    skill forbids) and claimed 4,000 against a proven 25,700. On #400 the ingredient
+    shares of the mixes were scaled wrongly. On cutting stock the agent modelled 3 pieces
+    instead of the whole order, then sent a tool call that was not valid JSON.
+  - #473 was solved to the optimum, 785, but the agent wrote `**FINAL ANSWER:**` in bold,
+    which the scorer does not accept. The same happened to one correct reasoning answer
+    (#56).
+- **Fractional plans again came only from the conditions without the plugin.** Reasoning
+  gave fractions twice, code once.
+- **What this shows:** for a small model, the hard step is turning words into a correct
+  general model. The next version adds per-family tools (production planning, cutting
+  stock, assignment) where the agent only fills in the data, measured as a fourth
+  condition.
+
+### A bug the benchmark found
+
+In version 0.1, an integer variable sent without `ub` silently got `ub = 1`. On #21
+gpt-oss-20b sent three quantities without bounds. The tool answered OPTIMAL with every
+quantity at 1, a profit of 515, and the verification passed, because that plan was valid
+for the model it received. The proven optimum is 27,510. Haiku's tool calls were not
+logged, but its plugin answers show no sign of the bug (19 of 20 optimal). Now:
+
+- An integer variable without `ub` is rejected with status `INVALID_MODEL` and one plain
+  sentence per problem ("integer variable 'x1' needs an upper bound 'ub': use the largest
+  value that makes sense..."), rather than a guessed bound.
+- Integer variables that end at their bound are listed in `at_upper_bound` with a
+  warning, because an invented bound (say 1,000) can cap the answer the same way.
+- Every input mistake comes back as a short list in plain words rather than raw
+  validation output, and tool schemas are flattened (no `$ref`), which small models read
+  more reliably.
+
+Replaying the logged #21 call with bounds added gives 27,510, the proven optimum. #75
+would still fail: its machine-rental constraints were also wrong (250 instead of 75). The
+lesson: "verified" only means the answer satisfies the model the agent wrote, so the
+plugin must refuse to fill in anything the agent left out.
 
 Next: a size sweep on generated problems (below), so results become charts of accuracy
 against problem size rather than single percentages.

@@ -50,7 +50,9 @@ numbers. Name every constraint in plain words ("wood available"), because confli
 explanations quote the names. Reusable patterns:
 
 - **Quantities**: an integer variable per decision, with realistic bounds
-  (`chairs` in 0..100). Integer variables need finite `lb` and `ub`.
+  (`chairs` in 0..100). Every integer variable needs an `ub`: the largest value that
+  makes sense, such as what the scarcest resource allows. If the result lists
+  `at_upper_bound`, raise any bound that is not a real limit and solve again.
 - **Yes/no choices**: a boolean per option, e.g. `take[item]`. A budget becomes
   `sum(cost[i] * take[i]) <= budget`.
 - **Assignment**: boolean `assign[w, t]`; "each task done once" is
