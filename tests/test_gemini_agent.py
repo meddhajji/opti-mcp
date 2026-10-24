@@ -101,3 +101,26 @@ def test_quota_errors_are_classified():
     assert not is_daily_limit(Exception("quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier'"))
     assert retry_delay_seconds(Exception("'retryDelay': '23s'")) == 23.0
     assert retry_delay_seconds(Exception("no hint")) == 30.0
+
+
+def test_dropped_connections_are_retried_then_stop_the_run(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(gemini_agent.time, "sleep", lambda s: None)
+    failures = [httpx.ConnectError("no route"), httpx.ReadTimeout("no reply")]
+
+    class Flaky:
+        def __init__(self, always):
+            self.always, self.models = always, self
+
+        def generate_content(self, **kwargs):
+            if self.always or failures:
+                raise failures.pop(0) if failures else httpx.ConnectError("still down")
+            return "ok"
+
+    assert gemini_agent.generate(Flaky(always=False), model="m") == "ok"
+    try:
+        gemini_agent.generate(Flaky(always=True), model="m")
+        raise AssertionError("expected ProviderUnavailable")
+    except gemini_agent.ProviderUnavailable:
+        pass

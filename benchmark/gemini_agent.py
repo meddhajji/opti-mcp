@@ -11,13 +11,18 @@ import re
 import time
 from pathlib import Path
 
+import httpx
 from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from agent_common import MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, env_key, instructions
+from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, ProviderUnavailable, condition_tools,
+                          env_key, instructions)
 
 MAX_RETRIES = 8
+CONNECTION_RETRIES = 5
+# Without a timeout, a request sent as the connection dropped once hung for over an hour.
+REQUEST_TIMEOUT_MS = 600_000
 
 
 def is_daily_limit(error: Exception) -> bool:
@@ -31,10 +36,16 @@ def retry_delay_seconds(error: Exception) -> float:
 
 
 def generate(client, **kwargs):
-    """One generation: waits out per-minute limits and overloads, stops on daily limits."""
+    """One generation: waits out per-minute limits and overloads, stops on daily limits and outages."""
+    connection_retries = 0
     for attempt in range(MAX_RETRIES):
         try:
             return client.models.generate_content(**kwargs)
+        except httpx.TransportError as e:  # no connection, or no reply within the timeout
+            connection_retries += 1
+            if connection_retries > CONNECTION_RETRIES:
+                raise ProviderUnavailable(f"Gemini API unreachable: {type(e).__name__}") from e
+            time.sleep(10 * connection_retries)
         except genai_errors.APIError as e:
             if e.code == 429 and is_daily_limit(e):
                 raise DailyLimitReached(str(e)[:300]) from e
@@ -53,7 +64,8 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
               answer_keys: list[str] | None = None) -> dict:
     """Returns {text, tools, turns, tokens, events, calls, answer} in the shape run.py records;
     answer is what submit_answer received (always None without answer_keys)."""
-    client = client or genai.Client(api_key=env_key("GEMINI_API_KEY"))
+    client = client or genai.Client(api_key=env_key("GEMINI_API_KEY"),
+                                    http_options=types.HttpOptions(timeout=REQUEST_TIMEOUT_MS))
     system = instructions(condition)
     if system and "gemma" in model:
         prompt, system = f"{system}\n\n---\n\n{prompt}", None
