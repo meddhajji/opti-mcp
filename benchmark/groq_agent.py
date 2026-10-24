@@ -132,7 +132,7 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     messages = [{"role": "user", "content": prompt}]
     if instructions(condition):
         messages.insert(0, {"role": "system", "content": instructions(condition)})
-    events, tokens = [], {"prompt": 0, "completion": 0}
+    events, tokens = [], {"prompt": 0, "completion": 0, "cached": 0}
 
     async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
         log = CallLog(call_tool, answer_keys)
@@ -158,6 +158,8 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
             if response.usage:
                 tokens["prompt"] += response.usage.prompt_tokens or 0
                 tokens["completion"] += response.usage.completion_tokens or 0
+                # part of prompt that Groq served from its cache: it does not count against rate limits
+                tokens["cached"] += getattr(getattr(response.usage, "prompt_tokens_details", None), "cached_tokens", 0) or 0
             choice = response.choices[0]
             if getattr(choice, "finish_reason", None) == "length":
                 events.append(f"turn {turn}: reply cut off by the output cap")

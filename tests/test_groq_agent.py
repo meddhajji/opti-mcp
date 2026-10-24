@@ -63,7 +63,7 @@ def test_plugin_condition_calls_the_real_mcp_server(tmp_path):
     assert {t["function"]["name"] for t in first["tools"]} == {"solve", "get_format"}
     tool_message = second["messages"][-1]
     assert tool_message["role"] == "tool" and '"OPTIMAL"' in tool_message["content"]
-    assert out["tokens"] == {"prompt": 200, "completion": 40}
+    assert out["tokens"] == {"prompt": 200, "completion": 40, "cached": 0}
 
 
 def test_code_condition_runs_the_models_python(tmp_path):

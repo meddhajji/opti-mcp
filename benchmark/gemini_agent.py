@@ -58,7 +58,7 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     if system and "gemma" in model:
         prompt, system = f"{system}\n\n---\n\n{prompt}", None
     contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]
-    events, tokens = [], {"prompt": 0, "completion": 0}
+    events, tokens = [], {"prompt": 0, "completion": 0, "cached": 0}
 
     async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
         log = CallLog(call_tool, answer_keys)
@@ -76,6 +76,7 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
             if usage:
                 tokens["prompt"] += usage.prompt_token_count or 0
                 tokens["completion"] += (usage.candidates_token_count or 0) + (usage.thoughts_token_count or 0)
+                tokens["cached"] += usage.cached_content_token_count or 0
             candidate = response.candidates[0] if response.candidates else None
             if candidate is None or candidate.content is None:
                 reason = getattr(candidate, "finish_reason", None) or getattr(response, "prompt_feedback", None)

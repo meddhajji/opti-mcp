@@ -50,7 +50,7 @@ def test_plugin_condition_with_the_real_mcp_server(tmp_path):
     assert names == {"solve", "get_format"}
     function_response = second["contents"][-1].parts[0].function_response
     assert function_response.name == "solve" and '"OPTIMAL"' in function_response.response["result"]
-    assert out["tokens"] == {"prompt": 200, "completion": 50}  # thinking tokens counted as output
+    assert out["tokens"] == {"prompt": 200, "completion": 50, "cached": 0}  # thinking tokens counted as output
 
 
 def test_gemma_gets_the_skill_in_the_user_message(tmp_path):
