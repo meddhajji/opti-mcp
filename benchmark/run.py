@@ -142,7 +142,7 @@ def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: in
     """Groq or Gemini models through this repo's own agent loop (imported lazily: optional SDKs)."""
     import importlib
 
-    from agent_common import DailyLimitReached
+    from agent_common import StopRun, unwrap
 
     agent = importlib.import_module(f"{backend}_agent")
     empty = {"text": "", "tools": [], "turns": None, "cost_usd": None}
@@ -151,10 +151,11 @@ def run_api(backend: str, prompt: str, model: str, condition: str, timeout_s: in
                                            timeout_s))
     except TimeoutError:
         return empty | {"stop": "timeout"}, f"timed out after {timeout_s} s"
-    except DailyLimitReached:
-        raise
     except Exception as e:  # one failed run is recorded, never fatal for the whole benchmark
-        return empty | {"stop": "error"}, f"{type(e).__name__}: {str(e)[:400]}"
+        inner = unwrap(e)  # the plugin condition's MCP client wraps errors in an exception group
+        if isinstance(inner, StopRun):  # quota or outage: nothing to record, the run resumes later
+            raise inner from None
+        return empty | {"stop": "error"}, f"{type(inner).__name__}: {str(inner)[:400]}"
     stream = {"text": out["text"], "tools": out["tools"], "turns": out["turns"], "cost_usd": None,
               "tokens": out["tokens"], "stop": "; ".join(out["events"]) or "success", "calls": out["calls"],
               "answer": out.get("answer")}
@@ -168,7 +169,7 @@ def run_one(problem: dict, model: str, condition: str, budget_usd: float, timeou
     prompt = (SUBMIT_PROMPT if answer_tool else PROMPT).format(
         question=problem["question"], keys=json.dumps(keys, ensure_ascii=False))
     started = time.monotonic()
-    if backend in ("groq", "gemini"):  # DailyLimitReached propagates
+    if backend in ("groq", "gemini"):  # StopRun (daily limit, outage) propagates
         stream, error = run_api(backend, prompt, model, condition, timeout_s, workdir, keys if answer_tool else None)
     elif answer_tool:
         raise ValueError("submit_answer is only implemented for the groq and gemini backends")
@@ -235,8 +236,9 @@ def main():
             row = run_one(problem, model, condition, args.budget_usd, args.timeout, workdir, args.backend,
                           args.answer_tool)
         except Exception as e:
-            if type(e).__name__ == "DailyLimitReached":
-                print(f"Stopped: the daily quota for {model} is used up. Re-run the same command later to resume.")
+            if type(e).__name__ in ("DailyLimitReached", "ProviderUnavailable"):
+                why = "the daily quota is used up" if type(e).__name__ == "DailyLimitReached" else "the provider is unreachable"
+                print(f"Stopped: {why} ({model}). Re-run the same command later to resume.")
                 break
             raise
         rows.append(row)

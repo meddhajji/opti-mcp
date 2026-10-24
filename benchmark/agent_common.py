@@ -68,8 +68,23 @@ def submit_spec(answer_keys: list[str]) -> dict:
     }
 
 
-class DailyLimitReached(RuntimeError):
+class StopRun(RuntimeError):
+    """The provider cannot be used for now: stop, record nothing, and resume later."""
+
+
+class DailyLimitReached(StopRun):
     """The provider's per-day quota is used up; waiting minutes will not help."""
+
+
+class ProviderUnavailable(StopRun):
+    """Connections keep failing (an outage): no run can say anything about the model."""
+
+
+def unwrap(error: BaseException) -> BaseException:
+    """The real error inside the exception groups that async task groups (the MCP client) wrap around it."""
+    while isinstance(error, BaseExceptionGroup) and len(error.exceptions) == 1:
+        error = error.exceptions[0]
+    return error
 
 
 def env_key(name: str) -> str:

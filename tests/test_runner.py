@@ -60,3 +60,27 @@ def test_parse_stream_collects_tools_and_final_text():
     assert out["tools"] == [f"{PLUGIN_TOOLS}__solve_model"]
     assert out["text"] == 'FINAL ANSWER: {"x": 1}'
     assert (out["turns"], out["cost_usd"], out["stop"]) == (3, 0.012, "success")
+
+
+def test_stops_inside_exception_groups_still_stop_the_run(tmp_path, monkeypatch):
+    # The plugin condition runs inside the MCP client's task group, which wraps every error.
+    import importlib
+    import types
+
+    import pytest
+
+    import agent_common
+    import run
+
+    def agent_failing_with(error):
+        async def fake_run(*args, **kwargs):
+            raise ExceptionGroup("unhandled errors in a TaskGroup", [error])
+        return types.SimpleNamespace(run=fake_run)
+
+    monkeypatch.setattr(importlib, "import_module", lambda name: agent_failing_with(agent_common.ProviderUnavailable("down")))
+    with pytest.raises(agent_common.ProviderUnavailable):
+        run.run_api("groq", "Q", "m", "plugin", 60, tmp_path)
+
+    monkeypatch.setattr(importlib, "import_module", lambda name: agent_failing_with(ValueError("bad tool output")))
+    stream, error = run.run_api("groq", "Q", "m", "plugin", 60, tmp_path)
+    assert error == "ValueError: bad tool output" and stream["stop"] == "error"

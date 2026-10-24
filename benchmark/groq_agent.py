@@ -14,7 +14,8 @@ from pathlib import Path
 
 import groq
 
-from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, condition_tools, deref,  # noqa: F401
+from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, ProviderUnavailable,  # noqa: F401
+                          condition_tools, deref,
                           env_key, instructions, run_python, skill_text)
 
 # Reasoning models (gpt-oss) spend output tokens thinking before they answer; Groq's
@@ -106,12 +107,14 @@ def chat(client, **kwargs):
                 continue
             minute_retries += 1
             time.sleep(min(retry_after_seconds(e) + 1, 120))
-        except groq.APIConnectionError:
+        except groq.APIConnectionError as e:
             # After a long wait the pooled connection is often stale; the request never reached
             # the model, so retrying cannot change any result. Two runs were lost to this.
             connection_retries += 1
             if connection_retries > CONNECTION_RETRIES:
-                raise
+                # Still failing after about 2.5 minutes: an outage. Stop rather than record it as a
+                # result (a 30-minute outage once turned 10 runs into "no answer").
+                raise ProviderUnavailable(f"Groq unreachable: {str(e)[:200]}") from e
             time.sleep(10 * connection_retries)
         except groq.APIStatusError as e:
             excess = overshoot(e) if e.status_code == 413 else None

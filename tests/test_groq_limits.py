@@ -91,3 +91,20 @@ def test_dropped_connections_are_retried(monkeypatch):
 
     client = type("C", (), {"chat": type("Ch", (), {"completions": type("Co", (), {"create": staticmethod(create)})})})
     assert groq_agent.chat(client, model="m", messages=[]) == "ok"
+
+
+def test_an_outage_stops_the_run_instead_of_recording_it(monkeypatch):
+    import groq
+
+    monkeypatch.setattr(groq, "APIConnectionError", _Dropped)
+    monkeypatch.setattr(groq_agent.time, "sleep", lambda s: None)
+
+    def create(**kwargs):
+        raise _Dropped("Connection error.")
+
+    client = type("C", (), {"chat": type("Ch", (), {"completions": type("Co", (), {"create": staticmethod(create)})})})
+    try:
+        groq_agent.chat(client, model="m", messages=[])
+        raise AssertionError("expected ProviderUnavailable")
+    except groq_agent.ProviderUnavailable:
+        pass
