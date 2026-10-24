@@ -28,8 +28,9 @@ REQUIREMENTS = ROOT / "requirements.txt"
 
 
 def code_fingerprint() -> str:
-    """Changes whenever the dependency list changes."""
-    return hashlib.sha256(REQUIREMENTS.read_bytes()).hexdigest()
+    """Changes whenever the dependency list changes (line endings ignored: a Windows
+    checkout of the same file must not trigger a reinstall)."""
+    return hashlib.sha256(REQUIREMENTS.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def ensure_installed() -> Path:

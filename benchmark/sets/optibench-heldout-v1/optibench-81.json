@@ -1,0 +1,80 @@
+{
+ "id": "optibench-81",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A research group is making fabric and plastic using two methods, method A and method B. Method A produces 25 units of fabric and 14 units of plastic per hour. Method B produces 45 units of fabric and 25 units of plastic per hour. Method A requires 60 units of a special element while method B requires 65 units of the same special element. The research group has available 3500 units of the special element and must make at least 1400 units of fabric and 1000 units of plastic. How many of each method should be executed to minimize the total time needed?",
+ "answer_keys": [
+  "The number of hours using method A",
+  "The number of hours using method B",
+  "The total time needed"
+ ],
+ "objective_key": "The total time needed",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of hours using method A": 0.0,
+  "The number of hours using method B": 40.0,
+  "The total time needed": 40.0
+ },
+ "optimum": 40.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of hours using method A": "method_a",
+   "The number of hours using method B": "method_b",
+   "The total time needed": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "method_a",
+     "type": "integer",
+     "lb": 0,
+     "ub": 58
+    },
+    {
+     "name": "method_b",
+     "type": "integer",
+     "lb": 0,
+     "ub": 53
+    }
+   ],
+   "constraints": [
+    {
+     "name": "at least 1400 fabric",
+     "terms": {
+      "method_a": 25,
+      "method_b": 45
+     },
+     "sense": ">=",
+     "rhs": 1400
+    },
+    {
+     "name": "at least 1000 plastic",
+     "terms": {
+      "method_a": 14,
+      "method_b": 25
+     },
+     "sense": ">=",
+     "rhs": 1000
+    },
+    {
+     "name": "3500 units of special element",
+     "terms": {
+      "method_a": 60,
+      "method_b": 65
+     },
+     "sense": "<=",
+     "rhs": 3500
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "method_a": 1,
+     "method_b": 1
+    }
+   }
+  }
+ }
+}

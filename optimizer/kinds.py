@@ -478,7 +478,9 @@ KINDS: dict[str, Kind] = {
         'Example: {"days": ["Mon", "Tue"], "shifts": ["am", "pm"], "staff": [{"name": "Sara"}, {"name": "Omar", '
         '"unavailable": [{"day": "Tue", "shift": "*"}]}], "needs": [{"day": "*", "shift": "am", "min_staff": 1}]}'),
     "model": Kind(Model, general,
-        "any other problem with whole-number decisions; call get_format first",
+        # its format in one line, so a small problem outside the families still takes one call (v0.3)
+        '{variables: [{name, ub, type?: "integer"|"boolean"}], constraints: [{name, terms: {variable: coefficient}, '
+        'sense: "<="|">="|"==", rhs}], objective: {sense: "maximize"|"minimize", terms}}',
         "A general integer model. variables: [{name, type: \"integer\" (needs lb and ub, the largest sensible value) or "
         "\"boolean\"}]. constraints: [{name in plain words, terms: {variable: coefficient}, sense: \"<=\"|\">=\"|\"==\", rhs}]. "
         "objective: {sense: \"minimize\"|\"maximize\", terms: {variable: coefficient}}. Decimals are fine.\n"
@@ -489,13 +491,16 @@ KINDS: dict[str, Kind] = {
 }
 KIND_NAMES = tuple(KINDS)
 
-INTRO = ("Solve an optimisation problem exactly: the answer is proved optimal and checked independently. Pick the "
+# The first sentence is a usage rule, not a description: in v0.2 a small model skipped the tool on 17 of 20
+# small hand-written problems and got 7 of them wrong, while it was right every time it called the tool.
+INTRO = ("Use for every question that asks for the best plan, quantities, assignment, schedule or choice under "
+         "limits, even a small one: an optimum worked out by hand is a guess until the solver proves it. Pick the "
          "kind that fits and pass the numbers as stated (decimals are fine).")
 OUTRO = "Returns the plan, its value and the status (OPTIMAL = proved best); when no plan exists, the rules that conflict."
 
 
 def catalogue() -> str:
-    """What every agent reads: one line per kind, about 330 tokens in all."""
+    """What every agent reads: one line per kind, about 400 tokens in all."""
     return "\n".join([INTRO, *(f"{name}: {k.line}" for name, k in KINDS.items()), OUTRO])
 
 

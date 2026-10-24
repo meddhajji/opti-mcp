@@ -1,0 +1,96 @@
+{
+ "id": "product_mix-L1-N1-101",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 1,
+ "noise": 1,
+ "seed": 101,
+ "question": "You are helping Youssef, who runs a furniture workshop near Oujda. Here is what they told you, in their own order.\nThe workshop makes doors and beds.\nLast year's total revenue was 6,532,000 dollars.\nThe parking lot has 68 spaces, 5 of them reserved for visitors.\nEach of the doors needs 4 units of wood, 3 machine hours, and earns a profit of 53 dollars.\nEach of the beds needs 8 units of wood, 6 machine hours, and earns a profit of 45 dollars.\nThis week the workshop has 52 units of wood and 55 machine hours available.\nDelivery trucks usually arrive around 7:45 in the morning.\nEverything produced will be sold, and only whole units can be made.\nA competitor opened a new site in Kenitra 5 months ago.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 689.0
+ },
+ "optimum": 689.0,
+ "independent_check": "brute force over every production plan",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "doors",
+     "type": "integer",
+     "lb": 0,
+     "ub": 13
+    },
+    {
+     "name": "beds",
+     "type": "integer",
+     "lb": 0,
+     "ub": 6
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "doors": 4,
+      "beds": 8
+     },
+     "sense": "<=",
+     "rhs": 52
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "doors": 3,
+      "beds": 6
+     },
+     "sense": "<=",
+     "rhs": 55
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "doors": 53,
+     "beds": 45
+    }
+   }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "doors",
+      "profit": 53,
+      "uses": {
+       "wood": 4,
+       "machine time": 3
+      }
+     },
+     {
+      "name": "beds",
+      "profit": 45,
+      "uses": {
+       "wood": 8,
+       "machine time": 6
+      }
+     }
+    ],
+    "available": {
+     "wood": 52,
+     "machine time": 55
+    }
+   }
+  }
+ }
+}

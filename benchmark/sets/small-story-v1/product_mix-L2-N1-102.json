@@ -1,0 +1,111 @@
+{
+ "id": "product_mix-L2-N1-102",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 2,
+ "noise": 1,
+ "seed": 102,
+ "question": "You are helping Driss, who runs a furniture workshop near Agadir. Here is what they told you, in their own order.\nThe workshop makes bookcases, cabinets and wardrobes.\nEach of the bookcases needs 7 units of wood, 8 machine hours, and earns a profit of 27 dollars.\nEach of the cabinets needs 3 units of wood, 1 machine hours, and earns a profit of 21 dollars.\nThe business was founded in 1979 in Fes and now employs 53 people.\nOffice rent is 4,300 dollars per month, paid whatever the plan.\nEach of the wardrobes needs 6 units of wood, and earns a profit of 49 dollars.\nThe parking lot has 25 spaces, 4 of them reserved for visitors.\nThis week the workshop has 74 units of wood and 52 machine hours available.\nLast year's total revenue was 8,470,000 dollars.\nEverything produced will be sold, and only whole units can be made.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 588.0
+ },
+ "optimum": 588.0,
+ "independent_check": "brute force over every production plan",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "bookcases",
+     "type": "integer",
+     "lb": 0,
+     "ub": 6
+    },
+    {
+     "name": "cabinets",
+     "type": "integer",
+     "lb": 0,
+     "ub": 24
+    },
+    {
+     "name": "wardrobes",
+     "type": "integer",
+     "lb": 0,
+     "ub": 12
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "bookcases": 7,
+      "cabinets": 3,
+      "wardrobes": 6
+     },
+     "sense": "<=",
+     "rhs": 74
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "bookcases": 8,
+      "cabinets": 1
+     },
+     "sense": "<=",
+     "rhs": 52
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "bookcases": 27,
+     "cabinets": 21,
+     "wardrobes": 49
+    }
+   }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "bookcases",
+      "profit": 27,
+      "uses": {
+       "wood": 7,
+       "machine time": 8
+      }
+     },
+     {
+      "name": "cabinets",
+      "profit": 21,
+      "uses": {
+       "wood": 3,
+       "machine time": 1
+      }
+     },
+     {
+      "name": "wardrobes",
+      "profit": 49,
+      "uses": {
+       "wood": 6
+      }
+     }
+    ],
+    "available": {
+     "wood": 74,
+     "machine time": 52
+    }
+   }
+  }
+ }
+}

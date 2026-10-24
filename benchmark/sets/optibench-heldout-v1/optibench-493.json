@@ -1,0 +1,67 @@
+{
+ "id": "optibench-493",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A shoe company supplies shoes to stores via vans and trucks. A van can transport 50 pairs of shoes while a truck can transport 100 pairs of shoes. The company must supply a minimum of 2000 pairs of shoes around the city. Since most stores are small, the number of trucks used cannot exceed the number of vans used.  Find the minimum number of vans that can be used?",
+ "answer_keys": [
+  "The number of vans used",
+  "The number of trucks used"
+ ],
+ "objective_key": "The number of vans used",
+ "objective_sense": "minimize",
+ "expected": {
+  "The number of vans used": 14.0,
+  "The number of trucks used": 13.0
+ },
+ "optimum": 14.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of vans used": "objective",
+   "The number of trucks used": "trucks"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "vans",
+     "type": "integer",
+     "lb": 0,
+     "ub": 40
+    },
+    {
+     "name": "trucks",
+     "type": "integer",
+     "lb": 0,
+     "ub": 20
+    }
+   ],
+   "constraints": [
+    {
+     "name": "at least 2000 pairs supplied",
+     "terms": {
+      "vans": 50,
+      "trucks": 100
+     },
+     "sense": ">=",
+     "rhs": 2000
+    },
+    {
+     "name": "trucks at most vans",
+     "terms": {
+      "trucks": 1,
+      "vans": -1
+     },
+     "sense": "<=",
+     "rhs": 0
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "vans": 1
+    }
+   }
+  }
+ }
+}

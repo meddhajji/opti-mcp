@@ -27,6 +27,9 @@ from mcp.client import Client
 from mcp.client.stdio import StdioServerParameters
 
 REPO = Path(__file__).resolve().parent.parent
+# The plugin under test: this checkout by default, or another version checked out elsewhere
+# (OPTIMIZER_PLUGIN_ROOT), so two versions can be compared in the same harness.
+PLUGIN_ROOT = Path(os.environ.get("OPTIMIZER_PLUGIN_ROOT") or REPO)
 MAX_TURNS = 10
 TOOL_RESULT_CHARS = 6000
 PYTHON_TIMEOUT_S = 60
@@ -83,7 +86,7 @@ def env_key(name: str) -> str:
 
 
 def skill_text() -> str:
-    text = (REPO / "skills" / "optimize" / "SKILL.md").read_text(encoding="utf-8")
+    text = (PLUGIN_ROOT / "skills" / "optimize" / "SKILL.md").read_text(encoding="utf-8")
     return re.sub(r"\A---.*?---\s*", "", text, flags=re.DOTALL)  # drop the YAML front matter
 
 
@@ -165,7 +168,10 @@ async def condition_tools(condition: str, workdir: Path, answer_keys: list[str] 
 @asynccontextmanager
 async def _condition_tools(condition: str, workdir: Path):
     if condition == "plugin":
-        params = StdioServerParameters(command="python", args=[str(REPO / "scripts" / "launch.py")], cwd=str(workdir))
+        # Its dependencies are the same for every version: reuse this checkout's plugin environment.
+        env = {**os.environ, "CLAUDE_PLUGIN_DATA": os.environ.get("CLAUDE_PLUGIN_DATA") or str(REPO / ".plugin-data")}
+        params = StdioServerParameters(command="python", args=[str(PLUGIN_ROOT / "scripts" / "launch.py")],
+                                       cwd=str(workdir), env=env)
         async with Client(params) as mcp:
             specs = [{"name": t.name, "description": t.description or "", "parameters": deref(t.input_schema)}
                      for t in (await mcp.list_tools()).tools]

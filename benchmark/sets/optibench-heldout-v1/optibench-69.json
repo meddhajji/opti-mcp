@@ -1,0 +1,79 @@
+{
+ "id": "optibench-69",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A clinic administers two vaccines available for the public to take one at a time. One vaccine is taken as a pill and another is taken as a shot. The pill vaccine takes 10 minutes to administer while the shot takes 20 minutes to administer. Since the shot has been more thoroughly studied, the clinic must deliver at least 3 times as many shots as pill. In addition, the clinic must administer at least 30 pill vaccines. If the clinic only operates for 10000 minutes, maximize the number of patients that can be vaccinated.",
+ "answer_keys": [
+  "The number of pill vaccines",
+  "The number of shot vaccines",
+  "The total number of patients vaccinated"
+ ],
+ "objective_key": "The total number of patients vaccinated",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of pill vaccines": 142.0,
+  "The number of shot vaccines": 429.0,
+  "The total number of patients vaccinated": 571.0
+ },
+ "optimum": 571.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of pill vaccines": "pill",
+   "The number of shot vaccines": "shot",
+   "The total number of patients vaccinated": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "pill",
+     "type": "integer",
+     "lb": 0,
+     "ub": 1000
+    },
+    {
+     "name": "shot",
+     "type": "integer",
+     "lb": 0,
+     "ub": 500
+    }
+   ],
+   "constraints": [
+    {
+     "name": "10,000 minutes",
+     "terms": {
+      "pill": 10,
+      "shot": 20
+     },
+     "sense": "<=",
+     "rhs": 10000
+    },
+    {
+     "name": "at least 3 shots per pill",
+     "terms": {
+      "shot": 1,
+      "pill": -3
+     },
+     "sense": ">=",
+     "rhs": 0
+    },
+    {
+     "name": "at least 30 pills",
+     "terms": {
+      "pill": 1
+     },
+     "sense": ">=",
+     "rhs": 30
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "pill": 1,
+     "shot": 1
+    }
+   }
+  }
+ }
+}

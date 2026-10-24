@@ -1,0 +1,139 @@
+{
+ "id": "optibench-20",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-table",
+ "question": "There are six cities (cities 1-6) in Kilroy County. The county must determine where to build fire stations. The county wants to build the minimum number of fire stations needed to ensure that at least one fire station is within 15 minutes (driving time) of each city. The times (in minutes) required to drive between the cities in Kilroy County are shown in Table 6: \nTime Required to Travel between Cities in Kilroy County, \nFrom City 1 to ctiy 1-6 are 0 10 20 30 30 20; \nFrom City 2 to ctiy 1-6 are 10 0 25 35 20 10;  \nFrom City 3 to ctiy 1-6 are 20 25 0 15 30 20; \nFrom City 4 to ctiy 1-6 are 30 35 15 0 15 25; \nFrom City 5 to ctiy 1-6 are 30 20 30 15 0 14; \nFrom City 5 to ctiy 1-6 are 20 10 20 25 14 0. \nTell Kilroy how many fire stations should be built and where they should be located.",
+ "answer_keys": [
+  "The optimal number of fire stations to be built is",
+  "Whether a fire stations should be built in City 1",
+  "Whether a fire stations should be built in City 2",
+  "Whether a fire stations should be built in City 3",
+  "Whether a fire stations should be built in City 4",
+  "Whether a fire stations should be built in City 5",
+  "Whether a fire stations should be built in City 6"
+ ],
+ "objective_key": "The optimal number of fire stations to be built is",
+ "objective_sense": "minimize",
+ "expected": {
+  "The optimal number of fire stations to be built is": 2.0,
+  "Whether a fire stations should be built in City 1": 0.0,
+  "Whether a fire stations should be built in City 2": 1.0,
+  "Whether a fire stations should be built in City 3": 0.0,
+  "Whether a fire stations should be built in City 4": 1.0,
+  "Whether a fire stations should be built in City 5": 0.0,
+  "Whether a fire stations should be built in City 6": 0.0
+ },
+ "optimum": 2.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The optimal number of fire stations to be built is": "objective",
+   "Whether a fire stations should be built in City 1": "city1",
+   "Whether a fire stations should be built in City 2": "city2",
+   "Whether a fire stations should be built in City 3": "city3",
+   "Whether a fire stations should be built in City 4": "city4",
+   "Whether a fire stations should be built in City 5": "city5",
+   "Whether a fire stations should be built in City 6": "city6"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "city1",
+     "type": "boolean"
+    },
+    {
+     "name": "city2",
+     "type": "boolean"
+    },
+    {
+     "name": "city3",
+     "type": "boolean"
+    },
+    {
+     "name": "city4",
+     "type": "boolean"
+    },
+    {
+     "name": "city5",
+     "type": "boolean"
+    },
+    {
+     "name": "city6",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "city 1 within 15 minutes of a station",
+     "terms": {
+      "city1": 1,
+      "city2": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    },
+    {
+     "name": "city 2 within 15 minutes of a station",
+     "terms": {
+      "city1": 1,
+      "city2": 1,
+      "city6": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    },
+    {
+     "name": "city 3 within 15 minutes of a station",
+     "terms": {
+      "city3": 1,
+      "city4": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    },
+    {
+     "name": "city 4 within 15 minutes of a station",
+     "terms": {
+      "city3": 1,
+      "city4": 1,
+      "city5": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    },
+    {
+     "name": "city 5 within 15 minutes of a station",
+     "terms": {
+      "city4": 1,
+      "city5": 1,
+      "city6": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    },
+    {
+     "name": "city 6 within 15 minutes of a station",
+     "terms": {
+      "city2": 1,
+      "city5": 1,
+      "city6": 1
+     },
+     "sense": ">=",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "city1": 1,
+     "city2": 1,
+     "city3": 1,
+     "city4": 1,
+     "city5": 1,
+     "city6": 1
+    }
+   }
+  }
+ }
+}

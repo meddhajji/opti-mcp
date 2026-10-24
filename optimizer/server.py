@@ -8,7 +8,7 @@ every request:
   get_format(kind)    the full format of one kind, fetched only when needed
 
 Version 0.1 exposed four tools with full JSON schemas (about 3,900 tokens per request
-with the skill); this surface is about 500. See README, "Making it light".
+with the skill); this surface is about 700. See README, "Making it light".
 """
 import json
 from typing import Any, Literal

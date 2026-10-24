@@ -1,8 +1,8 @@
 {
   "name": "optimizer",
   "displayName": "Optimizer",
-  "version": "0.2.0",
-  "description": "Exact optimisation for agents in about 600 tokens: assignment, project selection, cutting stock, production planning, product mix, transport, staff rotas and general integer models, every answer proved optimal and independently verified, with plain explanations when no plan exists. Runs locally, no API key.",
+  "version": "0.3.0",
+  "description": "Exact optimisation for agents in about 700 tokens: assignment, project selection, cutting stock, production planning, product mix, transport, staff rotas and general integer models, every answer proved optimal and independently verified, with plain explanations when no plan exists. Runs locally, no API key.",
   "author": {
     "name": "Mohamed Hajji"
   },

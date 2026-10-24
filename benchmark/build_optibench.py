@@ -6,7 +6,8 @@ question, the expected answer, the reference model and how the answer keys map
 to model variables (so an agent's decisions can be checked for feasibility, and
 an alternative optimal plan is not marked wrong).
 
-Run: python benchmark/build_optibench.py
+Run: python benchmark/build_optibench.py            (the 15 problems in benchmark/problems/)
+     python benchmark/build_optibench.py --heldout  (10 held-out ones in benchmark/sets/optibench-heldout-v1/)
 """
 import json
 import sys
@@ -180,14 +181,97 @@ MODELS = {
           "The maximum weekly profit": "objective"}, 1),
 }
 
+# Held-out set for the v0.3 tool-adoption test (optibench/heldout.json): drawn after v0.3 was designed.
+# Decimals are written as given, since the engine scales them exactly.
+HELDOUT_MODELS = {
+    # The question asks for the fewest vans, so the vans answer is the objective.
+    493: (m({"vans": (0, 40), "trucks": (0, 20)},
+            [("at least 2000 pairs supplied", {"vans": 50, "trucks": 100}, ">=", 2000),
+             ("trucks at most vans", {"trucks": 1, "vans": -1}, "<=", 0)],
+            "minimize", {"vans": 1}),
+          {"The number of vans used": "objective", "The number of trucks used": "trucks"}, 1),
+
+    151: (m({"oil": (0, 833), "auto": (0, 1923), "pharma": (0, 5555)},
+            [("budget $100,000", {"oil": 120, "auto": 52, "pharma": 18}, "<=", 100000),
+             ("at most 40% in oil", {"oil": 120}, "<=", 40000),
+             ("at most 40% in auto", {"auto": 52}, "<=", 40000),
+             ("at most 40% in pharmaceutical", {"pharma": 18}, "<=", 40000),
+             ("at least $10,000 in oil", {"oil": 120}, ">=", 10000)],
+            "maximize", {"oil": 11, "auto": 4, "pharma": 2}),
+          {"The number of oil stock shares": "oil", "The number of auto stock shares": "auto",
+           "The number of pharmaceutical stock shares": "pharma", "The maximum annual income": "objective"}, 1),
+
+    69: (m({"pill": (0, 1000), "shot": (0, 500)},
+           [("10,000 minutes", {"pill": 10, "shot": 20}, "<=", 10000),
+            ("at least 3 shots per pill", {"shot": 1, "pill": -3}, ">=", 0),
+            ("at least 30 pills", {"pill": 1}, ">=", 30)],
+           "maximize", {"pill": 1, "shot": 1}),
+         {"The number of pill vaccines": "pill", "The number of shot vaccines": "shot",
+          "The total number of patients vaccinated": "objective"}, 1),
+
+    # Set covering. The dataset labels the sixth row "City 5"; it is city 6 (cities 1-6, one row each).
+    20: (m({f"city{i}": "bool" for i in range(1, 7)},
+           [(f"city {j} within 15 minutes of a station", {f"city{i}": 1 for i in near}, ">=", 1)
+            for j, near in {1: (1, 2), 2: (1, 2, 6), 3: (3, 4), 4: (3, 4, 5), 5: (4, 5, 6), 6: (2, 5, 6)}.items()],
+           "minimize", {f"city{i}": 1 for i in range(1, 7)}),
+         {"The optimal number of fire stations to be built is": "objective",
+          **{f"Whether a fire stations should be built in City {i}": f"city{i}" for i in range(1, 7)}}, 1),
+
+    163: (m({"suv": (0, 100), "sedan": (0, 133)},
+            [("manufacturing minutes", {"suv": 200, "sedan": 150}, "<=", 20000),
+             ("testing minutes", {"suv": 120, "sedan": 100}, "<=", 10000)],
+            "maximize", {"suv": 10000, "sedan": 9000}),
+          {"The number of SUVs to produce": "suv", "The number of sedans to produce": "sedan",
+           "The maximum total profit": "objective"}, 1),
+
+    442: (m({"fish": (0, 400), "shrimp": (0, 800)},
+            [("weight checking minutes", {"fish": 3, "shrimp": 1.5}, "<=", 1200),
+             ("packaging inspection minutes", {"fish": 15, "shrimp": 7}, "<=", 1200)],
+            "maximize", {"fish": 7, "shrimp": 3}),
+          {"The number of packages of fish meat": "fish", "The number of packages of shrimp meat": "shrimp",
+           "The maximum profit": "objective"}, 1),
+
+    # Dollars invested; condos >= 20% of the total  <=>  0.8 condos - 0.2 detached >= 0.
+    62: (m({"condos": (0, 760000), "detached": (0, 760000)},
+           [("budget $760,000", {"condos": 1, "detached": 1}, "<=", 760000),
+            ("at least 20% in condos", {"condos": 0.8, "detached": -0.2}, ">=", 0),
+            ("at least $20,000 in detached houses", {"detached": 1}, ">=", 20000)],
+           "maximize", {"condos": 0.5, "detached": 1}),
+         {"The amount invested in condos": "condos", "The amount invested in detached houses": "detached",
+          "The total profit from the investment": "objective"}, 1),
+
+    549: (m({f"item{i}": "bool" for i in range(1, 5)},
+            [("12 kg capacity", {"item1": 3, "item2": 6, "item3": 5, "item4": 5}, "<=", 12)],
+            "maximize", {"item1": 15, "item2": 25, "item3": 12, "item4": 10}),
+          {**{f"The decision to put item {i} in the knapsack": f"item{i}" for i in range(1, 5)},
+           "The maximum total value of the knapsack": "objective"}, 1),
+
+    468: (m({"helicopter": (0, 27), "truck": (0, 12)},
+            [("80 cows moved", {"helicopter": 3, "truck": 7}, ">=", 80),
+             ("at most 8 truck trips", {"truck": 1}, "<=", 8)],
+            "minimize", {"helicopter": 5, "truck": 10}),
+          {"Number of helicopter trips": "helicopter", "Number of truck trips": "truck",
+           "Total amount of pollution produced": "objective"}, 1),
+
+    81: (m({"method_a": (0, 58), "method_b": (0, 53)},
+           [("at least 1400 fabric", {"method_a": 25, "method_b": 45}, ">=", 1400),
+            ("at least 1000 plastic", {"method_a": 14, "method_b": 25}, ">=", 1000),
+            ("3500 units of special element", {"method_a": 60, "method_b": 65}, "<=", 3500)],
+           "minimize", {"method_a": 1, "method_b": 1}),
+         {"The number of hours using method A": "method_a", "The number of hours using method B": "method_b",
+          "The total time needed": "objective"}, 1),
+}
+
 
 def main():
-    selection = json.loads((ROOT / "optibench" / "selection.json").read_text(encoding="utf-8"))
-    out_dir = ROOT / "problems"
-    out_dir.mkdir(exist_ok=True)
+    heldout = "--heldout" in sys.argv[1:]
+    selection = json.loads((ROOT / "optibench" / ("heldout.json" if heldout else "selection.json")).read_text(encoding="utf-8"))
+    models = HELDOUT_MODELS if heldout else MODELS
+    out_dir = ROOT / ("sets/optibench-heldout-v1" if heldout else "problems")
+    out_dir.mkdir(parents=True, exist_ok=True)
     disagreements = 0
     for p in selection["problems"]:
-        model_dict, keymap, divisor = MODELS[p["index"]]
+        model_dict, keymap, divisor = models[p["index"]]
         model = Model.model_validate(model_dict)
         expected = {k: float(v) for k, v in p["results"].items()}
         assert set(keymap) == set(expected), f"#{p['index']}: answer keys and key map differ"

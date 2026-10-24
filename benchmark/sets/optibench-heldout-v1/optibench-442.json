@@ -1,0 +1,71 @@
+{
+ "id": "optibench-442",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A seafood factory packages fish meat and shrimp meat. All packages must pass through a weight checking machine and a packaging inspection machine. In a week, each machine is available for at most 1200 minutes. A package of fish meat requires 3 minutes in the weight checking machine and 15 minutes in the packaging inspection machine. A package of shrimp meat requires 1.5 minutes in the weight checking machine and 7 minutes in the packaging inspection machine. A package of fish meat generates a profit of $7 while a package of shrimp generates a profit of $3. Formulate an LP to maximize profit.",
+ "answer_keys": [
+  "The number of packages of fish meat",
+  "The number of packages of shrimp meat",
+  "The maximum profit"
+ ],
+ "objective_key": "The maximum profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of packages of fish meat": 80.0,
+  "The number of packages of shrimp meat": 0.0,
+  "The maximum profit": 560.0
+ },
+ "optimum": 560.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of packages of fish meat": "fish",
+   "The number of packages of shrimp meat": "shrimp",
+   "The maximum profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "fish",
+     "type": "integer",
+     "lb": 0,
+     "ub": 400
+    },
+    {
+     "name": "shrimp",
+     "type": "integer",
+     "lb": 0,
+     "ub": 800
+    }
+   ],
+   "constraints": [
+    {
+     "name": "weight checking minutes",
+     "terms": {
+      "fish": 3,
+      "shrimp": 1.5
+     },
+     "sense": "<=",
+     "rhs": 1200
+    },
+    {
+     "name": "packaging inspection minutes",
+     "terms": {
+      "fish": 15,
+      "shrimp": 7
+     },
+     "sense": "<=",
+     "rhs": 1200
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "fish": 7,
+     "shrimp": 3
+    }
+   }
+  }
+ }
+}

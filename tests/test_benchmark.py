@@ -23,6 +23,16 @@ def test_every_expected_answer_scores_optimal(pid):
     assert score(PROBLEMS[pid], PROBLEMS[pid]["expected"])["outcome"] == "optimal"
 
 
+HELDOUT = {p.stem: json.loads(p.read_text(encoding="utf-8"))
+           for p in (ROOT / "benchmark" / "sets" / "optibench-heldout-v1").glob("*.json")}
+
+
+@pytest.mark.parametrize("pid", sorted(HELDOUT))
+def test_heldout_labels_agree_with_the_solver_and_score_optimal(pid):
+    p = HELDOUT[pid]
+    assert p["label_agrees_with_solver"] and score(p, p["expected"])["outcome"] == "optimal"
+
+
 @pytest.mark.parametrize("text, expected", [
     ('Reasoning...\nFINAL ANSWER: {"a": 1, "b": 2}', {"a": 1, "b": 2}),
     ('FINAL ANSWER:\n```json\n{"a": 3}\n```', {"a": 3}),

@@ -1,0 +1,79 @@
+{
+ "id": "optibench-62",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "Mrs. Watson wants to invest in the real-estate market and has a total budget of at most $760000. She has two choices which include condos and detached houses. Each dollar invested in condos yields a $0.50 profit and each dollar invested in detached houses yields a $1 profit. A minimum of 20% of all money invested must be in condos, and at least $20000 must be in detached houses. Formulate an LP that can be used to maximize total profit earned from Mrs. Watson's investment.",
+ "answer_keys": [
+  "The amount invested in condos",
+  "The amount invested in detached houses",
+  "The total profit from the investment"
+ ],
+ "objective_key": "The total profit from the investment",
+ "objective_sense": "maximize",
+ "expected": {
+  "The amount invested in condos": 152000.0,
+  "The amount invested in detached houses": 608000.0,
+  "The total profit from the investment": 684000.0
+ },
+ "optimum": 684000.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The amount invested in condos": "condos",
+   "The amount invested in detached houses": "detached",
+   "The total profit from the investment": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "condos",
+     "type": "integer",
+     "lb": 0,
+     "ub": 760000
+    },
+    {
+     "name": "detached",
+     "type": "integer",
+     "lb": 0,
+     "ub": 760000
+    }
+   ],
+   "constraints": [
+    {
+     "name": "budget $760,000",
+     "terms": {
+      "condos": 1,
+      "detached": 1
+     },
+     "sense": "<=",
+     "rhs": 760000
+    },
+    {
+     "name": "at least 20% in condos",
+     "terms": {
+      "condos": 0.8,
+      "detached": -0.2
+     },
+     "sense": ">=",
+     "rhs": 0
+    },
+    {
+     "name": "at least $20,000 in detached houses",
+     "terms": {
+      "detached": 1
+     },
+     "sense": ">=",
+     "rhs": 20000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "condos": 0.5,
+     "detached": 1
+    }
+   }
+  }
+ }
+}

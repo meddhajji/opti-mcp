@@ -1,0 +1,107 @@
+{
+ "id": "project_selection-L1-N1-102",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "project_selection",
+ "level": 1,
+ "noise": 1,
+ "seed": 102,
+ "question": "You are helping Hamza, who runs a manufacturing company near Marrakech. Here is what they told you, in their own order.\nThe company is choosing among 5 improvement projects, labelled P1 to P5.\nA competitor opened a new site in Casablanca 8 months ago.\nEach project is either done in full or not at all. Cost and expected yearly benefit:\n\n| Project | Cost (dollars) | Yearly benefit (dollars) |\n|---|---|---|\n| P1 | 18,000 | 26,000 |\n| P2 | 15,000 | 13,000 |\n| P3 | 85,000 | 79,000 |\n| P4 | 39,000 | 52,000 |\n| P5 | 88,000 | 79,000 |\n\nHamza, who manages the site, has 18 years of experience.\nThe annual safety inspection last took place 7 months ago and found no issues.\nThe total budget is 92,000 dollars.\nLast year's total revenue was 5,882,000 dollars.\nWhich projects should be funded to maximise the total yearly benefit?",
+ "answer_keys": [
+  "The maximum total yearly benefit in dollars"
+ ],
+ "objective_key": "The maximum total yearly benefit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total yearly benefit in dollars": 91000.0
+ },
+ "optimum": 91000.0,
+ "independent_check": "dynamic programming over the budget",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total yearly benefit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "P1",
+     "type": "boolean"
+    },
+    {
+     "name": "P2",
+     "type": "boolean"
+    },
+    {
+     "name": "P3",
+     "type": "boolean"
+    },
+    {
+     "name": "P4",
+     "type": "boolean"
+    },
+    {
+     "name": "P5",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "budget",
+     "terms": {
+      "P1": 18000,
+      "P2": 15000,
+      "P3": 85000,
+      "P4": 39000,
+      "P5": 88000
+     },
+     "sense": "<=",
+     "rhs": 92000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "P1": 26000,
+     "P2": 13000,
+     "P3": 79000,
+     "P4": 52000,
+     "P5": 79000
+    }
+   }
+  },
+  "kind": {
+   "kind": "selection",
+   "data": {
+    "items": [
+     {
+      "name": "P1",
+      "cost": 18000,
+      "value": 26000
+     },
+     {
+      "name": "P2",
+      "cost": 15000,
+      "value": 13000
+     },
+     {
+      "name": "P3",
+      "cost": 85000,
+      "value": 79000
+     },
+     {
+      "name": "P4",
+      "cost": 39000,
+      "value": 52000
+     },
+     {
+      "name": "P5",
+      "cost": 88000,
+      "value": 79000
+     }
+    ],
+    "budget": 92000
+   }
+  }
+ }
+}

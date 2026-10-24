@@ -1,0 +1,174 @@
+{
+ "id": "assignment-L1-N1-102",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "assignment",
+ "level": 1,
+ "noise": 1,
+ "seed": 102,
+ "question": "You are helping Sara, who runs a maintenance team near Oujda. Here is what they told you, in their own order.\nA team leader must give each of 3 workers exactly one of 3 jobs (J1, J2, J3), and every job must be done by exactly one worker.\nTime in minutes each worker needs for each job:\n\n| Worker | J1 | J2 | J3 |\n|---|---|---|---|\n| Salma | 41 | 33 | 58 |\n| Anas | 19 | 52 | 34 |\n| Zineb | 47 | 34 | 12 |\n\nHamza, who manages the site, has 15 years of experience.\nThe business was founded in 2007 in Oujda and now employs 66 people.\nAround 92% of customers said they were satisfied in the last survey.\nThe site's internet subscription costs 100 dollars per month.\nWhich worker should do which job so that the total time is as small as possible?",
+ "answer_keys": [
+  "The minimum total time in minutes"
+ ],
+ "objective_key": "The minimum total time in minutes",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total time in minutes": 64.0
+ },
+ "optimum": 64.0,
+ "independent_check": "dynamic programming over subsets of jobs",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total time in minutes": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "assign_Salma_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Salma_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Anas_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Zineb_J3",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Salma does exactly one job",
+     "terms": {
+      "assign_Salma_J1": 1,
+      "assign_Salma_J2": 1,
+      "assign_Salma_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Anas does exactly one job",
+     "terms": {
+      "assign_Anas_J1": 1,
+      "assign_Anas_J2": 1,
+      "assign_Anas_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Zineb does exactly one job",
+     "terms": {
+      "assign_Zineb_J1": 1,
+      "assign_Zineb_J2": 1,
+      "assign_Zineb_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J1 done by exactly one worker",
+     "terms": {
+      "assign_Salma_J1": 1,
+      "assign_Anas_J1": 1,
+      "assign_Zineb_J1": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J2 done by exactly one worker",
+     "terms": {
+      "assign_Salma_J2": 1,
+      "assign_Anas_J2": 1,
+      "assign_Zineb_J2": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J3 done by exactly one worker",
+     "terms": {
+      "assign_Salma_J3": 1,
+      "assign_Anas_J3": 1,
+      "assign_Zineb_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "assign_Salma_J1": 41,
+     "assign_Salma_J2": 33,
+     "assign_Salma_J3": 58,
+     "assign_Anas_J1": 19,
+     "assign_Anas_J2": 52,
+     "assign_Anas_J3": 34,
+     "assign_Zineb_J1": 47,
+     "assign_Zineb_J2": 34,
+     "assign_Zineb_J3": 12
+    }
+   }
+  },
+  "kind": {
+   "kind": "assignment",
+   "data": {
+    "workers": [
+     "Salma",
+     "Anas",
+     "Zineb"
+    ],
+    "jobs": [
+     "J1",
+     "J2",
+     "J3"
+    ],
+    "cost": [
+     [
+      41,
+      33,
+      58
+     ],
+     [
+      19,
+      52,
+      34
+     ],
+     [
+      47,
+      34,
+      12
+     ]
+    ]
+   }
+  }
+ }
+}

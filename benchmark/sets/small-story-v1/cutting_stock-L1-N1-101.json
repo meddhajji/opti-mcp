@@ -1,0 +1,133 @@
+{
+ "id": "cutting_stock-L1-N1-101",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "cutting_stock",
+ "level": 1,
+ "noise": 1,
+ "seed": 101,
+ "question": "You are helping Salma, who runs a metal workshop near Rabat. Here is what they told you, in their own order.\nA workshop cuts pieces from bars 6 metres long. Cuts lose no material and offcuts cannot be joined.\nThe annual safety inspection last took place 6 months ago and found no issues.\nOffice rent is 5,700 dollars per month, paid whatever the plan.\nAround 98% of customers said they were satisfied in the last survey.\nPieces ordered: 3 pieces of 2.70 m, 8 pieces of 1.35 m.\nThe parking lot has 18 spaces, 5 of them reserved for visitors.\nWhat is the minimum number of 6-metre bars needed to cut the whole order?",
+ "answer_keys": [
+  "The minimum number of 6-metre bars"
+ ],
+ "objective_key": "The minimum number of 6-metre bars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum number of 6-metre bars": 4.0
+ },
+ "optimum": 4.0,
+ "independent_check": "lower bound: total length / bar length, rounded up, is reached",
+ "reference": {
+  "key_to_variable": {
+   "The minimum number of 6-metre bars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "cut_0x270_1x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_0x270_2x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_0x270_3x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_0x270_4x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_1x270_0x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_1x270_1x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_1x270_2x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    },
+    {
+     "name": "cut_2x270_0x135",
+     "type": "integer",
+     "lb": 0,
+     "ub": 11
+    }
+   ],
+   "constraints": [
+    {
+     "name": "3 pieces of 270 cm",
+     "terms": {
+      "cut_1x270_0x135": 1,
+      "cut_1x270_1x135": 1,
+      "cut_1x270_2x135": 1,
+      "cut_2x270_0x135": 2
+     },
+     "sense": ">=",
+     "rhs": 3
+    },
+    {
+     "name": "8 pieces of 135 cm",
+     "terms": {
+      "cut_0x270_1x135": 1,
+      "cut_0x270_2x135": 2,
+      "cut_0x270_3x135": 3,
+      "cut_0x270_4x135": 4,
+      "cut_1x270_1x135": 1,
+      "cut_1x270_2x135": 2
+     },
+     "sense": ">=",
+     "rhs": 8
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "cut_0x270_1x135": 1,
+     "cut_0x270_2x135": 1,
+     "cut_0x270_3x135": 1,
+     "cut_0x270_4x135": 1,
+     "cut_1x270_0x135": 1,
+     "cut_1x270_1x135": 1,
+     "cut_1x270_2x135": 1,
+     "cut_2x270_0x135": 1
+    }
+   }
+  },
+  "kind": {
+   "kind": "cutting",
+   "data": {
+    "bar_length": 6.0,
+    "pieces": [
+     {
+      "length": 2.7,
+      "count": 3
+     },
+     {
+      "length": 1.35,
+      "count": 8
+     }
+    ]
+   }
+  }
+ }
+}

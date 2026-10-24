@@ -1,0 +1,71 @@
+{
+ "id": "optibench-163",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A company makes two types of cars, a SUV and a sedan. The SUV takes 200 minutes on the manufacturing line and 120 minutes of testing. The sedan takes 150 minutes on the manufacturing line and 100 minutes of testing. The company has 20000 minutes available on the manufacturing line and 10000 minutes available for testing. If the profit per SUV is $10000 and the profit per sedan is $9000, how many of each should they make to maximize profit?",
+ "answer_keys": [
+  "The number of SUVs to produce",
+  "The number of sedans to produce",
+  "The maximum total profit"
+ ],
+ "objective_key": "The maximum total profit",
+ "objective_sense": "maximize",
+ "expected": {
+  "The number of SUVs to produce": 0.0,
+  "The number of sedans to produce": 100.0,
+  "The maximum total profit": 900000.0
+ },
+ "optimum": 900000.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The number of SUVs to produce": "suv",
+   "The number of sedans to produce": "sedan",
+   "The maximum total profit": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "suv",
+     "type": "integer",
+     "lb": 0,
+     "ub": 100
+    },
+    {
+     "name": "sedan",
+     "type": "integer",
+     "lb": 0,
+     "ub": 133
+    }
+   ],
+   "constraints": [
+    {
+     "name": "manufacturing minutes",
+     "terms": {
+      "suv": 200,
+      "sedan": 150
+     },
+     "sense": "<=",
+     "rhs": 20000
+    },
+    {
+     "name": "testing minutes",
+     "terms": {
+      "suv": 120,
+      "sedan": 100
+     },
+     "sense": "<=",
+     "rhs": 10000
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "suv": 10000,
+     "sedan": 9000
+    }
+   }
+  }
+ }
+}

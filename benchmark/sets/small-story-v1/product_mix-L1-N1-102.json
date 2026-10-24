@@ -1,0 +1,96 @@
+{
+ "id": "product_mix-L1-N1-102",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 1,
+ "noise": 1,
+ "seed": 102,
+ "question": "You are helping Sara, who runs a furniture workshop near Oujda. Here is what they told you, in their own order.\nThe workshop makes tables and bookcases.\nEach of the tables needs 3 units of wood, 7 machine hours, and earns a profit of 119 dollars.\nEach of the bookcases needs 4 units of wood, 8 machine hours, and earns a profit of 22 dollars.\nOffice rent is 7,600 dollars per month, paid whatever the plan.\nThis week the workshop has 62 units of wood and 125 machine hours available.\nThe parking lot has 23 spaces, 5 of them reserved for visitors.\nEverything produced will be sold, and only whole units can be made.\nAround 62% of customers said they were satisfied in the last survey.\nThe business was founded in 2007 in Casablanca and now employs 71 people.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 2023.0
+ },
+ "optimum": 2023.0,
+ "independent_check": "brute force over every production plan",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "tables",
+     "type": "integer",
+     "lb": 0,
+     "ub": 17
+    },
+    {
+     "name": "bookcases",
+     "type": "integer",
+     "lb": 0,
+     "ub": 15
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "tables": 3,
+      "bookcases": 4
+     },
+     "sense": "<=",
+     "rhs": 62
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "tables": 7,
+      "bookcases": 8
+     },
+     "sense": "<=",
+     "rhs": 125
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "tables": 119,
+     "bookcases": 22
+    }
+   }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "tables",
+      "profit": 119,
+      "uses": {
+       "wood": 3,
+       "machine time": 7
+      }
+     },
+     {
+      "name": "bookcases",
+      "profit": 22,
+      "uses": {
+       "wood": 4,
+       "machine time": 8
+      }
+     }
+    ],
+    "available": {
+     "wood": 62,
+     "machine time": 125
+    }
+   }
+  }
+ }
+}

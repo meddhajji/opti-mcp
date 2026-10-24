@@ -1,0 +1,113 @@
+{
+ "id": "product_mix-L2-N1-101",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "product_mix",
+ "level": 2,
+ "noise": 1,
+ "seed": 101,
+ "question": "You are helping Nour, who runs a furniture workshop near Kenitra. Here is what they told you, in their own order.\nThe workshop makes stools, desks and frames.\nEach of the stools needs 1 units of wood, 1 machine hours, and earns a profit of 38 dollars.\nEach of the desks needs 3 units of wood, 6 machine hours, and earns a profit of 107 dollars.\nSalma, who manages the site, has 19 years of experience.\nThe parking lot has 56 spaces, 6 of them reserved for visitors.\nOffice rent is 6,700 dollars per month, paid whatever the plan.\nEach of the frames needs 2 units of wood, 9 machine hours, and earns a profit of 47 dollars.\nThis week the workshop has 27 units of wood and 126 machine hours available.\nA competitor opened a new site in Rabat 10 months ago.\nEverything produced will be sold, and only whole units can be made.\nHow many of each product should be made to maximise total profit?",
+ "answer_keys": [
+  "The maximum total profit in dollars"
+ ],
+ "objective_key": "The maximum total profit in dollars",
+ "objective_sense": "maximize",
+ "expected": {
+  "The maximum total profit in dollars": 1026.0
+ },
+ "optimum": 1026.0,
+ "independent_check": "brute force over every production plan",
+ "reference": {
+  "key_to_variable": {
+   "The maximum total profit in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "stools",
+     "type": "integer",
+     "lb": 0,
+     "ub": 27
+    },
+    {
+     "name": "desks",
+     "type": "integer",
+     "lb": 0,
+     "ub": 9
+    },
+    {
+     "name": "frames",
+     "type": "integer",
+     "lb": 0,
+     "ub": 13
+    }
+   ],
+   "constraints": [
+    {
+     "name": "units of wood available",
+     "terms": {
+      "stools": 1,
+      "desks": 3,
+      "frames": 2
+     },
+     "sense": "<=",
+     "rhs": 27
+    },
+    {
+     "name": "machine hours available",
+     "terms": {
+      "stools": 1,
+      "desks": 6,
+      "frames": 9
+     },
+     "sense": "<=",
+     "rhs": 126
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "stools": 38,
+     "desks": 107,
+     "frames": 47
+    }
+   }
+  },
+  "kind": {
+   "kind": "product_mix",
+   "data": {
+    "products": [
+     {
+      "name": "stools",
+      "profit": 38,
+      "uses": {
+       "wood": 1,
+       "machine time": 1
+      }
+     },
+     {
+      "name": "desks",
+      "profit": 107,
+      "uses": {
+       "wood": 3,
+       "machine time": 6
+      }
+     },
+     {
+      "name": "frames",
+      "profit": 47,
+      "uses": {
+       "wood": 2,
+       "machine time": 9
+      }
+     }
+    ],
+    "available": {
+     "wood": 27,
+     "machine time": 126
+    }
+   }
+  }
+ }
+}

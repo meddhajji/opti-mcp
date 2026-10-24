@@ -1,0 +1,76 @@
+{
+ "id": "optibench-549",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-table",
+ "question": "Let us suppose that we want to put four items in a knapsack that can hold up to 12 kg. The weight and the value associated with each of the items are listed in the following Table. We need to decide which items to put in so as to maximize the total value of the knapsack.\n\nTable (The weight and value of each item):\n| Item | Weight (kg) | Value |\n| ---- | ----------- | ----- |\n| 1    | 3           | 15    |\n| 2    | 6           | 25    |\n| 3    | 5           | 12    |\n| 4    | 5           | 10    |",
+ "answer_keys": [
+  "The decision to put item 1 in the knapsack",
+  "The decision to put item 2 in the knapsack",
+  "The decision to put item 3 in the knapsack",
+  "The decision to put item 4 in the knapsack",
+  "The maximum total value of the knapsack"
+ ],
+ "objective_key": "The maximum total value of the knapsack",
+ "objective_sense": "maximize",
+ "expected": {
+  "The decision to put item 1 in the knapsack": 1.0,
+  "The decision to put item 2 in the knapsack": 1.0,
+  "The decision to put item 3 in the knapsack": 0.0,
+  "The decision to put item 4 in the knapsack": 0.0,
+  "The maximum total value of the knapsack": 40.0
+ },
+ "optimum": 40.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "The decision to put item 1 in the knapsack": "item1",
+   "The decision to put item 2 in the knapsack": "item2",
+   "The decision to put item 3 in the knapsack": "item3",
+   "The decision to put item 4 in the knapsack": "item4",
+   "The maximum total value of the knapsack": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "item1",
+     "type": "boolean"
+    },
+    {
+     "name": "item2",
+     "type": "boolean"
+    },
+    {
+     "name": "item3",
+     "type": "boolean"
+    },
+    {
+     "name": "item4",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "12 kg capacity",
+     "terms": {
+      "item1": 3,
+      "item2": 6,
+      "item3": 5,
+      "item4": 5
+     },
+     "sense": "<=",
+     "rhs": 12
+    }
+   ],
+   "objective": {
+    "sense": "maximize",
+    "terms": {
+     "item1": 15,
+     "item2": 25,
+     "item3": 12,
+     "item4": 10
+    }
+   }
+  }
+ }
+}

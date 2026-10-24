@@ -1,0 +1,70 @@
+{
+ "id": "optibench-468",
+ "source": "OptiBench (Yang et al., ICLR 2025), Apache-2.0",
+ "kind": "linear-notable",
+ "question": "A farmer decides to move his cows to a nearby farm using helicopters and trucks. A helicopter can take 3 cows per trip and creates 5 units of pollution. A truck can take 7 cows per trip and creates 10 units of pollution. The farmer needs to transport 80 cows and he only has enough money for at most 8 truck trips. How many of each type of trip should be taken to minimize the total amount of pollution produced?",
+ "answer_keys": [
+  "Number of helicopter trips",
+  "Number of truck trips",
+  "Total amount of pollution produced"
+ ],
+ "objective_key": "Total amount of pollution produced",
+ "objective_sense": "minimize",
+ "expected": {
+  "Number of helicopter trips": 8.0,
+  "Number of truck trips": 8.0,
+  "Total amount of pollution produced": 120.0
+ },
+ "optimum": 120.0,
+ "label_agrees_with_solver": true,
+ "reference": {
+  "key_to_variable": {
+   "Number of helicopter trips": "helicopter",
+   "Number of truck trips": "truck",
+   "Total amount of pollution produced": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "helicopter",
+     "type": "integer",
+     "lb": 0,
+     "ub": 27
+    },
+    {
+     "name": "truck",
+     "type": "integer",
+     "lb": 0,
+     "ub": 12
+    }
+   ],
+   "constraints": [
+    {
+     "name": "80 cows moved",
+     "terms": {
+      "helicopter": 3,
+      "truck": 7
+     },
+     "sense": ">=",
+     "rhs": 80
+    },
+    {
+     "name": "at most 8 truck trips",
+     "terms": {
+      "truck": 1
+     },
+     "sense": "<=",
+     "rhs": 8
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "helicopter": 5,
+     "truck": 10
+    }
+   }
+  }
+ }
+}

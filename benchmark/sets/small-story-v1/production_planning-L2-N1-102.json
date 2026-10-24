@@ -1,0 +1,186 @@
+{
+ "id": "production_planning-L2-N1-102",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "production_planning",
+ "level": 2,
+ "noise": 1,
+ "seed": 102,
+ "question": "You are helping Meryem, who runs a factory near Kenitra. Here is what they told you, in their own order.\nA factory plans production for the next 4 weeks.\nKarim, who manages the site, has 3 years of experience.\nWeekly demand, which must be met on time with no backorders: week 1: 170, week 2: 193, week 3: 174, week 4: 230 units.\nEach week it can make up to 166 units in regular time at 48 dollars per unit, plus up to 42 units in overtime at 59 dollars per unit.\nDelivery trucks usually arrive around 6:00 in the morning.\nThe parking lot has 75 spaces, 4 of them reserved for visitors.\nUnits kept in stock at the end of a week cost 7 dollars each, and the warehouse holds at most 161 units.\nThere are 8 units in stock at the start.\nThe annual safety inspection last took place 3 months ago and found no issues.\nWhat is the minimum total cost of meeting demand over the 4 weeks?",
+ "answer_keys": [
+  "The minimum total cost in dollars"
+ ],
+ "objective_key": "The minimum total cost in dollars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total cost in dollars": 37659.0
+ },
+ "optimum": 37659.0,
+ "independent_check": "dynamic programming over weekly stock levels",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total cost in dollars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "regular_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 166
+    },
+    {
+     "name": "overtime_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 42
+    },
+    {
+     "name": "stock_w1",
+     "type": "integer",
+     "lb": 0,
+     "ub": 161
+    },
+    {
+     "name": "regular_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 166
+    },
+    {
+     "name": "overtime_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 42
+    },
+    {
+     "name": "stock_w2",
+     "type": "integer",
+     "lb": 0,
+     "ub": 161
+    },
+    {
+     "name": "regular_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 166
+    },
+    {
+     "name": "overtime_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 42
+    },
+    {
+     "name": "stock_w3",
+     "type": "integer",
+     "lb": 0,
+     "ub": 161
+    },
+    {
+     "name": "regular_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 166
+    },
+    {
+     "name": "overtime_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 42
+    },
+    {
+     "name": "stock_w4",
+     "type": "integer",
+     "lb": 0,
+     "ub": 161
+    }
+   ],
+   "constraints": [
+    {
+     "name": "stock balance week 1",
+     "terms": {
+      "regular_w1": 1,
+      "overtime_w1": 1,
+      "stock_w1": -1
+     },
+     "sense": "==",
+     "rhs": 162
+    },
+    {
+     "name": "stock balance week 2",
+     "terms": {
+      "regular_w2": 1,
+      "overtime_w2": 1,
+      "stock_w2": -1,
+      "stock_w1": 1
+     },
+     "sense": "==",
+     "rhs": 193
+    },
+    {
+     "name": "stock balance week 3",
+     "terms": {
+      "regular_w3": 1,
+      "overtime_w3": 1,
+      "stock_w3": -1,
+      "stock_w2": 1
+     },
+     "sense": "==",
+     "rhs": 174
+    },
+    {
+     "name": "stock balance week 4",
+     "terms": {
+      "regular_w4": 1,
+      "overtime_w4": 1,
+      "stock_w4": -1,
+      "stock_w3": 1
+     },
+     "sense": "==",
+     "rhs": 230
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "regular_w1": 48,
+     "overtime_w1": 59,
+     "stock_w1": 7,
+     "regular_w2": 48,
+     "overtime_w2": 59,
+     "stock_w2": 7,
+     "regular_w3": 48,
+     "overtime_w3": 59,
+     "stock_w3": 7,
+     "regular_w4": 48,
+     "overtime_w4": 59,
+     "stock_w4": 7
+    }
+   }
+  },
+  "kind": {
+   "kind": "production",
+   "data": {
+    "demand": [
+     170,
+     193,
+     174,
+     230
+    ],
+    "regular": {
+     "capacity": 166,
+     "cost": 48
+    },
+    "overtime": {
+     "capacity": 42,
+     "cost": 59
+    },
+    "holding_cost": 7,
+    "storage": 161,
+    "start_stock": 8
+   }
+  }
+ }
+}

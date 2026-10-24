@@ -1,6 +1,6 @@
 [project]
 name = "optimizer-mcp"
-version = "0.2.0"
+version = "0.3.0"
 description = "Exact optimisation for agents: standard problem kinds solved, proved optimal and verified, as an MCP server or a library"
 requires-python = ">=3.10"
 dynamic = ["dependencies"]  # read from requirements.txt, which the plugin launcher also uses

@@ -1,0 +1,145 @@
+{
+ "id": "cutting_stock-L2-N1-101",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "cutting_stock",
+ "level": 2,
+ "noise": 1,
+ "seed": 101,
+ "question": "You are helping Lina, who runs a metal workshop near Tangier. Here is what they told you, in their own order.\nA workshop cuts pieces from bars 6 metres long. Cuts lose no material and offcuts cannot be joined.\nOffice rent is 3,200 dollars per month, paid whatever the plan.\nAround 81% of customers said they were satisfied in the last survey.\nPieces ordered: 10 pieces of 3.10 m, 8 pieces of 2.90 m, 4 pieces of 2.10 m.\nA competitor opened a new site in Marrakech 7 months ago.\nLast year's total revenue was 6,510,000 dollars.\nWhat is the minimum number of 6-metre bars needed to cut the whole order?",
+ "answer_keys": [
+  "The minimum number of 6-metre bars"
+ ],
+ "objective_key": "The minimum number of 6-metre bars",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum number of 6-metre bars": 11.0
+ },
+ "optimum": 11.0,
+ "independent_check": "lower bound: total length / bar length, rounded up, is reached",
+ "reference": {
+  "key_to_variable": {
+   "The minimum number of 6-metre bars": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "cut_0x310_0x290_1x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_0x310_0x290_2x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_0x310_1x290_0x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_0x310_1x290_1x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_0x310_2x290_0x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_1x310_0x290_0x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_1x310_0x290_1x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    },
+    {
+     "name": "cut_1x310_1x290_0x210",
+     "type": "integer",
+     "lb": 0,
+     "ub": 22
+    }
+   ],
+   "constraints": [
+    {
+     "name": "10 pieces of 310 cm",
+     "terms": {
+      "cut_1x310_0x290_0x210": 1,
+      "cut_1x310_0x290_1x210": 1,
+      "cut_1x310_1x290_0x210": 1
+     },
+     "sense": ">=",
+     "rhs": 10
+    },
+    {
+     "name": "8 pieces of 290 cm",
+     "terms": {
+      "cut_0x310_1x290_0x210": 1,
+      "cut_0x310_1x290_1x210": 1,
+      "cut_0x310_2x290_0x210": 2,
+      "cut_1x310_1x290_0x210": 1
+     },
+     "sense": ">=",
+     "rhs": 8
+    },
+    {
+     "name": "4 pieces of 210 cm",
+     "terms": {
+      "cut_0x310_0x290_1x210": 1,
+      "cut_0x310_0x290_2x210": 2,
+      "cut_0x310_1x290_1x210": 1,
+      "cut_1x310_0x290_1x210": 1
+     },
+     "sense": ">=",
+     "rhs": 4
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "cut_0x310_0x290_1x210": 1,
+     "cut_0x310_0x290_2x210": 1,
+     "cut_0x310_1x290_0x210": 1,
+     "cut_0x310_1x290_1x210": 1,
+     "cut_0x310_2x290_0x210": 1,
+     "cut_1x310_0x290_0x210": 1,
+     "cut_1x310_0x290_1x210": 1,
+     "cut_1x310_1x290_0x210": 1
+    }
+   }
+  },
+  "kind": {
+   "kind": "cutting",
+   "data": {
+    "bar_length": 6.0,
+    "pieces": [
+     {
+      "length": 3.1,
+      "count": 10
+     },
+     {
+      "length": 2.9,
+      "count": 8
+     },
+     {
+      "length": 2.1,
+      "count": 4
+     }
+    ]
+   }
+  }
+ }
+}

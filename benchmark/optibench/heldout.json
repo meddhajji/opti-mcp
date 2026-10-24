@@ -1,0 +1,126 @@
+{
+ "source": "OptiBench (Yang et al., ICLR 2025), https://github.com/yangzhch6/ReSocratic, data/OptiBench.json",
+ "license": "Apache-2.0, see LICENSE-OptiBench",
+ "purpose": "Held-out set for the v0.3 tool-adoption test (24 Oct 2026): drawn after v0.3 was designed, never seen while designing it.",
+ "selection": "Same rule as selection.json: linear problems whose expected answers are all whole numbers, excluding the 18 problems already used or excluded there, in random order (seed 20261024), checked by hand; the first 10 that pass are kept.",
+ "problems": [
+  {
+   "index": 493,
+   "type": "linear-notable",
+   "question": "A shoe company supplies shoes to stores via vans and trucks. A van can transport 50 pairs of shoes while a truck can transport 100 pairs of shoes. The company must supply a minimum of 2000 pairs of shoes around the city. Since most stores are small, the number of trucks used cannot exceed the number of vans used.  Find the minimum number of vans that can be used?",
+   "results": {
+    "The number of vans used": "14.0",
+    "The number of trucks used": "13.0"
+   }
+  },
+  {
+   "index": 151,
+   "type": "linear-table",
+   "question": "A client asks his stockbroker to invest $100,000 for maximum annual income, subject to the three conditions: Spread the investment over no more than three different stocks. Put no more than 40 percent of the money into any one stock. Put a minimum of $10,000 into an oil stock. The broker has identified three stocks for investment. Their estimated annual returns per share and price per share are shown in the following table: Stock, Price and annual returns are, (Oil, $120, $11), (Auto, $52, $4), (Pharmaceutical, $18, $2).",
+   "results": {
+    "The number of oil stock shares": "333.0",
+    "The number of auto stock shares": "385.0",
+    "The number of pharmaceutical stock shares": "2222.0",
+    "The maximum annual income": "9647.0"
+   }
+  },
+  {
+   "index": 69,
+   "type": "linear-notable",
+   "question": "A clinic administers two vaccines available for the public to take one at a time. One vaccine is taken as a pill and another is taken as a shot. The pill vaccine takes 10 minutes to administer while the shot takes 20 minutes to administer. Since the shot has been more thoroughly studied, the clinic must deliver at least 3 times as many shots as pill. In addition, the clinic must administer at least 30 pill vaccines. If the clinic only operates for 10000 minutes, maximize the number of patients that can be vaccinated.",
+   "results": {
+    "The number of pill vaccines": "142.0",
+    "The number of shot vaccines": "429.0",
+    "The total number of patients vaccinated": "571.0"
+   }
+  },
+  {
+   "index": 20,
+   "type": "linear-table",
+   "question": "There are six cities (cities 1-6) in Kilroy County. The county must determine where to build fire stations. The county wants to build the minimum number of fire stations needed to ensure that at least one fire station is within 15 minutes (driving time) of each city. The times (in minutes) required to drive between the cities in Kilroy County are shown in Table 6: \nTime Required to Travel between Cities in Kilroy County, \nFrom City 1 to ctiy 1-6 are 0 10 20 30 30 20; \nFrom City 2 to ctiy 1-6 are 10 0 25 35 20 10;  \nFrom City 3 to ctiy 1-6 are 20 25 0 15 30 20; \nFrom City 4 to ctiy 1-6 are 30 35 15 0 15 25; \nFrom City 5 to ctiy 1-6 are 30 20 30 15 0 14; \nFrom City 5 to ctiy 1-6 are 20 10 20 25 14 0. \nTell Kilroy how many fire stations should be built and where they should be located.",
+   "results": {
+    "The optimal number of fire stations to be built is": "2.0",
+    "Whether a fire stations should be built in City 1": "0.0",
+    "Whether a fire stations should be built in City 2": "1.0",
+    "Whether a fire stations should be built in City 3": "0.0",
+    "Whether a fire stations should be built in City 4": "1.0",
+    "Whether a fire stations should be built in City 5": "0.0",
+    "Whether a fire stations should be built in City 6": "0.0"
+   }
+  },
+  {
+   "index": 163,
+   "type": "linear-notable",
+   "question": "A company makes two types of cars, a SUV and a sedan. The SUV takes 200 minutes on the manufacturing line and 120 minutes of testing. The sedan takes 150 minutes on the manufacturing line and 100 minutes of testing. The company has 20000 minutes available on the manufacturing line and 10000 minutes available for testing. If the profit per SUV is $10000 and the profit per sedan is $9000, how many of each should they make to maximize profit?",
+   "results": {
+    "The number of SUVs to produce": "0.0",
+    "The number of sedans to produce": "100.0",
+    "The maximum total profit": "900000.0"
+   }
+  },
+  {
+   "index": 442,
+   "type": "linear-notable",
+   "question": "A seafood factory packages fish meat and shrimp meat. All packages must pass through a weight checking machine and a packaging inspection machine. In a week, each machine is available for at most 1200 minutes. A package of fish meat requires 3 minutes in the weight checking machine and 15 minutes in the packaging inspection machine. A package of shrimp meat requires 1.5 minutes in the weight checking machine and 7 minutes in the packaging inspection machine. A package of fish meat generates a profit of $7 while a package of shrimp generates a profit of $3. Formulate an LP to maximize profit.",
+   "results": {
+    "The number of packages of fish meat": "80.0",
+    "The number of packages of shrimp meat": "0.0",
+    "The maximum profit": "560.0"
+   }
+  },
+  {
+   "index": 62,
+   "type": "linear-notable",
+   "question": "Mrs. Watson wants to invest in the real-estate market and has a total budget of at most $760000. She has two choices which include condos and detached houses. Each dollar invested in condos yields a $0.50 profit and each dollar invested in detached houses yields a $1 profit. A minimum of 20% of all money invested must be in condos, and at least $20000 must be in detached houses. Formulate an LP that can be used to maximize total profit earned from Mrs. Watson's investment.",
+   "results": {
+    "The amount invested in condos": "152000.0",
+    "The amount invested in detached houses": "608000.0",
+    "The total profit from the investment": "684000.0"
+   }
+  },
+  {
+   "index": 549,
+   "type": "linear-table",
+   "question": "Let us suppose that we want to put four items in a knapsack that can hold up to 12 kg. The weight and the value associated with each of the items are listed in the following Table. We need to decide which items to put in so as to maximize the total value of the knapsack.\n\nTable (The weight and value of each item):\n| Item | Weight (kg) | Value |\n| ---- | ----------- | ----- |\n| 1    | 3           | 15    |\n| 2    | 6           | 25    |\n| 3    | 5           | 12    |\n| 4    | 5           | 10    |",
+   "results": {
+    "The decision to put item 1 in the knapsack": "1.0",
+    "The decision to put item 2 in the knapsack": "1.0",
+    "The decision to put item 3 in the knapsack": "0.0",
+    "The decision to put item 4 in the knapsack": "0.0",
+    "The maximum total value of the knapsack": "40.0"
+   }
+  },
+  {
+   "index": 468,
+   "type": "linear-notable",
+   "question": "A farmer decides to move his cows to a nearby farm using helicopters and trucks. A helicopter can take 3 cows per trip and creates 5 units of pollution. A truck can take 7 cows per trip and creates 10 units of pollution. The farmer needs to transport 80 cows and he only has enough money for at most 8 truck trips. How many of each type of trip should be taken to minimize the total amount of pollution produced?",
+   "results": {
+    "Number of helicopter trips": "8.0",
+    "Number of truck trips": "8.0",
+    "Total amount of pollution produced": "120.0"
+   }
+  },
+  {
+   "index": 81,
+   "type": "linear-notable",
+   "question": "A research group is making fabric and plastic using two methods, method A and method B. Method A produces 25 units of fabric and 14 units of plastic per hour. Method B produces 45 units of fabric and 25 units of plastic per hour. Method A requires 60 units of a special element while method B requires 65 units of the same special element. The research group has available 3500 units of the special element and must make at least 1400 units of fabric and 1000 units of plastic. How many of each method should be executed to minimize the total time needed?",
+   "results": {
+    "The number of hours using method A": "0.0",
+    "The number of hours using method B": "40.0",
+    "The total time needed": "40.0"
+   }
+  }
+ ],
+ "excluded": [
+  {
+   "index": 251,
+   "reason": "The same candy-counter problem as #400, already in the hand-written set, given as a table.",
+   "question": "A chocolate maker has contracted to operate a small candy counter in a fashionable store, offering a limited selection of candy mixes and individual one-pound boxes of cashews, raisins, caramels, and chocolates. The counter will offer a regular mix (equal parts of cashews, raisins, caramels, and chocolates), a deluxe mix (one-half cashews and one-half chocolates), and individual one-pound boxes of each candy type. All candies are made fresh at the counter, but storage space for supplies is limited. Bins are available with the capacities shown in the following table. Additionally, to maintain a good image and encourage purchases, at least 20 boxes of each type of product must be made each day. Leftover boxes are donated to a nearby nursing home. The profit per box for each item is also provided in the table. Determine the optimal values of the decision variables and the maximum profit.\n\nTable (Ingredient Capacity and Profit per Box):\n| Ingredient | Capacity (pounds per day) | Regular Mix Profit | Deluxe Mix Profit | Individual Box Profit |\n|------------|---------------------------|--------------------|-------------------|-----------------------|\n| Cashews    | 120                       | $0.80              | $0.90             | $0.70                 |\n| Raisins    | 200                       | $0.80              | -                 | $0.60                 |\n| Caramels   | 100                       | $0.80              | -                 | $0.50                 |\n| Chocolates | 160                       | $0.80              | $0.90             | $0.75                 |"
+  },
+  {
+   "index": 545,
+   "reason": "Ambiguous: 'twice as many technician shifts' read as at least twice gives 13 workers, exactly twice gives 15; also no answer key for the objective.",
+   "question": "A hospital hires ultrasound technicians and graduate researchers to image patients. An ultrasound technician works 8 hours per shift while a graduate researcher works 5 hours per shift. Ultrasound technicians are paid $300 per shift while graduate researchers are paid $100 per shift. However, due to regulations, there must be twice as many ultrasound technician shifts than graduate researcher shifts. Currently, the hospital needs 100 hours of ultrasound services to meet needs. If the hospital has a budget of $14000, how many of each worker certified to use the ultrasound should be scheduled to reduce the total number of workers?"
+  }
+ ]
+}

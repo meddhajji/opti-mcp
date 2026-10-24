@@ -46,12 +46,13 @@ MAX_DAILY_WAIT_S = int(os.environ.get("GROQ_MAX_DAILY_WAIT_S", "1200"))
 
 
 def try_again_seconds(error: Exception) -> float | None:
-    """From "Please try again in 7m30.5s" (also "1h2m3s", "17.28s"), in seconds."""
-    m = re.search(r"try again in ((?:\d+h)?(?:\d+m)?(?:[\d.]+s)?)", str(error))
-    if not m or not m.group(1):
+    """From "Please try again in 7m30.5s" (also "1h2m3s", "17.28s", "539ms"), in seconds.
+    "ms" is matched before "m": reading 539ms as 539 minutes once stalled a run for 9 hours."""
+    m = re.search(r"try again in ([\d.hms]+)", str(error))
+    if not m:
         return None
-    parts = re.findall(r"([\d.]+)([hms])", m.group(1))
-    return sum(float(v) * {"h": 3600, "m": 60, "s": 1}[u] for v, u in parts) if parts else None
+    parts = re.findall(r"([\d.]+)(ms|h|m|s)", m.group(1))
+    return sum(float(v) * {"h": 3600, "m": 60, "s": 1, "ms": 0.001}[u] for v, u in parts) if parts else None
 
 
 def retry_after_seconds(error: Exception) -> float:
@@ -85,10 +86,13 @@ def overshoot(error: Exception) -> int | None:
     return int(m.group(2)) - int(m.group(1)) if m else None
 
 
+CONNECTION_RETRIES = 5
+
+
 def chat(client, **kwargs):
     """One completion: sizes the output cap, waits out per-minute limits, stops on daily ones."""
     kwargs["max_completion_tokens"] = completion_budget(kwargs)
-    minute_retries = 0
+    minute_retries = connection_retries = 0
     while minute_retries < 8:
         try:
             return client.chat.completions.create(**kwargs)
@@ -97,10 +101,18 @@ def chat(client, **kwargs):
                 wait = try_again_seconds(e)
                 if wait is None or wait > MAX_DAILY_WAIT_S:
                     raise DailyLimitReached(str(e)[:300]) from e
+                print(f"  (waiting {wait + 2:.0f} s for Groq's daily token limit)", flush=True)
                 time.sleep(wait + 2)  # rolling window: this much has freed up by then
                 continue
             minute_retries += 1
             time.sleep(min(retry_after_seconds(e) + 1, 120))
+        except groq.APIConnectionError:
+            # After a long wait the pooled connection is often stale; the request never reached
+            # the model, so retrying cannot change any result. Two runs were lost to this.
+            connection_retries += 1
+            if connection_retries > CONNECTION_RETRIES:
+                raise
+            time.sleep(10 * connection_retries)
         except groq.APIStatusError as e:
             excess = overshoot(e) if e.status_code == 413 else None
             if excess is None:

@@ -1,0 +1,248 @@
+{
+ "id": "assignment-L2-N1-101",
+ "source": "Generated (benchmark/generate.py)",
+ "kind": "generated",
+ "family": "assignment",
+ "level": 2,
+ "noise": 1,
+ "seed": 101,
+ "question": "You are helping Khadija, who runs a maintenance team near Marrakech. Here is what they told you, in their own order.\nA team leader must give each of 4 workers exactly one of 4 jobs (J1, J2, J3, J4), and every job must be done by exactly one worker.\nOffice rent is 8,500 dollars per month, paid whatever the plan.\nLast year's total revenue was 641,000 dollars.\nAround 88% of customers said they were satisfied in the last survey.\nTime in minutes each worker needs for each job:\n\n| Worker | J1 | J2 | J3 | J4 |\n|---|---|---|---|---|\n| Mehdi | 24 | 59 | 39 | 35 |\n| Aya | 33 | 54 | 7 | 42 |\n| Khadija | 53 | 9 | 23 | 11 |\n| Driss | 39 | 46 | 52 | 47 |\n\nNour, who manages the site, has 20 years of experience.\nWhich worker should do which job so that the total time is as small as possible?",
+ "answer_keys": [
+  "The minimum total time in minutes"
+ ],
+ "objective_key": "The minimum total time in minutes",
+ "objective_sense": "minimize",
+ "expected": {
+  "The minimum total time in minutes": 87.0
+ },
+ "optimum": 87.0,
+ "independent_check": "dynamic programming over subsets of jobs",
+ "reference": {
+  "key_to_variable": {
+   "The minimum total time in minutes": "objective"
+  },
+  "objective_divisor": 1,
+  "model": {
+   "variables": [
+    {
+     "name": "assign_Mehdi_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Mehdi_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Aya_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Aya_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Aya_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Aya_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Khadija_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Khadija_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Khadija_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Khadija_J4",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J1",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J2",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J3",
+     "type": "boolean"
+    },
+    {
+     "name": "assign_Driss_J4",
+     "type": "boolean"
+    }
+   ],
+   "constraints": [
+    {
+     "name": "Mehdi does exactly one job",
+     "terms": {
+      "assign_Mehdi_J1": 1,
+      "assign_Mehdi_J2": 1,
+      "assign_Mehdi_J3": 1,
+      "assign_Mehdi_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Aya does exactly one job",
+     "terms": {
+      "assign_Aya_J1": 1,
+      "assign_Aya_J2": 1,
+      "assign_Aya_J3": 1,
+      "assign_Aya_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Khadija does exactly one job",
+     "terms": {
+      "assign_Khadija_J1": 1,
+      "assign_Khadija_J2": 1,
+      "assign_Khadija_J3": 1,
+      "assign_Khadija_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "Driss does exactly one job",
+     "terms": {
+      "assign_Driss_J1": 1,
+      "assign_Driss_J2": 1,
+      "assign_Driss_J3": 1,
+      "assign_Driss_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J1 done by exactly one worker",
+     "terms": {
+      "assign_Mehdi_J1": 1,
+      "assign_Aya_J1": 1,
+      "assign_Khadija_J1": 1,
+      "assign_Driss_J1": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J2 done by exactly one worker",
+     "terms": {
+      "assign_Mehdi_J2": 1,
+      "assign_Aya_J2": 1,
+      "assign_Khadija_J2": 1,
+      "assign_Driss_J2": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J3 done by exactly one worker",
+     "terms": {
+      "assign_Mehdi_J3": 1,
+      "assign_Aya_J3": 1,
+      "assign_Khadija_J3": 1,
+      "assign_Driss_J3": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    },
+    {
+     "name": "J4 done by exactly one worker",
+     "terms": {
+      "assign_Mehdi_J4": 1,
+      "assign_Aya_J4": 1,
+      "assign_Khadija_J4": 1,
+      "assign_Driss_J4": 1
+     },
+     "sense": "==",
+     "rhs": 1
+    }
+   ],
+   "objective": {
+    "sense": "minimize",
+    "terms": {
+     "assign_Mehdi_J1": 24,
+     "assign_Mehdi_J2": 59,
+     "assign_Mehdi_J3": 39,
+     "assign_Mehdi_J4": 35,
+     "assign_Aya_J1": 33,
+     "assign_Aya_J2": 54,
+     "assign_Aya_J3": 7,
+     "assign_Aya_J4": 42,
+     "assign_Khadija_J1": 53,
+     "assign_Khadija_J2": 9,
+     "assign_Khadija_J3": 23,
+     "assign_Khadija_J4": 11,
+     "assign_Driss_J1": 39,
+     "assign_Driss_J2": 46,
+     "assign_Driss_J3": 52,
+     "assign_Driss_J4": 47
+    }
+   }
+  },
+  "kind": {
+   "kind": "assignment",
+   "data": {
+    "workers": [
+     "Mehdi",
+     "Aya",
+     "Khadija",
+     "Driss"
+    ],
+    "jobs": [
+     "J1",
+     "J2",
+     "J3",
+     "J4"
+    ],
+    "cost": [
+     [
+      24,
+      59,
+      39,
+      35
+     ],
+     [
+      33,
+      54,
+      7,
+      42
+     ],
+     [
+      53,
+      9,
+      23,
+      11
+     ],
+     [
+      39,
+      46,
+      52,
+      47
+     ]
+    ]
+   }
+  }
+ }
+}

@@ -31,6 +31,8 @@ def test_try_again_durations_are_parsed():
     assert try_again_seconds(Exception("Please try again in 17.28s.")) == 17.28
     assert try_again_seconds(Exception("Please try again in 7m30.5s.")) == 450.5
     assert try_again_seconds(Exception("Please try again in 1h2m3s.")) == 3723
+    assert try_again_seconds(Exception("Please try again in 539ms.")) == 0.539  # once read as 539 minutes
+    assert try_again_seconds(Exception("Please try again in 2m0.5s.")) == 120.5
     assert try_again_seconds(Exception("no hint")) is None
 
 
@@ -69,3 +71,23 @@ def test_long_daily_waits_stop_the_run(monkeypatch):
         raise AssertionError("expected DailyLimitReached")
     except groq_agent.DailyLimitReached:
         pass
+
+
+class _Dropped(Exception):
+    pass
+
+
+def test_dropped_connections_are_retried(monkeypatch):
+    import groq
+
+    monkeypatch.setattr(groq, "APIConnectionError", _Dropped)
+    monkeypatch.setattr(groq_agent.time, "sleep", lambda s: None)
+    failures = [_Dropped("Connection error."), _Dropped("Connection error.")]
+
+    def create(**kwargs):
+        if failures:
+            raise failures.pop(0)
+        return "ok"
+
+    client = type("C", (), {"chat": type("Ch", (), {"completions": type("Co", (), {"create": staticmethod(create)})})})
+    assert groq_agent.chat(client, model="m", messages=[]) == "ok"

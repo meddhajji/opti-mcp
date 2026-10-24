@@ -347,12 +347,13 @@ def main():
     ap.add_argument("--levels", nargs="+", type=int, default=[1, 2, 3, 4, 5])
     ap.add_argument("--noise", nargs="+", type=int, default=[0, 1])
     ap.add_argument("--seeds", type=int, default=3, help="instances per family and level")
+    ap.add_argument("--first-seed", type=int, default=1, help="first seed; a fresh range gives unseen instances")
     args = ap.parse_args()
     out = BENCH / "sets" / args.set
     out.mkdir(parents=True, exist_ok=True)
     for family in args.families:
         for level in args.levels:
-            for seed in range(1, args.seeds + 1):
+            for seed in range(args.first_seed, args.first_seed + args.seeds):
                 spec = solved_spec(family, level, seed)
                 for noise in args.noise:
                     p = build(family, level, noise, seed, spec)
