@@ -1,0 +1,12 @@
+# The image needs only requirements.txt, pyproject.toml and the optimizer package.
+.git
+.venv
+.plugin-data
+benchmark
+tests
+examples
+scripts
+skills
+.claude-plugin
+**/__pycache__
+*.md

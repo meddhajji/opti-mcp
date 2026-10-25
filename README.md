@@ -7,8 +7,9 @@ the shifts for my five staff this week": the agent passes the numbers, Google OR
 finds the answer and proves it optimal, and an independent check confirms it before the
 agent shows it.
 
-Runs entirely on your machine. No API key, no LLM calls inside the plugin: the agent
-reads the problem, the solver decides, the verifier checks.
+No API key, no LLM calls inside: the agent reads the problem, the solver decides, the
+verifier checks. One engine, three ways in: a local plugin, a Python import, or a web
+service any assistant can reach by URL.
 
 ## Why
 
@@ -87,9 +88,40 @@ Omar unavailable Fri evening
 - `optimizer/scheduling.py`: turns a rota description into a model using four patterns
   (yes/no assignment, coverage, min-max fairness, weighted priorities).
 - `optimizer/server.py`: the MCP server, two tools.
+- `optimizer/web.py`: the same server over HTTP, plus plain JSON endpoints (below).
 - `scripts/launch.py`: what the plugin starts. On first run it creates a private Python
   environment in the plugin's data folder and installs OR-Tools there (about a minute),
   then reuses it.
+
+## As a web service
+
+The same engine behind a URL, for assistants that take a connector address and for any
+program that can send JSON:
+
+| Endpoint | What it does |
+|---|---|
+| `/mcp` | MCP over HTTP: the same two tools as the plugin (`solve`, `get_format`) |
+| `POST /solve` | `{"kind": "...", "data": {...}}` in, the same answer as the tool out |
+| `GET /formats` | the catalogue of kinds; `GET /formats/<kind>` gives one kind's full format |
+| `GET /health` | status and version |
+
+```bash
+curl -X POST https://<your-host>/solve -H "content-type: application/json" -d '{"kind": "shifts", "data":
+  {"days": ["Mon", "Tue"], "shifts": ["am", "pm"], "staff": [{"name": "Sara"}, {"name": "Omar",
+  "unavailable": [{"day": "Tue", "shift": "*"}]}, {"name": "Lina"}], "needs": [{"day": "*", "shift": "am",
+  "min_staff": 1}, {"day": "*", "shift": "pm", "min_staff": 1}]}}'
+```
+
+Nothing a caller sends is stored; the log keeps only the kind, status, size and time of
+each solve. A free public instance has to stay usable for everyone, so each request is at
+most 256 KB, at most 4 problems are solved at once, and one client can make 30 requests a
+minute (`OPTIMIZER_MAX_BODY_BYTES`, `OPTIMIZER_MAX_CONCURRENT`,
+`OPTIMIZER_REQUESTS_PER_MINUTE` change them). For private data, run it yourself:
+
+```bash
+python -m optimizer.web                        # http://127.0.0.1:8000
+docker build -t optimizer . && docker run -p 7860:7860 optimizer
+```
 
 ## Testing
 
@@ -99,7 +131,7 @@ python -m venv .venv
 .venv/Scripts/python -m pytest
 ```
 
-214 tests. Every kind is checked independently: brute force over every plan for
+221 tests. Every kind is checked independently: brute force over every plan for
 assignment, selection, product mix and transport, dynamic programming for production
 planning, and for cutting stock a different formulation (each piece given to a bar) plus
 the total-length lower bound. Each generated benchmark
@@ -109,7 +141,8 @@ reported conflict is checked to be truly minimal, and a test fails if the tools 
 reads grow past 700 tokens. The benchmark scorer is tested on every verdict, every
 reference answer must score as optimal, and the agent loops are tested against scripted
 fake models (tool calls, answer formats, rate limits, dropped connections, outages), so
-the tests never call a real model.
+the tests never call a real model. The web service is tested through its endpoints and
+limits, and over real HTTP with the MCP SDK's own client.
 
 ## Benchmark (in progress)
 
