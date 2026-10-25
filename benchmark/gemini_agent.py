@@ -49,7 +49,7 @@ def generate(client, **kwargs):
         except genai_errors.APIError as e:
             if e.code == 429 and is_daily_limit(e):
                 raise DailyLimitReached(str(e)[:300]) from e
-            if e.code in (429, 500, 503) and attempt < MAX_RETRIES - 1:
+            if e.code in (429, 500, 503, 504) and attempt < MAX_RETRIES - 1:  # 504: the server gave up, retry
                 time.sleep(min(retry_delay_seconds(e) + 1, 120))
                 continue
             raise

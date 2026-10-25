@@ -17,7 +17,7 @@ greedy loop, a brute force that stops scaling) whose answer looks plausible but 
 optimal, quietly drop a rule, or invent a plan when none exists. Small models also lose
 accuracy as their input grows, so the tool itself must be cheap to read.
 
-## Two tools, about 620 tokens
+## Two tools, about 700 tokens
 
 | Tool | What it does |
 |---|---|
@@ -99,14 +99,17 @@ python -m venv .venv
 .venv/Scripts/python -m pytest
 ```
 
-200 tests. Every kind is checked independently: brute force over every plan for
+214 tests. Every kind is checked independently: brute force over every plan for
 assignment, selection, product mix and transport, dynamic programming for production
 planning, and for cutting stock a different formulation (each piece given to a bar) plus
 the total-length lower bound. Each generated benchmark
 instance must reach its proven optimum from the data a perfect reader would pass. The
 general model is compared with brute-force enumeration on 60 random problems, every
 reported conflict is checked to be truly minimal, and a test fails if the tools an agent
-reads grow past 700 tokens. The benchmark scorer is tested on every verdict.
+reads grow past 700 tokens. The benchmark scorer is tested on every verdict, every
+reference answer must score as optimal, and the agent loops are tested against scripted
+fake models (tool calls, answer formats, rate limits, dropped connections, outages), so
+the tests never call a real model.
 
 ## Benchmark (in progress)
 
@@ -201,9 +204,8 @@ prompt, which never mentions the plugin:
 - **Fractional plans again came only from the conditions without the plugin.** Reasoning
   gave fractions twice, code once.
 - **What this shows:** for a small model, the hard step is turning words into a correct
-  general model. The next version adds per-family tools (production planning, cutting
-  stock, assignment) where the agent only fills in the data, measured as a fourth
-  condition.
+  general model. Version 0.2 (below) gives it per-family tools where it only fills in the
+  data.
 
 ### A bug the benchmark found
 
@@ -253,14 +255,16 @@ changed:
 - The skill is 140 tokens instead of 1,000.
 - The same functions can be imported as a Python library, for agents that write code.
 
+Version 0.3 (below) adds a usage rule and the general model's one-line format: 694 tokens.
+
 **The risk, stated up front.** The kinds cover exactly the five families the generator
 produces, so on generated problems they could look good simply because they match the
 test. Two checks against that: the families are the textbook ones (assignment, knapsack,
 cutting stock, lot sizing, product mix, plus transport) chosen because they are what
 industrial engineers meet most, and the 20 hand-written problems, which were not written
-for the kinds, are rerun with v0.2.
+for the kinds, are rerun with v0.2 (results below).
 
-### Generated problems and more models (in progress)
+### Generated problems, more models and a fourth condition
 
 `benchmark/generate.py` builds word problems from code, in five families with a size
 level from 1 to 5: product mix (2 to 12 products), project selection (5 to 35 projects),
@@ -284,10 +288,115 @@ for these runs:
 - A fourth condition, `library`: plain code execution where scripts can also
   `import optimizer`, with the same guidance as the skill (about 500 tokens).
 
-**Running now:** gpt-oss-20b on `benchmark/sets/scale-v1` (10 problems, one per family at
-size levels 4 and 5) in three conditions: code, plugin v0.2 and library. Then plugin v0.2
-and library on the 20 hand-written problems, with the same answer format as the v0.1
-baseline.
+### v0.2 on 10 large generated problems (23 Oct 2026)
+
+`benchmark/sets/scale-v1`: one problem per family at size levels 4 and 5 (up to 12
+workers, 35 projects, 8 piece lengths, 12 weeks), answers through `submit_answer`. Raw
+runs in `benchmark/results/scale-v1-*.jsonl`.
+
+| Model | Condition | Optimal | Median tokens per run | Total tokens |
+|---|---|---|---|---|
+| gpt-oss-20b | code | 4 / 10 | 7,813 | 92,351 |
+| gpt-oss-20b | plugin v0.2 | **9 / 10** | **3,354** | 52,493 |
+| gpt-oss-20b | library | **10 / 10** | 4,035 | 53,240 |
+| Gemma 4 26B | code | 9 / 10 | 27,102 | 384,730 |
+| Gemma 4 26B | plugin v0.2 | **10 / 10** | 11,698 | 139,827 |
+| Gemma 4 26B | library | **10 / 10** | **10,467** | 110,787 |
+
+- **For the weaker model, the toolkit more than doubles accuracy with about 43% fewer
+  tokens.** Five of code's six misses were numbers it never computed: after its scripts
+  crashed (PuLP is not installed, for instance), gpt-oss submitted a lower bound or zero,
+  such as 31 and 24 bars against proven optima of 32 and 25, or a cost of 0 against
+  124,498. The sixth, 35 projects, was close but not optimal (1,554,000 vs 1,557,000).
+- **For Gemma, accuracy is nearly equal; cost is not.** The plugin and the library use
+  under half of code's tokens per run (about a third in total) and finish in a median of
+  80 to 100 s instead of 337 s.
+- **The plugin's one miss came from the format, not the data.** On product mix with 8
+  products the agent put an "at least 1 chair" rule in a field that does not exist, worked
+  around the error by reserving one chair's resources, then forgot to add that chair's
+  profit (5,505 instead of 5,565).
+- 38 of the 40 plugin and library runs used the matching kind. The other two were Gemma
+  on product mix, which wrote the problem as a general model (one of them only partly
+  visible in a truncated log), and both still reached the optimum.
+
+### v0.2 on the 20 hand-written problems (24 Oct 2026)
+
+gpt-oss-20b, with the same text answer format as the v0.1 runs above
+(`benchmark/results/gpt-oss-20b-v02.jsonl`):
+
+| Condition | Optimal | Called the tool | Optimal when it did | Median tokens |
+|---|---|---|---|---|
+| reasoning (v0.1 runs) | 8 / 20 | | | 1,370 |
+| code (v0.1 runs) | 14 / 20 | | | 1,572 |
+| plugin v0.1 | 11 / 20 | 10 | 4 | 6,568 |
+| plugin v0.2 | 13 / 20 | **3** | 3 | 1,687 |
+| library | **15 / 20** | 16 | 11 | 5,784 |
+
+- **The library is the most accurate condition on these problems too.**
+- **The plugin's weakness moved.** v0.2 fixed what went wrong when the tool was called
+  (3 of 3 optimal, against 4 of 10 with v0.1), but gpt-oss called it on only 3 of the 20
+  problems. All 7 plugin misses are problems it answered by hand: on textbook-size
+  problems, a 20B model often decides it does not need a tool, and is then often wrong.
+- Two library runs lost to a dropped connection were redone.
+
+### v0.3: asking for the tool even on small problems (test in progress)
+
+The change: `solve`'s description now opens with a usage rule, echoed in the skill ("use
+for every question that asks for the best plan, quantities, assignment, schedule or
+choice under limits, even a small one: an optimum worked out by hand is a guess until the
+solver proves it"), and the general `model` kind carries its own one-line format, so a
+small problem outside the families takes one call instead of two. 694 tokens.
+
+The test, with its success criteria fixed before any run: gpt-oss-20b calls the tool on
+at least 15 of 20 problems in each set (from 3 of 20), the plugin is at least as accurate
+as the library on the hand-written problems, the large problems do not get worse, and the
+tools stay under 700 tokens. v0.2 and v0.3 answer the same problems in the same format,
+with v0.2 run from a pinned checkout:
+
+- **20 unseen story problems** (`benchmark/sets/small-story-v1`): size levels 1 and 2,
+  told with irrelevant facts, from fresh seeds (101 and 102).
+- **10 new OptiBench problems** (`benchmark/sets/optibench-heldout-v1`), drawn at random
+  after v0.3 was designed (seed 20261024), with two exclusions recorded in
+  `benchmark/optibench/heldout.json`. All 10 labels match the solver's proven optimum,
+  and only 3 of the 10 fit a kind, so 7 test the general path.
+
+Results so far:
+
+| | v0.2 optimal | v0.2 called the tool | v0.3 optimal | v0.3 called the tool |
+|---|---|---|---|---|
+| Gemma 4 26B, 20 story problems | 17 | 20 | 14 | 20 |
+| Gemma 4 26B, 10 new OptiBench problems | 10 | 9 | 10 | 10 |
+| gpt-oss-20b, 20 story problems | 18 | 6 | running | running |
+| gpt-oss-20b, 10 new OptiBench problems | running | running | running | running |
+
+- **Gemma already calls the tool on almost every problem**, so v0.3 has nothing to fix for
+  it. Its lower v0.3 score on the story problems is answer format, not numbers: five runs
+  (two with v0.2, three with v0.3) wrote the right optimum with the number as its own
+  label (`{"91000": 91000}`), and two v0.3 runs ended with no text. Counting right numbers,
+  19 against 17.
+- **gpt-oss with v0.2 called the tool on 6 of the 20 story problems**, and all 6 were
+  optimal; both misses were answered by hand. Its v0.3 runs are still going.
+- **A flaw in the story generator.** Gemma's one wrong story answer had every number right:
+  the gap was exactly an office rent mentioned as an irrelevant fact ("7,600 dollars per
+  month, paid whatever the plan"), which it added to "the total cost of meeting demand".
+  That reading is defensible, so future sets must keep money facts out of cost and
+  profit questions. Both versions face the same problems, so this comparison stays fair.
+
+### What the harness got wrong, and how it was fixed
+
+Not model results, but each one changed what could be measured:
+
+- **Groq's "try again in 539ms" was read as 539 minutes**, so runs slept for up to 9
+  hours. Milliseconds are now read first, a test covers it, and every wait is logged.
+- **A 30-minute loss of internet** turned 10 runs into "no answer", and a Gemini request
+  sent as the connection dropped hung for over an hour. Connections are now retried,
+  requests time out after 10 minutes, and a lasting outage stops the run so that it
+  resumes later instead of recording failures. The failed runs were set aside, not
+  deleted, and redone.
+- **In the plugin condition the MCP client wraps every error in an exception group**, so a
+  stop signal was recorded as an ordinary error. Errors are now unwrapped.
+- **Gemini's 504 (the server gave up) is now retried**, and cached prompt tokens, which do
+  not count against Groq's limits, are recorded separately.
 
 ## Install
 
@@ -305,13 +414,17 @@ pip install git+https://github.com/meddhajji/optimization-plugin
 
 ## Status and next steps
 
-Version 0.2: eight problem kinds behind two tools, the `optimize` skill, the Python
-library, 200 tests, and the benchmark above. Next:
+Version 0.3: eight problem kinds behind two tools (about 700 tokens), the `optimize`
+skill, the Python library, 214 tests, and the benchmark above. Next:
 
-1. Finish the scale runs, then the size sweep (levels 1 to 5, several seeds, noise on
-   and off) as charts of accuracy and tokens against problem size, for gpt-oss-20b,
-   Gemma 4 26B and Gemini Flash-Lite.
-2. Infeasible instances, to measure whether agents report conflicts instead of
+1. Finish the v0.3 test (gpt-oss-20b on the new OptiBench problems, the hand-written
+   problems and the large ones).
+2. If small models still skip the tool on small problems, rethink how it is offered
+   rather than reword it again. The library condition, where the agent writes code that
+   imports the solver, is the strongest candidate so far.
+3. The size sweep (levels 1 to 5, several seeds, noise on and off) as charts of accuracy
+   and tokens against problem size, after fixing the money-distractor flaw.
+4. Infeasible instances, to measure whether agents report conflicts instead of
    inventing a plan.
-3. More kinds where agents fail most: vehicle routing, bin packing, job-shop scheduling.
-4. Continuous variables (linear programming with HiGHS).
+5. More kinds where agents fail most: vehicle routing, bin packing, job-shop scheduling.
+6. Continuous variables (linear programming with HiGHS).
