@@ -1,0 +1,43 @@
+# The test suite on every push and pull request. No API keys: the model harness is tested
+# with scripted fake clients, and the solver against independent checks.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"  # the Docker image's version
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+  # The server supports Python 3.10; the benchmark harness and its tests need 3.11, so on 3.10
+  # only the installed package is checked.
+  package-on-3-10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - run: pip install .
+      - name: Solve one problem with the installed package
+        working-directory: ${{ runner.temp }}
+        run: |
+          python -c '
+          from optimizer import solve
+          from optimizer.web import app
+          r = solve("assignment", {"workers": ["Ana", "Ben"], "jobs": ["J1", "J2"], "cost": [[4, 7], [6, 3]]})
+          assert r["status"] == "OPTIMAL" and r["total"] == 7 and r["checked"], r
+          print(r)
+          '

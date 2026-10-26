@@ -1,5 +1,7 @@
 # Optimizer: exact optimisation for cheap and open-source LLMs
 
+[![tests](https://github.com/meddhajji/opti-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/meddhajji/opti-mcp/actions/workflows/tests.yml)
+
 An MCP server that lets any LLM, especially small and open-source ones, solve
 optimisation problems exactly. The model reads the problem and passes the numbers;
 Google OR-Tools finds the best plan and proves it optimal; an independent check confirms
@@ -55,14 +57,14 @@ Decimals are scaled to whole numbers exactly, never rounded.
 With Docker:
 
 ```bash
-git clone https://github.com/meddhajji/optimization-plugin && cd optimization-plugin
+git clone https://github.com/meddhajji/opti-mcp && cd opti-mcp
 docker build -t optimizer . && docker run -p 7860:7860 optimizer
 ```
 
 Or with Python 3.10 or newer:
 
 ```bash
-pip install git+https://github.com/meddhajji/optimization-plugin
+pip install git+https://github.com/meddhajji/opti-mcp
 optimizer-web     # MCP over HTTP at http://127.0.0.1:8000/mcp, JSON at /solve
 optimizer-mcp     # MCP over stdio, for clients that start the server themselves
 ```
@@ -136,10 +138,11 @@ problems.
 pip install -e ".[dev]" && pytest
 ```
 
-222 tests: every kind against an independent method (brute force, dynamic programming, a
-second formulation), every benchmark answer against its proven optimum, the server as a
-client sees it (including real MCP over HTTP), and a budget that fails if what a model
-reads grows past 700 tokens. The tests never call a real model.
+222 tests, run on GitHub at every push: every kind against an independent method (brute
+force, dynamic programming, a second formulation), every benchmark answer against its
+proven optimum, the server as a client sees it (including real MCP over HTTP), and a
+budget that fails if what a model reads grows past 700 tokens. The tests never call a
+real model.
 
 ## License
 
