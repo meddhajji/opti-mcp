@@ -143,6 +143,10 @@ def deref(schema: dict) -> dict:
     return walk(schema)
 
 
+# First on the code condition's path: an optimizer package whose import fails.
+BLOCKED = Path(__file__).resolve().parent / "blocked"
+
+
 def library_site() -> Path:
     """This harness's own environment, which holds OR-Tools."""
     return Path(sysconfig.get_paths()["purelib"])
@@ -151,16 +155,19 @@ def library_site() -> Path:
 def run_python(code: str, workdir: Path, library: bool = False) -> str:
     """Runs with the system Python, like the code condition. With library, the optimizer
     package comes first on the path and the plugin's packages last, so the system's own
-    numpy and scipy are the ones scripts get, exactly as in the code condition."""
+    numpy and scipy are the ones scripts get, exactly as in the code condition. Without it,
+    a stub shadows the optimizer even where that Python has it installed (CI, or after a pip
+    install), so the code condition can never reach the tool; every other error reads as before."""
     script = (workdir / "script.py").resolve()
     script.write_text(code, encoding="utf-8")
     cmd = ["python", str(script)]
+    env = {**os.environ, "PYTHONPATH": os.pathsep.join(filter(None, [str(BLOCKED), os.environ.get("PYTHONPATH")]))}
     if library:
         boot = (f"import runpy, sys; sys.path.insert(0, {str(REPO)!r}); sys.path.append({str(library_site())!r}); "
                 "sys.argv = sys.argv[1:]; runpy.run_path(sys.argv[0], run_name='__main__')")
-        cmd = ["python", "-c", boot, str(script)]
+        cmd, env = ["python", "-c", boot, str(script)], None
     try:
-        proc = subprocess.run(cmd, cwd=workdir, capture_output=True, text=True,
+        proc = subprocess.run(cmd, cwd=workdir, env=env, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=PYTHON_TIMEOUT_S)
         out = proc.stdout + (f"\n[stderr]\n{proc.stderr}" if proc.stderr else "")
     except subprocess.TimeoutExpired:
