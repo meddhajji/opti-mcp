@@ -15,9 +15,10 @@ def test_conditions_differ_only_in_what_they_allow():
         assert cmd[cmd.index("--model") + 1] == "haiku"
     tools = {name: cmd[cmd.index("--tools") + 1] for name, cmd in (("r", reasoning), ("c", code), ("p", plugin))}
     assert tools == {"r": "", "c": "Bash,Read,Write,Edit", "p": ""}  # explicit lists: no web search, no sub-agents
-    assert "--plugin-dir" not in reasoning and "--plugin-dir" not in code
-    assert "--plugin-dir" in plugin and "--mcp-config" in plugin and PLUGIN_TOOLS in plugin
-    assert "launch.py" in plugin[plugin.index("--mcp-config") + 1]
+    assert "--mcp-config" not in reasoning and "--mcp-config" not in code
+    assert "--mcp-config" in plugin and PLUGIN_TOOLS in plugin
+    server = json.loads(plugin[plugin.index("--mcp-config") + 1])["mcpServers"]["optimizer"]
+    assert server["args"] == ["-m", "optimizer.server"]
 
 
 def test_prompt_never_mentions_the_plugin():

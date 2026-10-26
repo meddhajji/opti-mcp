@@ -45,7 +45,7 @@ def test_plugin_condition_with_the_real_mcp_server(tmp_path):
     assert out["tools"] == ["solve"] and out["turns"] == 2
     assert out["text"] == 'FINAL ANSWER: {"value": 12}'
     first, second = fake.requests
-    assert "Optimize" in first["config"].system_instruction
+    assert "even when the problem looks small" in first["config"].system_instruction  # the server's instructions
     names = {d.name for d in first["config"].tools[0].function_declarations}
     assert names == {"solve", "get_format"}
     function_response = second["contents"][-1].parts[0].function_response
@@ -53,13 +53,13 @@ def test_plugin_condition_with_the_real_mcp_server(tmp_path):
     assert out["tokens"] == {"prompt": 200, "completion": 50, "cached": 0}  # thinking tokens counted as output
 
 
-def test_gemma_gets_the_skill_in_the_user_message(tmp_path):
+def test_gemma_gets_the_guidance_in_the_user_message(tmp_path):
     fake = FakeGemini([response([types.Part(text="FINAL ANSWER: {}")])])
     asyncio.run(gemini_agent.run("THE QUESTION", "gemma-4-26b-a4b-it", "plugin", tmp_path, client=fake))
     request = fake.requests[0]
     assert request["config"].system_instruction is None
     text = request["contents"][0].parts[0].text
-    assert "Optimize" in text and text.endswith("THE QUESTION")
+    assert "even when the problem looks small" in text and text.endswith("THE QUESTION")
 
 
 def test_code_and_reasoning_conditions(tmp_path):

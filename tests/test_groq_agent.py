@@ -59,7 +59,8 @@ def test_plugin_condition_calls_the_real_mcp_server(tmp_path):
     assert out["tools"] == ["solve"] and out["turns"] == 2
     assert out["text"].endswith('{"profit": 2850}')
     first, second = fake.requests
-    assert first["messages"][0]["role"] == "system" and "Optimize" in first["messages"][0]["content"]
+    system = first["messages"][0]
+    assert system["role"] == "system" and "even when the problem looks small" in system["content"]  # server instructions
     assert {t["function"]["name"] for t in first["tools"]} == {"solve", "get_format"}
     tool_message = second["messages"][-1]
     assert tool_message["role"] == "tool" and '"OPTIMAL"' in tool_message["content"]

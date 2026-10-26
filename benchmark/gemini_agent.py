@@ -1,9 +1,9 @@
 """Benchmark agent for Gemini API models (Gemini Flash-Lite, Gemma 4).
 
 Shared behaviour (conditions, tools, logging) lives in agent_common.py. Here only
-the Gemini API's specifics. The skill goes in as a system instruction, except for
-Gemma models, where it is placed at the top of the user message because Gemma on
-this API does not reliably accept system instructions.
+the Gemini API's specifics. A condition's guidance goes in as a system instruction,
+except for Gemma models, where it is placed at the top of the user message because
+Gemma on this API does not reliably accept system instructions.
 
 The API key is read from GEMINI_API_KEY, or from .env at the repo root.
 """
@@ -17,7 +17,7 @@ from google.genai import errors as genai_errors
 from google.genai import types
 
 from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, ProviderUnavailable, condition_tools,
-                          env_key, instructions)
+                          env_key)
 
 MAX_RETRIES = 8
 CONNECTION_RETRIES = 5
@@ -66,13 +66,12 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     answer is what submit_answer received (always None without answer_keys)."""
     client = client or genai.Client(api_key=env_key("GEMINI_API_KEY"),
                                     http_options=types.HttpOptions(timeout=REQUEST_TIMEOUT_MS))
-    system = instructions(condition)
-    if system and "gemma" in model:
-        prompt, system = f"{system}\n\n---\n\n{prompt}", None
-    contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]
     events, tokens = [], {"prompt": 0, "completion": 0, "cached": 0}
 
-    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
+    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool, system):
+        if system and "gemma" in model:
+            prompt, system = f"{system}\n\n---\n\n{prompt}", None
+        contents = [types.Content(role="user", parts=[types.Part(text=prompt)])]
         log = CallLog(call_tool, answer_keys)
         config = types.GenerateContentConfig(
             system_instruction=system,

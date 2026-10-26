@@ -4,10 +4,9 @@ how they call their model:
   reasoning  no tools
   code       one run_python tool: runs the model's script in an empty folder with
              the system Python, like Claude Code's Bash tool
-  plugin     the optimizer MCP tools, listed live from the real server
-             (scripts/launch.py), plus the optimize skill as instructions
-  library    run_python, where scripts can also `import optimizer` (OR-Tools from the
-             plugin's own environment), plus the same guidance as the skill
+  plugin     the optimizer MCP server (python -m optimizer.server), its tools listed live
+             and its own instructions as the system text, as any MCP client gets them
+  library    run_python, where scripts can also `import optimizer`, plus the same guidance
 
 With answer keys given, every condition also gets a submit_answer tool with one number
 per key, and the run ends when it is called: the answer arrives as structured
@@ -20,6 +19,8 @@ import json
 import os
 import re
 import subprocess
+import sys
+import sysconfig
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -100,9 +101,13 @@ def env_key(name: str) -> str:
     return key
 
 
-def skill_text() -> str:
-    text = (PLUGIN_ROOT / "skills" / "optimize" / "SKILL.md").read_text(encoding="utf-8")
-    return re.sub(r"\A---.*?---\s*", "", text, flags=re.DOTALL)  # drop the YAML front matter
+def legacy_skill() -> str | None:
+    """Versions up to v0.3 shipped their guidance as a Claude Code skill rather than as server
+    instructions: a pinned old version is run with its own skill, so its results stay comparable."""
+    path = PLUGIN_ROOT / "skills" / "optimize" / "SKILL.md"
+    if not path.exists():
+        return None
+    return re.sub(r"\A---.*?---\s*", "", path.read_text(encoding="utf-8"), flags=re.DOTALL)  # drop the front matter
 
 
 LIBRARY_TEXT = (
@@ -117,14 +122,9 @@ LIBRARY_TEXT = (
 )
 
 
-def instructions(condition: str) -> str | None:
-    """The system text a condition starts with: the skill for the plugin, the same guidance for the library."""
-    if condition == "plugin":
-        return skill_text()
-    if condition == "library":
-        from optimizer.kinds import catalogue
-        return LIBRARY_TEXT.format(catalogue=catalogue())
-    return None
+def library_text() -> str:
+    from optimizer.kinds import catalogue
+    return LIBRARY_TEXT.format(catalogue=catalogue())
 
 
 def deref(schema: dict) -> dict:
@@ -144,11 +144,8 @@ def deref(schema: dict) -> dict:
 
 
 def library_site() -> Path:
-    """The plugin's own environment (created by scripts/launch.py), which holds OR-Tools."""
-    found = sorted((REPO / ".plugin-data" / "venv").rglob("site-packages"))
-    if not found:
-        raise RuntimeError("no plugin environment yet: run `python scripts/launch.py` once to create it")
-    return found[0]
+    """This harness's own environment, which holds OR-Tools."""
+    return Path(sysconfig.get_paths()["purelib"])
 
 
 def run_python(code: str, workdir: Path, library: bool = False) -> str:
@@ -173,23 +170,23 @@ def run_python(code: str, workdir: Path, library: bool = False) -> str:
 
 @asynccontextmanager
 async def condition_tools(condition: str, workdir: Path, answer_keys: list[str] | None = None):
-    """Yields (tool specs {name, description, parameters}, async call_tool(name, args) -> str).
-    With answer_keys the submit_answer spec is added; CallLog handles its calls."""
+    """Yields (tool specs {name, description, parameters}, async call_tool(name, args) -> str,
+    system text or None). With answer_keys the submit_answer spec is added; CallLog handles its calls."""
     workdir.mkdir(parents=True, exist_ok=True)
-    async with _condition_tools(condition, workdir) as (specs, call_tool):
-        yield specs + ([submit_spec(answer_keys)] if answer_keys else []), call_tool
+    async with _condition_tools(condition, workdir) as (specs, call_tool, system):
+        yield specs + ([submit_spec(answer_keys)] if answer_keys else []), call_tool, system
 
 
 @asynccontextmanager
 async def _condition_tools(condition: str, workdir: Path):
     if condition == "plugin":
-        # Its dependencies are the same for every version: reuse this checkout's plugin environment.
-        env = {**os.environ, "CLAUDE_PLUGIN_DATA": os.environ.get("CLAUDE_PLUGIN_DATA") or str(REPO / ".plugin-data")}
-        params = StdioServerParameters(command="python", args=[str(PLUGIN_ROOT / "scripts" / "launch.py")],
-                                       cwd=str(workdir), env=env)
+        # The version under test comes first on the path; its dependencies are this environment's.
+        env = {**os.environ, "PYTHONPATH": os.pathsep.join([str(PLUGIN_ROOT), os.environ.get("PYTHONPATH", "")])}
+        params = StdioServerParameters(command=sys.executable, args=["-m", "optimizer.server"], cwd=str(workdir), env=env)
         async with Client(params) as mcp:
             specs = [{"name": t.name, "description": t.description or "", "parameters": deref(t.input_schema)}
                      for t in (await mcp.list_tools()).tools]
+            system = legacy_skill() or mcp.instructions
 
             async def call_mcp(name, args):
                 res = await mcp.call_tool(name, args)
@@ -197,19 +194,19 @@ async def _condition_tools(condition: str, workdir: Path):
                     return json.dumps(res.structured_content)
                 return "\n".join(getattr(c, "text", "") for c in res.content)
 
-            yield specs, call_mcp
+            yield specs, call_mcp, system
     elif condition in ("code", "library"):
         async def call_python(name, args):
             if name != "run_python":
                 return f"Unknown tool {name}"
             return run_python(args.get("code", ""), workdir, library=condition == "library")
 
-        yield [RUN_PYTHON], call_python
+        yield [RUN_PYTHON], call_python, library_text() if condition == "library" else None
     else:
         async def no_tools(name, args):
             return "No tools are available."
 
-        yield [], no_tools
+        yield [], no_tools, None
 
 
 class CallLog:

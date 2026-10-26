@@ -5,7 +5,7 @@ general integer model, solves it with the engine and answers in the problem's ow
 words: the plan, its value, the solver status, and whether the independent check
 passed. When no plan exists it names the rules that conflict.
 
-This is what keeps the plugin light for small models. The agent reads one line per
+This is what keeps the server light for small models. The agent reads one line per
 kind (CATALOGUE), sends only the numbers it has already read, and gets a short answer
 back. Loops, variables and the exact scaling of decimals happen here, in code tested
 against independent methods (brute force, dynamic programming), not in the agent's
@@ -497,6 +497,15 @@ INTRO = ("Use for every question that asks for the best plan, quantities, assign
          "limits, even a small one: an optimum worked out by hand is a guess until the solver proves it. Pick the "
          "kind that fits and pass the numbers as stated (decimals are fine).")
 OUTRO = "Returns the plan, its value and the status (OPTIMAL = proved best); when no plan exists, the rules that conflict."
+
+# How an agent should use the tools. The MCP server sends it as its instructions, which clients pass to the
+# model; frameworks that ignore server instructions can put it in their system prompt. Until v0.3 this was a
+# Claude Code skill: the words are unchanged, so benchmark results carry over.
+GUIDANCE = """For any request to plan, assign, schedule, cut, ship, produce or choose the best option under limits, call solve, even when the problem looks small enough to do in your head: it takes one call, and hand-worked optima are often wrong.
+
+1. Pick the kind that fits and pass the numbers exactly as stated. For shifts, call get_format first. If a rule is ambiguous, say which reading you used.
+2. If the answer is INVALID_INPUT, fix what it lists and call again.
+3. Report the status meaning, the plan and its value. If no plan exists, show the conflicting rules and ask which one to relax; never drop a rule yourself."""
 
 
 def catalogue() -> str:

@@ -11,10 +11,11 @@ from optimizer.server import server
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "benchmark"))
 
-from agent_common import skill_text  # noqa: E402
+from optimizer import GUIDANCE  # noqa: E402
 
-# What an agent reads on every request, at about 4 characters per token. Version 0.1 cost
-# 3,904 tokens (four tools with full schemas, a 1,000-token skill); this guards the light design.
+# What an agent reads on every request (tools and the server's instructions), at about 4 characters
+# per token. Version 0.1 cost 3,904 tokens (four tools with full schemas, 1,000 tokens of guidance);
+# this guards the light design.
 TOKEN_BUDGET = 700
 
 
@@ -37,8 +38,15 @@ def test_two_tools_within_the_token_budget():
     specs = [{"type": "function", "function": {"name": t.name, "description": t.description, "parameters": t.input_schema}}
              for t in tools()]
     assert [s["function"]["name"] for s in specs] == ["solve", "get_format"]
-    tokens = (len(json.dumps(specs)) + len(skill_text())) / 4
-    assert tokens <= TOKEN_BUDGET, f"the plugin now costs ~{tokens:.0f} tokens per request"
+    tokens = (len(json.dumps(specs)) + len(GUIDANCE)) / 4
+    assert tokens <= TOKEN_BUDGET, f"the server now costs ~{tokens:.0f} tokens per request"
+
+
+def test_the_guidance_reaches_every_client():
+    async def go():
+        async with Client(server) as c:
+            return c.instructions
+    assert asyncio.run(go()) == GUIDANCE and "even when the problem looks small" in GUIDANCE
 
 
 def test_answers_are_one_line_of_json():

@@ -1,16 +1,17 @@
 [project]
 name = "optimizer-mcp"
-version = "0.3.0"
-description = "Exact optimisation for agents: standard problem kinds solved, proved optimal and verified, as an MCP server or a library"
+version = "0.4.0"
+description = "An MCP server that lets cheap and open-source LLMs solve optimisation problems exactly: proved optimal, independently verified"
 requires-python = ">=3.10"
-dynamic = ["dependencies"]  # read from requirements.txt, which the plugin launcher also uses
+dynamic = ["dependencies"]  # read from requirements.txt, which the Docker image also installs
 
 [project.optional-dependencies]
-# groq and google-genai: benchmark harness for weaker models only, never the plugin
+# groq and google-genai: benchmark harness for the models under test only, never the server
 dev = ["pytest>=8.0", "groq>=1.7", "google-genai>=2.30"]
 
 [project.scripts]
-optimizer-mcp = "optimizer.server:main"
+optimizer-mcp = "optimizer.server:main"   # MCP over stdio
+optimizer-web = "optimizer.web:main"      # MCP over HTTP plus JSON endpoints
 
 [build-system]
 requires = ["setuptools>=68"]

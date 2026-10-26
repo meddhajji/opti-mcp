@@ -1,7 +1,7 @@
-"""The optimizer as a web service: the same engine as the plugin and the library, reachable by URL.
+"""The optimizer as a web service: the same engine as the stdio server and the library, reachable by URL.
 
-  /mcp             MCP over HTTP: the same two tools as the local plugin, for AI assistants that
-                   take a connector URL (for example a custom connector in Claude)
+  /mcp             MCP over HTTP: the same two tools and instructions as the stdio server, for
+                   agent frameworks and assistants that take a connector URL
   POST /solve      {"kind": "...", "data": {...}}: the same answer as the solve tool, as JSON
   GET  /formats    the catalogue of kinds; /formats/{kind}: the full format of one kind
   GET  /health     liveness check for the host

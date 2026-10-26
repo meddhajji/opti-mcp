@@ -1,30 +1,27 @@
-"""Run benchmark problems through Claude Code and score the answers.
+"""Run benchmark problems through an agent and score the answers.
 
-Each run sends one problem to `claude -p` in restricted mode with an explicit
-tool list, so nothing else is available: no web search (benchmark problems are
-public), no sub-agents, none of the user's own plugins, settings or claude.ai
-connectors (--strict-mcp-config), and a fresh empty working folder:
+With --backend groq or gemini (the models this project is for), each run goes
+through this repo's own agent loop (benchmark/groq_agent.py, gemini_agent.py,
+shared logic in agent_common.py) in a fresh empty folder, in one of four
+conditions:
 
   reasoning  no tools at all: the model answers from its own reasoning
-  code       Bash, Read, Write, Edit: the model may write and run its own code
-  plugin     the optimizer skill (--plugin-dir) and its MCP server, no other tools
+  code       run_python: the model may write and run its own code
+  plugin     the optimizer MCP server's tools, with its instructions as system text
+  library    run_python, where scripts can also `import optimizer`, plus the same
+             guidance (the optimizer used as a Python library)
 
-The plugin's MCP server is passed with --mcp-config (the same launcher command
-the plugin declares) because --strict-mcp-config also drops servers that come
-from --plugin-dir; the skill still loads from the plugin.
+--answer-tool replaces the FINAL ANSWER line with a submit_answer tool call, so the
+answer is structured data rather than text to parse.
 
-The prompt is identical in every condition and never mentions the plugin:
+With --backend claude (used for the first Claude Haiku runs), each run goes to
+`claude -p` in restricted mode with an explicit tool list: no web search (the
+problems are public), no sub-agents, none of the user's own settings or
+connectors (--strict-mcp-config); the plugin condition gets the optimizer MCP
+server through --mcp-config.
+
+The prompt is identical in every condition and never mentions the optimizer:
 whether the agent chooses to use it is part of what is measured.
-
-With --backend groq or gemini, the same problems, prompt and conditions go
-through benchmark/groq_agent.py or gemini_agent.py instead (shared logic in
-agent_common.py), to test models weaker than Claude Code runs. There,
---answer-tool replaces the FINAL ANSWER line with a submit_answer tool call, so
-the answer is structured data rather than text to parse, and a fourth condition
-is available:
-
-  library    run_python, where scripts can also `import optimizer`, plus the
-             same guidance as the skill (the plugin used as a Python library)
 
 Results are appended to benchmark/results/<run name>.jsonl, one line per
 (problem, model, condition); finished combinations are skipped, so an
@@ -56,7 +53,7 @@ PLUGIN_TOOLS = "mcp__optimizer"  # every tool of the optimizer MCP server, as Cl
 OPTIMIZER_TOOLS = {"solve", "get_format",  # raw MCP names, v0.2, then v0.1
                    "solve_model", "verify_solution", "explain_infeasibility", "schedule_shifts"}
 MCP_CONFIG = json.dumps({"mcpServers": {"optimizer": {
-    "command": "python", "args": [str(REPO / "scripts" / "launch.py")]}}})
+    "command": sys.executable, "args": ["-m", "optimizer.server"], "env": {"PYTHONPATH": str(REPO)}}}})
 CONDITIONS = ("reasoning", "code", "plugin", "library")  # library: API backends only
 
 PROMPT = """{question}
@@ -95,7 +92,7 @@ def command(model: str, condition: str, budget_usd: float) -> list[str]:
         return cmd + ["--tools", "Bash,Read,Write,Edit", "--allowedTools", "Bash", "Read", "Write", "Edit"]
     cmd += ["--tools", ""]
     if condition == "plugin":
-        cmd += ["--plugin-dir", str(REPO), "--mcp-config", MCP_CONFIG, "--allowedTools", PLUGIN_TOOLS]
+        cmd += ["--mcp-config", MCP_CONFIG, "--allowedTools", PLUGIN_TOOLS]
     return cmd
 
 

@@ -1,9 +1,8 @@
 """Benchmark agent for models served by Groq (OpenAI-style chat with tools).
 
 Shared behaviour (conditions, tools, logging) lives in agent_common.py. Here only
-Groq's specifics: its free-tier limits and error shapes. Differences from Claude
-Code, stated plainly: the skill is given up front as a system message (Claude Code
-shows its description and loads it on demand), and the loop is this file's.
+Groq's specifics: its free-tier limits and error shapes. A condition's guidance (the
+server's instructions, for the plugin) is given up front as a system message.
 
 The API key is read from GROQ_API_KEY, or from .env at the repo root.
 """
@@ -16,7 +15,7 @@ import groq
 
 from agent_common import (MAX_TURNS, REMINDER, CallLog, DailyLimitReached, ProviderUnavailable,  # noqa: F401
                           condition_tools, deref,
-                          env_key, instructions, run_python, skill_text)
+                          env_key, run_python)
 
 # Reasoning models (gpt-oss) spend output tokens thinking before they answer; Groq's
 # default cap (2,048) cut answers off mid-thought, which Claude Code runs never hit.
@@ -26,7 +25,7 @@ MAX_COMPLETION_TOKENS = 8192
 TPM_LIMIT = int(os.environ.get("GROQ_TPM_LIMIT", "8000"))  # free (on_demand) tier for gpt-oss-20b
 MIN_COMPLETION_TOKENS = 256
 # gpt-oss models think at length by default; under the free 8,000 tokens-per-minute limit
-# the plugin condition (whose prompt carries ~4,000 tokens of tool definitions and skill)
+# the plugin condition (whose prompt carried ~4,000 tokens of tool definitions and guidance in v0.1)
 # was left too little room to answer. "low" is applied to every condition alike, and is
 # what the laptop tracker's assistant uses in production.
 REASONING_EFFORT = os.environ.get("GROQ_REASONING_EFFORT", "low")
@@ -132,12 +131,12 @@ async def run(prompt: str, model: str, condition: str, workdir: Path, client=Non
     """Returns {text, tools, turns, tokens, events, calls, answer} in the shape run.py records;
     answer is what submit_answer received (always None without answer_keys)."""
     client = client or groq.Groq(api_key=api_key(), max_retries=0)
-    messages = [{"role": "user", "content": prompt}]
-    if instructions(condition):
-        messages.insert(0, {"role": "system", "content": instructions(condition)})
     events, tokens = [], {"prompt": 0, "completion": 0, "cached": 0}
 
-    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool):
+    async with condition_tools(condition, workdir, answer_keys) as (specs, call_tool, system):
+        messages = [{"role": "user", "content": prompt}]
+        if system:
+            messages.insert(0, {"role": "system", "content": system})
         log = CallLog(call_tool, answer_keys)
         tools = [{"type": "function", "function": s} for s in specs]
         text, turns, reminded = "", MAX_TURNS, False
