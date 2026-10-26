@@ -264,6 +264,7 @@ Results:
 | 20 story problems | gpt-oss-20b | 18 | 6 | 17 | 8 |
 | 10 new OptiBench problems | gpt-oss-20b | 7 | 1 | 8 | 5 |
 | 20 hand-written problems | gpt-oss-20b | 13 | 3 | 13 | 10 |
+| 10 large problems (`submit_answer`) | gpt-oss-20b | 9 | 10 | 9 | 9 |
 | 20 story problems | Gemma 4 26B | 17 | 20 | 14 | 20 |
 | 10 new OptiBench problems | Gemma 4 26B | 10 | 9 | 10 | 10 |
 
@@ -274,7 +275,10 @@ Against the criteria fixed before the runs:
   p = 0.04), much less on the story problems (6 changed, p = 0.69).
 - **The plugin at least as accurate as the library on the hand-written problems: not
   met** (13 against 15).
-- **No loss on the large problems:** LARGE_PENDING
+- **No loss on the large problems: met for accuracy** (9 of 10 with both versions: v0.3
+  fixed the product-mix format slip and lost the 8-worker assignment, answered by hand and
+  never submitted), **not for cost**: the median run rose from 3,354 to 5,257 tokens,
+  mostly from extra `get_format` calls.
 - **Under 700 tokens: met** (694).
 
 What it shows:
